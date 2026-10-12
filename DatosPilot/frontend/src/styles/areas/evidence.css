@@ -1,0 +1,67 @@
+/* evidence screens (area-specific styles only; use the tokens from app.css). */
+
+/* ── Forms ── */
+.segmented.ev-scope { display: flex; max-width: 460px; }
+.segmented.ev-scope button { flex: 1; height: auto; min-height: 32px; padding: 6px 12px; line-height: 1.25; }
+.ev-fieldset { border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px 14px; margin: 0; min-width: 0; }
+.ev-fieldset > legend { font-size: 12px; font-weight: 650; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.04em; padding: 0 6px; }
+.ev-radios { display: flex; flex-direction: column; gap: 6px; }
+.ev-radios-label { font-size: 12.5px; font-weight: 600; color: var(--text-2); }
+.ev-radios-label .req { color: var(--danger); margin-left: 2px; }
+.ev-radio { display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; cursor: pointer; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.ev-radio:hover { background: var(--surface-2); }
+.ev-radio:has(input:checked) { border-color: var(--brand); background: var(--surface-2); }
+.ev-radio input { margin-top: 3px; width: 15px; height: 15px; accent-color: var(--brand); flex: none; }
+.ev-radio-detail { padding: 2px 0 4px 31px; max-width: 320px; }
+.ev-error { font-size: 12px; color: var(--danger); display: flex; gap: 4px; align-items: center; }
+.ev-tag-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 6px 12px; max-height: 180px; overflow-y: auto; }
+
+/* ── Lists ── */
+.kpi.ev-kpi-active { border-color: var(--brand); box-shadow: inset 0 0 0 1px var(--brand); }
+.ev-toolbar-check { align-self: center; padding-top: 18px; }
+.ev-docs-table td { font-size: 13px; }
+.ev-title-cell { min-width: 200px; max-width: 340px; }
+.ev-docs-table td.ev-req { min-width: 190px; }
+.ev-docs-table td.ev-cat { min-width: 140px; }
+.ev-request-row td { background: color-mix(in srgb, var(--warning-bg) 45%, transparent); }
+.ev-status-cell { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.ev-plain-link { text-decoration: none; }
+.ev-plain-link:hover { text-decoration: none; filter: brightness(0.95); }
+.ev-row-actions { display: flex; flex-wrap: wrap; gap: 4px; min-width: 210px; }
+.ev-row-actions .btn.sm { white-space: nowrap; }
+
+/* ── Files ── */
+.ev-file { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
+.ev-file svg { color: var(--text-3); flex: none; }
+.ev-file-name { overflow-wrap: anywhere; font-weight: 600; }
+
+/* ── Version history ── */
+.ev-versions { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.ev-version { border: 1px solid var(--border); border-left: 3px solid var(--border-strong); border-radius: var(--radius); padding: 10px 12px; background: var(--surface); }
+.ev-version.is-current { border-left-color: var(--success); }
+.ev-version.ev-status-rejected { border-left-color: var(--danger); }
+.ev-version.ev-status-received, .ev-version.ev-status-in_review { border-left-color: var(--info); }
+.ev-version.ev-status-superseded { background: var(--surface-2); }
+.ev-version-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
+.ev-version-grid { margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px 16px; font-size: 13px; }
+.ev-version-grid > div { min-width: 0; }
+.ev-version-grid dt { font-size: 11.5px; color: var(--text-3); margin-bottom: 1px; }
+.ev-version-grid dd { margin: 0; overflow-wrap: anywhere; }
+.ev-version-grid .ev-span { grid-column: 1 / -1; }
+.ev-version-grid .sub { font-size: 12px; color: var(--text-3); }
+.ev-reject { color: var(--danger); }
+
+/* ── Acknowledgements ── */
+.ev-own-ack { padding: 10px 12px; border: 1px dashed var(--border-strong); border-radius: var(--radius); background: var(--surface-2); }
+.ev-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.ev-chips li { font-size: 12.5px; padding: 2px 8px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); }
+
+@media (max-width: 720px) {
+  .ev-toolbar-check { padding-top: 0; }
+  .ev-radio-detail { padding-left: 0; max-width: none; }
+  .ev-title-cell { min-width: 160px; }
+  .ev-version-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+@media (max-width: 420px) {
+  .ev-version-grid { grid-template-columns: minmax(0, 1fr); }
+}

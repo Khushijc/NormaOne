@@ -1,0 +1,74 @@
+/* cae screens (area-specific styles only; use the tokens from app.css). Worksites + CAE coordination. */
+
+/* Compact readiness counts and their legend. */
+.readiness-mini { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.readiness-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--text-2); }
+.readiness-legend span { display: inline-flex; align-items: center; gap: 4px; }
+
+/* Risk tags of a worksite. */
+.ws-tags { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.ws-tag {
+  display: inline-block; font-size: 11.5px; line-height: 18px; padding: 0 6px; border-radius: 4px;
+  background: var(--surface-sunken); color: var(--text-2); border: 1px solid var(--border);
+}
+.ws-tag.specialist { background: var(--warning-bg); color: var(--warning); border-color: var(--warning); }
+.ws-table { min-width: 1000px; }
+.ws-table td { vertical-align: top; }
+.ws-table .ws-col-name { min-width: 200px; }
+.ws-table .ws-status { margin-top: 4px; }
+.ws-table .ws-col-contact { min-width: 140px; }
+.ws-table .ws-col-people { min-width: 140px; }
+.ws-table .ws-col-risks { min-width: 150px; }
+.ws-table .ws-col-readiness { min-width: 100px; }
+.ws-roles { max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ws-case-link { display: block; font-weight: 600; }
+.ws-toolbar-check { align-self: center; min-height: 32px; align-items: center; }
+.ws-toolbar-check input { margin-top: 0; }
+
+/* Risk checklist in the worksite form. */
+.ws-risk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 6px 16px; }
+
+/* Worksite instruction block (document + version history). */
+.ws-doc { border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; background: var(--surface-2); }
+.ws-doc .table th { background: var(--surface); }
+
+/* CAE: participants editor in the case form. */
+.cae-participant-row {
+  display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr) minmax(0, 1.5fr) minmax(0, 1.6fr) 120px;
+  gap: 8px 12px; align-items: end; padding-bottom: 10px; border-bottom: 1px dashed var(--border);
+}
+.cae-participant-row:last-of-type { border-bottom: 0; }
+.cae-participant-actions { display: flex; align-items: center; min-height: 34px; }
+@media (max-width: 900px) {
+  .cae-participant-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .cae-participant-actions { grid-column: 1 / -1; }
+}
+@media (max-width: 520px) {
+  .cae-participant-row { grid-template-columns: minmax(0, 1fr); }
+}
+
+.cae-orgs { max-width: 280px; overflow-wrap: anywhere; }
+.cae-token { font-family: var(--mono); font-size: 12px; background: var(--surface-sunken); padding: 1px 5px; border-radius: 4px; }
+.cae-plain-list { list-style: none; margin: 0; padding: 0; }
+.cae-plain-list li + li { margin-top: 2px; }
+.cae-missing li { padding-left: 14px; position: relative; }
+.cae-missing li::before { content: '•'; position: absolute; left: 2px; color: var(--warning); }
+.cae-row-actions { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.cae-exchanges td { vertical-align: top; }
+.cae-exchanges td:nth-child(2) { min-width: 180px; }
+.cae-legend span { display: inline-flex; align-items: center; gap: 4px; }
+.cae-recipient-docs { list-style: none; margin: 0; padding: 0; border: 1px solid var(--border); border-radius: var(--radius); }
+.cae-recipient-docs li { padding: 8px 12px; }
+.cae-recipient-docs li + li { border-top: 1px solid var(--border); }
+
+@media (max-width: 520px) {
+  .ws-roles { max-width: 140px; }
+  .cae-row-actions { justify-content: flex-start; }
+}
+
+/* Readiness breakdown with full labels (worksite detail). */
+.readiness-breakdown { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.readiness-breakdown li { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.cae-exchanges { min-width: 1080px; }
+.cae-cell-action { margin-top: 6px; }
+.ws-row-actions { display: flex; gap: 2px; margin-top: 6px; margin-left: -6px; }

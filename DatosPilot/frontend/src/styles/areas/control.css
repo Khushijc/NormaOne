@@ -1,0 +1,73 @@
+/* control screens (area-specific styles only; use the tokens from app.css). */
+/* Informes, Configuración, Auditoría. */
+
+.control-pad { padding: 12px 16px; }
+.control-gap { margin-top: 12px; }
+.control-break { overflow-wrap: anywhere; word-break: break-word; }
+
+/* ── Reports: picker + preview ── */
+.control-reports { display: grid; grid-template-columns: minmax(220px, 280px) minmax(0, 1fr); gap: 16px; align-items: start; }
+.control-report-main { min-width: 0; }
+.control-report-picker { display: flex; flex-direction: column; gap: 6px; }
+.control-report-card {
+  display: flex; flex-direction: column; gap: 4px; text-align: left; width: 100%;
+  padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface); color: var(--text); font: inherit; cursor: pointer;
+}
+.control-report-card:hover { border-color: var(--border-strong); background: var(--surface-2); }
+.control-report-card:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.control-report-card[aria-pressed='true'] { border-color: var(--accent); background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+.control-report-title { display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 13px; }
+.control-report-title svg { flex: none; color: var(--text-3); }
+.control-report-meta { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--surface-2); }
+.control-report-table .table { width: max-content; min-width: 100%; }
+.control-report-table td { min-width: 72px; max-width: 280px; overflow-wrap: break-word; }
+.control-list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+
+@media (max-width: 960px) {
+  .control-reports { grid-template-columns: minmax(0, 1fr); }
+  .control-report-picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+}
+@media (max-width: 520px) {
+  .control-report-picker { grid-template-columns: minmax(0, 1fr); max-height: 320px; overflow-y: auto; }
+}
+
+/* ── Audit ── */
+.control-audit-table { width: max-content; min-width: 100%; }
+.control-audit-table td { vertical-align: top; }
+.control-audit-text { min-width: 180px; max-width: 360px; overflow-wrap: anywhere; }
+.control-changes { margin: 0; padding-left: 14px; }
+.control-changes li + li { margin-top: 2px; }
+.control-check { display: flex; align-items: center; min-height: 34px; padding-bottom: 2px; }
+
+/* ── Settings ── */
+.control-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.control-add-row { align-items: flex-end; }
+.control-add-row .field { flex: 1; min-width: 180px; max-width: 360px; }
+.control-tag-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 6px 16px; }
+.control-inactive td { color: var(--text-3); }
+.control-role-term { margin-left: 6px; font-weight: 400; opacity: 0.85; }
+.control-roles { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.control-role { border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; background: var(--surface-2); }
+.control-role p { margin: 4px 0 0; }
+.control-demo .badge { white-space: normal; }
+.control-classes { display: grid; gap: 10px; margin: 0; }
+.control-classes > div { display: grid; grid-template-columns: minmax(150px, 200px) minmax(0, 1fr); gap: 8px; align-items: start; }
+.control-classes dd { margin: 0; }
+@media (max-width: 520px) {
+  .control-classes > div { grid-template-columns: minmax(0, 1fr); }
+  .control-add-row .field { max-width: none; }
+}
+
+/* ── Print view of a report (shell and controls hidden by app.css and .no-print) ── */
+.control-print-only { display: none; }
+@media print {
+  .control-print-only { display: block; }
+  .control-reports { display: block; }
+  .control-report-card-main { border: 0; box-shadow: none; }
+  .control-report-table { overflow: visible; }
+  .control-report-table .table { width: 100%; }
+  .control-report-table td { max-width: none; min-width: 0; }
+  .control-report-table .sort svg { display: none; }
+  .control-report-table table { font-size: 10px; }
+}

@@ -1,0 +1,74 @@
+/* DatosPilot-specific styles. Area files keep each screen group's styles separate. */
+@import './areas/home.css';
+@import './areas/requirements.css';
+@import './areas/people.css';
+@import './areas/evidence.css';
+@import './areas/safety.css';
+@import './areas/cae.css';
+@import './areas/health.css';
+@import './areas/control.css';
+
+/* Readiness status colours, validated with the dataviz palette checker (light and dark).
+   Segment order in charts: ready, in review, incomplete, professional review, pending, blocked.
+   Always paired with a text label, a legend, 2px gaps and a table view (never colour alone). */
+:root {
+  --st-ready: #17703d;
+  --st-review: #1f5fae;
+  --st-incomplete: #b7791f;
+  --st-professional: #7b4bb8;
+  --st-pending: #8792a2;
+  --st-blocked: #b42318;
+}
+:root[data-theme='dark'] {
+  --st-ready: #3fa66b;
+  --st-review: #4f8fd9;
+  --st-incomplete: #c99a35;
+  --st-professional: #b07ff0;
+  --st-pending: #78808c;
+  --st-blocked: #e0605a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --st-ready: #3fa66b;
+    --st-review: #4f8fd9;
+    --st-incomplete: #c99a35;
+    --st-professional: #b07ff0;
+    --st-pending: #78808c;
+    --st-blocked: #e0605a;
+  }
+}
+
+/* Narrow screens: key/value labels and audit dates may wrap instead of widening the page. */
+.kv { grid-template-columns: minmax(110px, min(40%, max-content)) minmax(0, 1fr); }
+.kv dt { overflow-wrap: anywhere; }
+@media (max-width: 520px) {
+  .timeline .nowrap { white-space: normal; }
+  .timeline .row.between { flex-wrap: wrap; }
+}
+.timeline li li { padding: 0; }
+.timeline li li::before,
+.timeline li li::after { display: none; }
+
+/* Text-like button for links inside charts and tables. */
+.link-btn { all: unset; cursor: pointer; color: var(--info); text-decoration: underline; text-underline-offset: 2px; }
+.link-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* Stacked horizontal bars (readiness by worksite / role). */
+.stacked-bars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.stacked-bars li { display: grid; grid-template-columns: minmax(120px, 32%) minmax(0, 1fr); gap: 10px; align-items: center; }
+.stacked-bars .sb-label { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; min-width: 0; }
+.stacked-bars .sb-label > :first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stacked-bars .sb-track { display: flex; gap: 2px; height: 14px; min-width: 0; }
+.stacked-bars .sb-seg { position: relative; border: 0; padding: 0; min-width: 6px; height: 14px; cursor: pointer; }
+.stacked-bars .sb-seg:first-child { border-radius: 4px 0 0 4px; }
+.stacked-bars .sb-seg:last-child { border-radius: 0 4px 4px 0; }
+.stacked-bars .sb-seg:only-child { border-radius: 4px; }
+.stacked-bars .sb-seg:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.stacked-bars .sb-tip { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; white-space: nowrap; z-index: 5; pointer-events: none; }
+@media (max-width: 640px) {
+  .stacked-bars li { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+}
+
+/* Evidence / readiness separation note. */
+.readiness-note { font-size: 12px; color: var(--text-3); }
+.restricted-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-3); }

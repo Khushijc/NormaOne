@@ -1,0 +1,67 @@
+/* health screens (area-specific styles only; use the tokens from app.css). */
+
+/* ─────────── Restricted-area banner ─────────── */
+.health-banner {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px 16px; border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+  border-left: 4px solid var(--danger); border-radius: var(--radius);
+  background: var(--danger-bg); color: var(--text);
+}
+.health-banner-icon { flex: none; color: var(--danger); margin-top: 2px; }
+.health-banner-title { font-size: 14px; font-weight: 650; margin: 0; }
+.health-banner p { margin: 0; }
+.health-banner-list { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
+
+.health-h3 { font-size: 13.5px; font-weight: 650; margin: 0; gap: 6px; }
+
+/* Clinical-record reference: shown as data, never as a link. */
+.health-reference {
+  margin: 0; padding: 10px 12px; font-family: var(--mono); font-size: 13px;
+  background: var(--surface-sunken); border: 1px solid var(--border); border-radius: var(--radius);
+  overflow-wrap: anywhere;
+}
+
+.health-fieldset { border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 12px 10px; margin: 0; display: grid; gap: 8px; min-width: 0; }
+.health-fieldset legend { font-size: 12.5px; font-weight: 600; color: var(--text-2); padding: 0 4px; }
+.health-fieldset input[type='radio'] { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--brand); flex: none; }
+
+/* Search input with a leading icon (shared by both screens). */
+.health-search { position: relative; display: flex; align-items: center; }
+.health-search svg { position: absolute; left: 9px; color: var(--text-3); pointer-events: none; }
+.health-search .input { padding-left: 28px; width: 100%; }
+
+.health-toolbar-note { margin-left: auto; align-self: center; }
+
+.health-actions { gap: 6px; }
+.health-actions .btn { white-space: nowrap; }
+.health-locked { display: inline-flex; align-items: center; gap: 4px; color: var(--text-3); }
+.health-kpi-static { cursor: default; }
+.health-kpi-static:hover { background: var(--surface); border-color: var(--border); }
+.exc-kpis .kpi[aria-pressed='true'], .health-kpis .kpi[aria-pressed='true'] { border-color: var(--brand); box-shadow: inset 0 0 0 1px var(--brand); }
+
+.health-table td:first-child { min-width: 160px; }
+.health-table td.health-scope { min-width: 170px; max-width: 260px; }
+.health-table td.health-measures { min-width: 200px; max-width: 320px; }
+.health-table td:last-child { min-width: 170px; }
+.exc-table td:nth-child(2) { min-width: 150px; }
+.health-overdue { color: var(--danger); font-weight: 600; }
+.health-row-focus td { background: var(--accent-soft); }
+.health-audit-note { margin: 0 0 10px; }
+
+/* ─────────── Exceptions queue ─────────── */
+.exc-readonly { margin-top: 4px; }
+.exc-kpis { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+.exc-kpis .kpi .label { min-height: 2.6em; align-items: flex-start; }
+.exc-table td.exc-reason { min-width: 180px; max-width: 280px; }
+.exc-type { min-width: 150px; }
+.exc-actions { gap: 4px; flex-wrap: nowrap; }
+.exc-row-highlight td { background: var(--accent-soft); }
+.exc-row-highlight td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+.exc-form { padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); }
+
+@media (max-width: 640px) {
+  .health-banner { padding: 10px 12px; gap: 8px; }
+  .health-toolbar-note { margin-left: 0; width: 100%; }
+  .exc-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .exc-kpis .kpi .label { min-height: 0; }
+}

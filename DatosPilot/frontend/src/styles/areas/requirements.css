@@ -1,0 +1,52 @@
+/* requirements screens (area-specific styles only; use the tokens from app.css). */
+
+/* Catalogue */
+.kpi.rq-kpi-on { border-color: var(--brand-2); box-shadow: inset 0 0 0 1px var(--brand-2); background: var(--surface-2); }
+.rq-kpis { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.rq-table .rq-name-cell { min-width: 200px; max-width: 360px; }
+.rq-table .badge { white-space: normal; line-height: 1.35; padding-top: 2px; padding-bottom: 2px; }
+.rq-table td.rq-type-cell { min-width: 150px; max-width: 190px; }
+.rq-table td.rq-auth-cell { min-width: 140px; max-width: 180px; }
+.rq-table tbody tr.rq-row-pending td { background: var(--warning-bg); }
+.rq-table tbody tr.rq-row-pending td:first-child { box-shadow: inset 3px 0 0 var(--warning); }
+.rq-pending-list { margin: 4px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 2px; }
+
+/* Detail */
+.rq-header-badges { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 4px; }
+.rq-workflow-pending_approval { border-color: color-mix(in srgb, var(--warning) 45%, var(--border)); }
+.rq-workflow-rejected { border-color: color-mix(in srgb, var(--danger) 40%, var(--border)); }
+.rq-workflow .card-header h2 { margin: 0; }
+.rq-locked { display: flex; gap: 6px; align-items: flex-start; color: var(--text-2); background: var(--surface-sunken); border-radius: var(--radius); padding: 6px 10px; margin: 0; }
+.rq-locked svg { flex: none; margin-top: 2px; }
+.card-body .rq-locked.rq-pad, .rq-locked.rq-pad { margin: 0 16px 12px; }
+.rq-error-list { margin: 4px 0 0; padding-left: 18px; }
+.rq-error-list li + li { margin-top: 2px; }
+.rq-error-foot { color: var(--danger); margin: 0; }
+.rq-missing { color: var(--danger); font-weight: 600; }
+.rq-pad { padding: 12px 16px 0; margin: 0; }
+.rq-wrap { min-width: 200px; max-width: 380px; white-space: normal; overflow-wrap: anywhere; }
+.table tbody tr.rq-row-current td { background: var(--success-bg); }
+
+.rq-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+.rq-summary > .card:first-child { grid-column: 1 / -1; }
+.rq-inline-list { margin: 0; padding-left: 16px; }
+
+/* Version form */
+.rq-scope-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.rq-checklist-set { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.rq-checklist { max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding: 4px 2px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); }
+.rq-checklist .checkbox { padding: 2px 6px; }
+.rq-checklist-search { display: flex; align-items: center; gap: 6px; color: var(--text-3); }
+.rq-checklist-search .input { flex: 1; min-width: 0; height: 30px; }
+
+@media (max-width: 900px) {
+  .rq-summary { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 720px) {
+  .rq-scope-grid { grid-template-columns: minmax(0, 1fr); }
+  .rq-wrap { min-width: 160px; }
+}
+@media (max-width: 480px) {
+  .rq-summary .kv { grid-template-columns: minmax(0, 1fr); gap: 2px 0; }
+  .rq-summary .kv dd { margin-bottom: 6px; }
+}
