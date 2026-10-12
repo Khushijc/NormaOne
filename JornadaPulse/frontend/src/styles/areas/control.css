@@ -1,0 +1,48 @@
+/* Styles for the control screens (Incidencias, Informes, Auditoría, Requisitos). Design tokens from app.css. */
+
+.control-tabs { padding: 0 16px; }
+.control-tabs .tabs { margin-bottom: 0; border-bottom: 0; }
+.control-filters { border-top: 1px solid var(--border); }
+.control-reason { min-width: 220px; max-width: 360px; }
+.control-h3 { margin: 0; font-size: 14px; font-weight: 650; display: inline-flex; align-items: center; gap: 6px; }
+.control-action-form { padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); }
+.control-break { overflow-wrap: anywhere; }
+.control-file { min-width: 220px; }
+.control-pad { padding: 12px 16px; }
+
+/* Report picker */
+.control-report-picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; }
+.control-report-card {
+  display: flex; flex-direction: column; gap: 4px; align-items: flex-start; text-align: left;
+  font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 10px 12px; cursor: pointer; min-width: 0;
+}
+.control-report-card:hover { border-color: var(--border-strong); background: var(--surface-2); }
+.control-report-card[aria-pressed='true'] { border-color: var(--accent); background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+.control-report-card svg { flex: none; color: var(--accent); }
+.control-report-notes { padding: 10px 16px; border-bottom: 1px solid var(--border); }
+.control-filter-stack .toolbar + .toolbar { padding-top: 0; }
+.control-report-table td { white-space: nowrap; }
+
+/* Requirements page */
+.control-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.control-req-text { min-width: 220px; }
+.control-inline-field { min-width: 160px; }
+.control-scenario { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px 14px; background: var(--surface-2); min-width: 0; }
+.control-steps { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.control-sources { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.control-sources a { overflow-wrap: anywhere; }
+.control-tests { border-top: 1px solid var(--border); padding: 8px 0; }
+.control-tests summary { cursor: pointer; overflow-wrap: anywhere; }
+.control-tests ul { margin: 6px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; }
+.control-tests code, .control-scenario code { overflow-wrap: anywhere; white-space: normal; }
+@media (min-width: 900px) { .control-nowrap-md { white-space: nowrap; } }
+
+/* Audit */
+.control-audit-detail { min-width: 260px; max-width: 520px; }
+
+@media (max-width: 720px) {
+  .control-report-picker { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .control-report-card .tiny { display: none; }
+  .control-reason, .control-req-text, .control-audit-detail { min-width: 180px; }
+}

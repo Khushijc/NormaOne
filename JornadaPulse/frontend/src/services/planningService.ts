@@ -8,6 +8,7 @@
 import { newId } from '../domain/ids';
 import { BusinessRuleError, PermissionError } from '../domain/permissions';
 import { relationshipOn } from '../domain/records';
+import { CONTRACT_LABEL, WORKDAY_LABEL } from '../domain/status';
 import { addDays, isValidISODate, localToInstant, minutesBetween, nowInstant } from '../domain/time';
 import type { AbsenceType, CollectiveAgreementReference, Employee, EmploymentRelationship, Holiday, ID, ISODate, PlannedShift, RecordingProtocol, WorkingCalendar, WorkingTimePolicy } from '../domain/types';
 import { transact } from '../store/db';
@@ -49,8 +50,9 @@ export function checkShift(ctx: Ctx, input: ShiftInput, ignoreId: ID | null): Sh
   let end: string | null = null;
   if (isValidISODate(input.date)) {
     const overnight = input.endTime <= input.startTime;
-    const s = localToInstant(input.date, input.startTime);
-    const e = localToInstant(overnight ? addDays(input.date, 1) : input.date, input.endTime);
+    const tz = ctx.db.worksites.find((w) => w.id === input.worksiteId)?.timezone ?? ctx.company.timezone;
+    const s = localToInstant(input.date, input.startTime, tz);
+    const e = localToInstant(overnight ? addDays(input.date, 1) : input.date, input.endTime, tz);
     if (s.kind === 'gap' || e.kind === 'gap') errors.push('Una de las horas no existe ese día por el cambio de hora.');
     else if (s.kind === 'invalid' || e.kind === 'invalid') errors.push('Indique horas válidas (HH:MM).');
     else {
@@ -81,7 +83,7 @@ export async function saveShift(input: ShiftInput, existingId: ID | null): Promi
   const chk = checkShift(ctx, input, existingId);
   if (chk.errors.length) throw new BusinessRuleError('El turno no es válido', chk.errors);
   const at = nowInstant();
-  const row: PlannedShift = { ...(existing ?? { id: newId('shf'), companyId: ctx.company.id, createdBy: ctx.user.id, createdAt: at, status: 'planned' as const }), employeeId: input.employeeId, worksiteId: input.worksiteId, date: input.date, start: chk.start!, end: chk.end!, timezone: ctx.company.timezone, note: input.note.trim(), updatedAt: at };
+  const row: PlannedShift = { ...(existing ?? { id: newId('shf'), companyId: ctx.company.id, createdBy: ctx.user.id, createdAt: at, status: 'planned' as const }), employeeId: input.employeeId, worksiteId: input.worksiteId, date: input.date, start: chk.start!, end: chk.end!, timezone: ctx.db.worksites.find((w) => w.id === input.worksiteId)?.timezone ?? ctx.company.timezone, note: input.note.trim(), updatedAt: at };
   return transact(ctx.actor, ctx.company.id, (tx) => {
     if (existing) tx.update('shifts', row.id, row);
     else tx.insert('shifts', row);
@@ -185,7 +187,7 @@ export async function updateEmployee(id: ID, input: EmployeeInput): Promise<Empl
   const labels: Record<string, string> = { code: 'Código', firstName: 'Nombre', lastName: 'Apellidos', workEmail: 'Correo de trabajo', departmentId: 'Departamento', primaryWorksiteId: 'Centro principal', worksiteIds: 'Centros', managerEmployeeId: 'Responsable', jobTitle: 'Puesto', hireDate: 'Fecha de alta' };
   const changes = Object.entries(labels)
     .filter(([k]) => JSON.stringify((current as unknown as Record<string, unknown>)[k]) !== JSON.stringify((input as unknown as Record<string, unknown>)[k]))
-    .map(([k, field]) => ({ field, before: String((current as unknown as Record<string, unknown>)[k] ?? '—'), after: String((input as unknown as Record<string, unknown>)[k] ?? '—') }));
+    .map(([k, field]) => ({ field, before: String((current as unknown as Record<string, unknown>)[k] ?? '') || '—', after: String((input as unknown as Record<string, unknown>)[k] ?? '') || '—' }));
   return transact(ctx.actor, ctx.company.id, (tx) => {
     const u = tx.update('employees', id, { ...input, updatedAt: nowInstant() });
     tx.audit({ action: 'employee.update', entityType: 'employee', entityId: id, entityLabel: `${u.firstName} ${u.lastName}`, employeeId: id, summary: 'Ficha del empleado modificada.', changes });
@@ -231,7 +233,7 @@ export async function addRelationshipVersion(employeeId: ID, input: Relationship
     if (current) tx.update('relationships', current.id, { effectiveTo: addDays(input.effectiveFrom, -1) });
     const row: EmploymentRelationship = { id: newId('rel'), companyId: ctx.company.id, employeeId: emp.id, effectiveTo: null, createdBy: ctx.user.id, createdAt: at, ...input };
     tx.insert('relationships', row);
-    tx.audit({ action: 'relationship.version', entityType: 'employee', entityId: emp.id, entityLabel: `${emp.firstName} ${emp.lastName}`, employeeId: emp.id, summary: `Nuevas condiciones con efecto ${input.effectiveFrom}.`, reason: input.note || null, changes: current ? [{ field: 'Horas semanales', before: String(current.weeklyHours), after: String(input.weeklyHours) }, { field: 'Tipo de jornada', before: current.workdayType, after: input.workdayType }] : [] });
+    tx.audit({ action: 'relationship.version', entityType: 'employee', entityId: emp.id, entityLabel: `${emp.firstName} ${emp.lastName}`, employeeId: emp.id, summary: `Nuevas condiciones con efecto ${input.effectiveFrom}.`, reason: input.note || null, changes: current ? [{ field: 'Horas semanales', before: String(current.weeklyHours), after: String(input.weeklyHours) }, { field: 'Tipo de jornada', before: WORKDAY_LABEL[current.workdayType], after: WORKDAY_LABEL[input.workdayType] }, { field: 'Contrato', before: CONTRACT_LABEL[current.contractType], after: CONTRACT_LABEL[input.contractType] }].filter((c) => c.before !== c.after) : [] });
     return row;
   });
 }
@@ -276,7 +278,9 @@ export async function updateAgreementReview(id: ID, reviewStatus: CollectiveAgre
   const a = ownCompany(ctx, ctx.db.agreements.find((x) => x.id === id));
   if (reviewStatus === 'adviser_reviewed' && !reviewedBy.trim()) throw new BusinessRuleError('Indique quién ha revisado el convenio.');
   return transact(ctx.actor, ctx.company.id, (tx) => {
-    const u = tx.update('agreements', id, { reviewStatus, reviewedBy: reviewedBy.trim() || null, reviewedAt: reviewStatus === 'adviser_reviewed' ? ctx.today : a.reviewedAt, note: note.trim() || a.note });
+    // Reviewer and review date always change together.
+    const reviewed = reviewStatus === 'adviser_reviewed';
+    const u = tx.update('agreements', id, { reviewStatus, reviewedBy: reviewed ? reviewedBy.trim() : null, reviewedAt: reviewed ? ctx.today : null, note: note.trim() || a.note });
     tx.audit({ action: 'policy.agreement', entityType: 'agreement', entityId: id, entityLabel: a.name, employeeId: null, summary: 'Estado de revisión del convenio actualizado.', changes: [{ field: 'Revisión', before: a.reviewStatus, after: reviewStatus }] });
     return u;
   });
@@ -322,7 +326,8 @@ export async function updateAbsenceType(id: ID, patch: Partial<Pick<AbsenceType,
   if (patch.allowance && !(patch.allowance.days > 0 && patch.allowance.days <= 60)) throw new BusinessRuleError('El saldo anual debe estar entre 1 y 60 días.');
   return transact(ctx.actor, ctx.company.id, (tx) => {
     const u = tx.update('absenceTypes', id, { ...patch, version: t.version + 1, effectiveFrom: ctx.today });
-    const changes = Object.keys(patch).map((k) => ({ field: k, before: JSON.stringify((t as unknown as Record<string, unknown>)[k]), after: JSON.stringify((patch as Record<string, unknown>)[k]) }));
+    const FIELD: Record<string, string> = { name: 'Nombre', requiresApproval: 'Requiere aprobación', evidence: 'Justificante', allowsPartialDay: 'Admite horas', active: 'Activo', note: 'Nota', allowance: 'Saldo anual' };
+    const changes = Object.keys(patch).map((k) => ({ field: FIELD[k] ?? k, before: JSON.stringify((t as unknown as Record<string, unknown>)[k]), after: JSON.stringify((patch as Record<string, unknown>)[k]) }));
     tx.audit({ action: 'absence_type.update', entityType: 'absence_type', entityId: id, entityLabel: t.name, employeeId: null, summary: `Tipo de ausencia actualizado (versión ${t.version + 1}). Las solicitudes existentes no cambian.`, reason: reason.trim(), changes });
     return u;
   });
@@ -341,7 +346,8 @@ export async function newProtocolVersion(patch: Pick<RecordingProtocol, 'basis' 
   if (errors.length) throw new BusinessRuleError('El protocolo no es válido', errors);
   const at = nowInstant();
   return transact(ctx.actor, ctx.company.id, (tx) => {
-    if (current) tx.update('protocols', current.id, { status: 'superseded' });
+    // A future-dated version does not end the current one early: no gap without a protocol in force.
+    if (current && effectiveFrom <= ctx.today) tx.update('protocols', current.id, { status: 'superseded' });
     const row: RecordingProtocol = { id: newId('prt'), companyId: ctx.company.id, version: (current?.version ?? 0) + 1, ...patch, effectiveFrom, approvedBy: ctx.user.name, approvedAt: at, status: 'active' };
     tx.insert('protocols', row);
     tx.audit({ action: 'protocol.update', entityType: 'protocol', entityId: row.id, entityLabel: `Protocolo v${row.version}`, employeeId: null, summary: `Nueva versión del protocolo de registro con efecto ${effectiveFrom}.` });

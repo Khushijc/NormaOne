@@ -1,0 +1,46 @@
+/* Styles for the corrections screens (owned by that area). Use the design tokens from app.css. */
+
+/* ── List ── */
+.corr-table th, .corr-table td { padding-left: 8px; padding-right: 8px; }
+.corr-table td { vertical-align: top; }
+.corr-table td:first-child { min-width: 120px; }
+.corr-table .badge { white-space: nowrap; }
+.corr-table td:last-child { white-space: nowrap; }
+.corr-row-attention td { background: var(--warning-bg); }
+.corr-row-attention td:first-child { box-shadow: inset 3px 0 0 var(--warning); }
+.corr-spans { display: flex; flex-direction: column; gap: 2px; font-size: 12.5px; min-width: 190px; }
+.corr-span-label { display: inline-block; min-width: 68px; font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.03em; }
+.corr-span-changed { font-weight: 600; }
+
+/* ── Original / requested / approved columns ── */
+.corr-columns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+@media (max-width: 1000px) { .corr-columns { grid-template-columns: minmax(0, 1fr); } }
+.corr-col.is-applied { border-color: color-mix(in srgb, var(--success) 45%, var(--border)); }
+.corr-col-note { margin: 10px 0 0; }
+
+.corr-fields { margin: 0; display: grid; grid-template-columns: minmax(96px, max-content) minmax(0, 1fr); gap: 0; font-size: 13.5px; }
+.corr-field { display: contents; }
+.corr-field dt, .corr-field dd { padding: 5px 6px; border-bottom: 1px solid var(--border); }
+.corr-field:last-child dt, .corr-field:last-child dd { border-bottom: 0; }
+.corr-field dt { color: var(--text-3); }
+.corr-field dd { margin: 0; min-width: 0; overflow-wrap: anywhere; display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; }
+.corr-field.is-changed dt, .corr-field.is-changed dd { background: var(--warning-bg); }
+.corr-field.is-changed dt { color: var(--text); font-weight: 600; box-shadow: inset 3px 0 0 var(--warning); }
+.corr-field.is-adjusted dd { background: var(--info-bg); }
+.corr-mark { font-size: 11px; font-weight: 600; color: var(--warning); border: 1px solid color-mix(in srgb, var(--warning) 45%, transparent); border-radius: 999px; padding: 0 6px; line-height: 16px; white-space: nowrap; }
+.corr-mark.adjusted { color: var(--info); border-color: color-mix(in srgb, var(--info) 45%, transparent); }
+
+.corr-quote { white-space: pre-wrap; border-left: 3px solid var(--border-strong); padding-left: 8px; display: block; }
+
+/* Actions first on narrow screens, so a reviewer does not have to scroll past the whole record. */
+@media (max-width: 1100px) { .corr-detail-grid > .corr-side { order: -1; } }
+
+/* ── Form ── */
+.corr-form-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 300px); gap: 16px; align-items: start; }
+@media (max-width: 760px) { .corr-form-grid { grid-template-columns: minmax(0, 1fr); } }
+.corr-original { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.corr-choice { border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 12px 10px; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.corr-choice legend { padding: 0 4px; }
+.corr-radio { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; font-size: 13.5px; }
+.corr-radio input { margin-top: 3px; }
+.corr-form .segmented { align-self: flex-start; max-width: 100%; flex-wrap: wrap; }

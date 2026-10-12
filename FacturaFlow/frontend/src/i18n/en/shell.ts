@@ -31,7 +31,11 @@ export const shell: Record<string, string> = {
   'Fecha simulada: {d}': 'Simulated date: {d}',
   '(real: {d}).': '(actual: {d}).',
 
-  // ── Top bar: company / user switchers, notifications, search ──
+  // ── Top bar: company / user switchers, notifications, search, theme ──
+  'Cambiar a modo claro': 'Switch to light mode',
+  'Cambiar a modo oscuro': 'Switch to dark mode',
+  'Modo claro': 'Light mode',
+  'Modo oscuro': 'Dark mode',
   'Abrir menú': 'Open menu',
   'Empresa activa': 'Active company',
   'Seleccione deliberadamente la empresa': 'Choose the company deliberately',

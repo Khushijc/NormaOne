@@ -121,7 +121,7 @@ export function detectAnomalies(db: Database, companyId: ID, nowIso: string = no
   for (const a of db.absences.filter((x) => x.companyId === companyId && (x.status === 'approved' || x.status === 'pending' || x.status === 'cancel_requested'))) {
     for (const sh of db.shifts.filter((x) => x.employeeId === a.employeeId && x.status === 'planned' && x.date >= a.startDate && x.date <= a.endDate)) {
       if (a.partial) continue;
-      out.push({ key: `conf:${sh.id}:${a.id}`, type: 'shift_absence_conflict', companyId, employeeId: a.employeeId, date: sh.date, ref: { kind: 'absence', id: a.id }, severity: a.status === 'approved' ? 'medium' : 'low', reason: { text: 'Hay un turno planificado en un día con ausencia {status}. Revise la planificación.', params: { status: a.status === 'approved' ? 'aprobada' : 'pendiente' } } });
+      out.push({ key: `conf:${sh.id}:${a.id}`, type: 'shift_absence_conflict', companyId, employeeId: a.employeeId, date: sh.date, ref: { kind: 'absence', id: a.id }, severity: a.status === 'approved' ? 'medium' : 'low', reason: { text: a.status === 'approved' ? 'Hay un turno planificado en un día con ausencia aprobada. Revise la planificación.' : 'Hay un turno planificado en un día con ausencia pendiente. Revise la planificación.' } });
     }
   }
 

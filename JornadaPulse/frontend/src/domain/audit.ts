@@ -47,6 +47,7 @@ export const AUDIT_ACTION_LABEL: Record<string, string> = {
   'absence.approve': 'Ausencia aprobada',
   'absence.reject': 'Ausencia rechazada',
   'absence.withdraw': 'Ausencia retirada',
+  'absence.attachment': 'Justificante adjuntado',
   'absence.cancel_request': 'Cancelación de ausencia solicitada',
   'absence.cancel': 'Ausencia cancelada',
   'absence.cancel_denied': 'Cancelación de ausencia denegada',

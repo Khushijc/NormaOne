@@ -150,7 +150,13 @@ export async function clock(input: ClockInput): Promise<ClockResult> {
       source: 'web',
       worksiteId: input.action === 'clock_in' ? input.worksiteId : session.worksiteId,
       mode: input.mode,
-      breakKind: input.action === 'break_start' || input.action === 'break_end' ? input.breakKind ?? 'rest' : null,
+      // A break end always carries the kind of the break it closes (not whatever the client sent).
+      breakKind:
+        input.action === 'break_start'
+          ? input.breakKind ?? 'rest'
+          : input.action === 'break_end'
+            ? session.breaks.find((b) => !b.endEventId)?.kind ?? input.breakKind ?? 'rest'
+            : null,
       idempotencyKey: input.idempotencyKey,
       receipt: receiptFor(eventId),
       recordedBy: ctx.user.id,

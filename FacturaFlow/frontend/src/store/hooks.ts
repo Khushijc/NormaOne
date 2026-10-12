@@ -4,6 +4,7 @@ import { getLang, subscribeLang, type Lang } from '../i18n';
 import type { Database } from '../domain/types';
 import { getCtx, type Ctx } from '../services/context';
 import { getDb, getSession, subscribe, type Session } from './db';
+import { getTheme, subscribeTheme, toggleTheme, setTheme, type Theme } from './theme';
 
 export function useDb(): Database {
   return useSyncExternalStore(subscribe, getDb, getDb);
@@ -12,6 +13,12 @@ export function useDb(): Database {
 /** Current interface language. Components re-render when it changes. */
 export function useLang(): Lang {
   return useSyncExternalStore(subscribeLang, getLang, getLang);
+}
+
+/** Current interface theme ('light' | 'dark'). Re-renders when toggled. */
+export function useTheme(): { theme: Theme; toggleTheme: () => void; setTheme: (t: Theme) => void } {
+  const theme = useSyncExternalStore(subscribeTheme, getTheme, () => 'light' as Theme);
+  return { theme, toggleTheme, setTheme };
 }
 
 export interface UiCtx extends Ctx {
@@ -30,3 +37,4 @@ export function useCtx(): UiCtx {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [db, lang]);
 }
+

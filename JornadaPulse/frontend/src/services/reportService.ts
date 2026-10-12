@@ -14,7 +14,7 @@ import { eachDay, endOfMonth, formatOffset, inRange, localTime, minutesBetween, 
 import type { CorrectionRequest, Database, ExportJob, ID, ISODate, Period, WorkSession } from '../domain/types';
 import { transact } from '../store/db';
 import { absenceTypeLabel, countDays, visibleAbsences } from './absenceService';
-import { can, employeeName, getCtx, latency, timeScope, userName, visibleEmployeeIds, type Ctx } from './context';
+import { can, canSeeAbsenceDetail, employeeName, getCtx, latency, timeScope, userName, visibleEmployeeIds, type Ctx } from './context';
 import { visibleCorrections } from './correctionService';
 
 export interface Column<T> {
@@ -306,7 +306,7 @@ export function absenceRows(ctx: Ctx, f: Filters, onlyPending = false): AbsenceR
     .filter((a) => !f.status || a.status === f.status)
     .map((a) => {
       const e = ctx.db.employees.find((x) => x.id === a.employeeId)!;
-      return { id: a.id, employee: `${e.firstName} ${e.lastName}`, code: e.code, type: absenceTypeLabel(ctx, a), from: a.startDate, to: a.endDate, hours: a.partial ? `${a.partial.startTime}–${a.partial.endTime}` : '', status: ABSENCE_STATUS[a.status].label, reviewer: userName(ctx.db, a.reviewerId), decision: a.decisionReason ?? '' };
+      return { id: a.id, employee: `${e.firstName} ${e.lastName}`, code: e.code, type: absenceTypeLabel(ctx, a), from: a.startDate, to: a.endDate, hours: a.partial ? `${a.partial.startTime}–${a.partial.endTime}` : '', status: ABSENCE_STATUS[a.status].label, reviewer: userName(ctx.db, a.reviewerId), decision: canSeeAbsenceDetail(ctx, a, ctx.db.absenceTypes.find((x) => x.id === a.typeId)) ? a.decisionReason ?? '' : '' };
     })
     .sort((a, b) => b.from.localeCompare(a.from));
 }

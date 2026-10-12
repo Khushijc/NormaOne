@@ -202,7 +202,7 @@ export function StatusBadge({ meta, prefix }: { meta: StatusMeta; prefix?: strin
 
 export function SimulatedTag({ label }: { label?: string }) {
   return (
-    <Badge tone="warning" icon={FlaskConical} title={t('Comportamiento simulado en el prototipo. No hay conexión con la AEAT ni con un proveedor real.')}>
+    <Badge tone="warning" icon={FlaskConical} title={t('Comportamiento simulado en el prototipo: no hay conexión con ningún sistema externo.')}>
       {label ? t(label) : t('Simulado')}
     </Badge>
   );
@@ -228,7 +228,7 @@ export function Card({ title, actions, children, footer, flush, className = '', 
 
 export function PageHeader({ title, subtitle, actions, breadcrumbs }: { title: ReactNode; subtitle?: ReactNode; actions?: ReactNode; breadcrumbs?: ReactNode }) {
   useEffect(() => {
-    if (typeof title === 'string') document.title = `${title} · ${t('Facturas y Gastos')}`;
+    if (typeof title === 'string') document.title = `${title} · JornadaPulse`;
   }, [title]);
   return (
     <header className="page-header">

@@ -2,7 +2,7 @@
  * Exception review, notifications, pending actions and demo session switching.
  * Future endpoints: /anomalies/{key}/review, /notifications, /me/tasks, /session.
  */
-import { listAnomalies, isOpenStatus, type Anomaly } from '../domain/anomalies';
+import { ANOMALY_LABEL, listAnomalies, isOpenStatus, type Anomaly } from '../domain/anomalies';
 import { newId } from '../domain/ids';
 import { BusinessRuleError, PermissionError } from '../domain/permissions';
 import { nowInstant } from '../domain/time';
@@ -28,6 +28,9 @@ export function canManageAnomaly(ctx: Ctx, a: Anomaly): boolean {
 }
 
 export type AnomalyAction = 'assign' | 'acknowledge' | 'investigate' | 'resolve' | 'dismiss' | 'reopen' | 'comment';
+
+/** Spanish labels for review actions (audit summaries and history). */
+export const ANOMALY_ACTION_LABEL: Record<AnomalyAction, string> = { assign: 'asignada', acknowledge: 'reconocida', investigate: 'en investigación', resolve: 'resuelta', dismiss: 'descartada', reopen: 'reabierta', comment: 'comentario añadido' };
 
 const NEXT: Record<AnomalyAction, AnomalyStatus | null> = { assign: null, acknowledge: 'acknowledged', investigate: 'investigating', resolve: 'resolved', dismiss: 'dismissed', reopen: 'open', comment: null };
 
@@ -63,7 +66,7 @@ export async function reviewAnomaly(key: string, action: AnomalyAction, note: st
       row = { id: newId('anr'), companyId: ctx.company.id, key, snapshot, assigneeId: action === 'assign' ? assigneeId! : null, status, history: [entry], resolution: action === 'resolve' || action === 'dismiss' ? note.trim() : null, updatedAt: at };
       tx.insert('anomalyReviews', row);
     }
-    tx.audit({ action: 'anomaly.update', entityType: 'anomaly', entityId: key, entityLabel: employeeName(ctx.db, a.employeeId), employeeId: a.employeeId, summary: `Incidencia «${a.type}» del ${a.date}: ${action}.`, reason: entry.note });
+    tx.audit({ action: 'anomaly.update', entityType: 'anomaly', entityId: key, entityLabel: employeeName(ctx.db, a.employeeId), employeeId: a.employeeId, summary: `Incidencia «${ANOMALY_LABEL[a.type]}» del ${a.date}: ${ANOMALY_ACTION_LABEL[action]}.`, reason: entry.note });
     if (action === 'assign' && assigneeId && assigneeId !== ctx.user.id) tx.notify({ type: 'anomaly_assigned', title: 'Incidencia asignada para revisión', body: 'Tiene una incidencia de registro horario asignada.', recipientUserIds: [assigneeId], link: `/incidencias?clave=${encodeURIComponent(key)}`, dedupeKey: `anm:${key}:${at}` });
     return row;
   });

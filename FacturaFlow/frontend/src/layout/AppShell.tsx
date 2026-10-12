@@ -3,18 +3,14 @@ import {
   Bell,
   BookCheck,
   Building2,
-  CalendarClock,
   ChevronDown,
-  ClipboardList,
   Coins,
   FileText,
   FlaskConical,
   Gauge,
   History,
-  Inbox,
   Landmark,
   ListChecks,
-  Lock,
   Menu,
   Receipt,
   Search,
@@ -24,6 +20,8 @@ import {
   Users,
   Wallet,
   BarChart3,
+  Moon,
+  Sun,
   type LucideIcon,
 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
@@ -32,7 +30,7 @@ import { formatDate, formatDateTime, today as realToday } from '../domain/dates'
 import { isMembershipActive, ROLES, type Permission } from '../domain/permissions';
 import { getLoadResult, getSaveError, setSession } from '../store/db';
 import { LANG_LABEL, setLang, t, tKey, type Lang } from '../i18n';
-import { useCtx, useDb, useLang } from '../store/hooks';
+import { useCtx, useDb, useLang, useTheme } from '../store/hooks';
 import { accessibleCompanies } from '../services/context';
 import { markAllRead, markRead, myTasks, refreshDerivedNotifications, visibleNotifications } from '../services/notificationService';
 import { canViewExpense } from '../services/expenseService';
@@ -132,20 +130,6 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
             );
           })}
-          <div className="nav-section">{t('Otros módulos del portal')}</div>
-          {[
-            [tKey('Jornada y Ausencias'), CalendarClock],
-            [tKey('PRL y Documentación'), ClipboardList],
-            [tKey('Privacidad'), Lock],
-            [tKey('Buzón Oficial'), Inbox],
-          ].map(([label, Icon]) => {
-            const I = Icon as LucideIcon;
-            return (
-              <div key={label as string} className="disabled-module" title={t('Fuera del alcance de esta fase del prototipo')} aria-disabled="true">
-                <I size={16} aria-hidden /> {t(label as string)} <span className="tiny" style={{ marginLeft: 'auto' }}>{t('Próx.')}</span>
-              </div>
-            );
-          })}
         </nav>
         <div className="sidebar-foot">
           {t('Prototipo de interfaz · datos de demostración.')}
@@ -204,11 +188,33 @@ function TopBar({ onMenu }: { onMenu: () => void }) {
       <CompanySwitcher />
       <GlobalSearch />
       <div className="row" style={{ marginLeft: 'auto' }}>
+        <ThemeToggle />
         <LanguageToggle />
         <NotificationsBell />
         <UserSwitcher />
       </div>
     </header>
+  );
+}
+
+/** Theme toggle (light ⇄ dark). */
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme();
+  return (
+    <button
+      type="button"
+      className="btn ghost icon theme-toggle"
+      style={{ position: 'relative', height: 40, width: 40 }}
+      title={theme === 'dark' ? t('Cambiar a modo claro') : t('Cambiar a modo oscuro')}
+      aria-label={theme === 'dark' ? t('Cambiar a modo claro') : t('Cambiar a modo oscuro')}
+      onClick={toggleTheme}
+    >
+      {theme === 'dark' ? (
+        <Sun size={18} aria-hidden style={{ color: 'var(--warning)' }} />
+      ) : (
+        <Moon size={18} aria-hidden />
+      )}
+    </button>
   );
 }
 

@@ -3,7 +3,9 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  server: { port: 5173 },
+  // Portal mini-apps run on consecutive ports: FacturaFlow 3001, JornadaPulse 3002, …
+  server: { port: 3001, strictPort: true },
+  preview: { port: 3001, strictPort: true },
   build: {
     rollupOptions: {
       output: {

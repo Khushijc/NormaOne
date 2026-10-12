@@ -1,0 +1,66 @@
+/* Styles for the time screens (owned by that area). Use the design tokens from app.css. */
+
+/* ─── Mi jornada ─── */
+.myday-head { display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: flex-start; justify-content: space-between; }
+.myday-clock { display: flex; flex-direction: column; gap: 2px; }
+.myday-clock-time { font-size: 44px; line-height: 1.05; font-weight: 650; letter-spacing: 0.01em; color: var(--text); text-align: left; }
+.myday-clock-date { font-size: 14px; color: var(--text-2); }
+.myday-clock-date::first-letter { text-transform: uppercase; }
+.myday-state { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1 1 220px; max-width: 420px; }
+.myday-state-label { font-size: 22px; font-weight: 650; }
+.tone-text-neutral { color: var(--text-2); }
+.tone-text-info { color: var(--info); }
+.tone-text-accent { color: var(--accent); }
+.tone-text-success { color: var(--success); }
+.tone-text-warning { color: var(--warning); }
+.tone-text-danger { color: var(--danger); }
+
+.myday-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px 16px; align-items: start; }
+.myday-mode { display: flex; flex-direction: column; gap: 6px; }
+.myday-mode .segmented button { height: 36px; min-width: 110px; }
+.myday-mode .segmented button:disabled { cursor: not-allowed; opacity: 0.55; }
+
+.myday-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.myday-action { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.btn.myday-btn { height: 60px; font-size: 16px; font-weight: 600; justify-content: center; width: 100%; white-space: normal; line-height: 1.2; }
+.btn.myday-btn svg { width: 20px; height: 20px; }
+.btn.myday-btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+.myday-failure { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: var(--radius-lg); border: 2px solid var(--danger); background: var(--danger-bg); color: var(--text); }
+.myday-failure svg { color: var(--danger); flex: none; }
+.myday-failure-title { font-size: 20px; font-weight: 700; color: var(--danger); }
+
+.myday-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.myday-list > li { padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.myday-list > li:last-child { padding-bottom: 0; border-bottom: 0; }
+.myday-timeline { padding: 14px 16px 2px; }
+.myday-timeline li.ev-clock_in::before { background: var(--success); }
+.myday-timeline li.ev-clock_out::before { background: var(--danger); }
+.myday-timeline li.ev-break_start::before, .myday-timeline li.ev-break_end::before { background: var(--accent); }
+.table tr.myday-same-day td { border-top: 0; }
+
+@media (max-width: 480px) {
+  .myday-clock-time { font-size: 36px; }
+  .myday-actions { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ─── Registros horarios ─── */
+.records-table td { white-space: nowrap; }
+.records-table td .sub { white-space: nowrap; }
+
+/* ─── Detalle de registro ─── */
+.record-values { padding: 10px 12px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface-2); min-width: 0; }
+.record-values.effective { border-color: color-mix(in srgb, var(--success) 40%, var(--border)); }
+.record-values.original { border-style: dashed; }
+.record-values-label { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); margin-bottom: 6px; }
+.record-corrections { list-style: none; margin: 0; padding: 0; }
+.record-corrections > li { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+.record-corrections > li:last-child { border-bottom: 0; }
+.record-key { max-width: 220px; overflow-wrap: anywhere; white-space: normal; }
+.record-data .kv { grid-template-columns: minmax(110px, 40%) minmax(0, 1fr); }
+@media (max-width: 480px) {
+  .record-data .kv { grid-template-columns: minmax(0, 1fr); gap: 2px 0; }
+  .record-data .kv dd { margin-bottom: 8px; }
+}
+.record-events td { white-space: nowrap; }
+.record-events td.record-key { white-space: normal; }

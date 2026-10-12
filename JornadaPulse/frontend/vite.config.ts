@@ -3,12 +3,13 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  // FacturaFlow uses 5173; JornadaPulse runs alongside it on 5174.
-  server: { port: 5174 },
+  // Portal mini-apps run on consecutive ports: FacturaFlow 3001, JornadaPulse 3002, …
+  server: { port: 3002, strictPort: true },
+  preview: { port: 3002, strictPort: true },
   build: {
     rollupOptions: {
       output: {
-        manualChunks: { react: ['react', 'react-dom', 'react-dom/client', 'react-router-dom'], icons: ['lucide-react'] },
+        manualChunks: { react: ['react', 'react-dom', 'react-dom/client', 'react-router-dom'], icons: ['lucide-react'], i18n: ['./src/i18n/en/index.ts'], seed: ['./src/data/seed.ts'] },
       },
     },
   },

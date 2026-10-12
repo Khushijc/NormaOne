@@ -17,7 +17,7 @@ It runs on fictitious demo data.
 ```bash
 cd frontend
 npm install        # .npmrc sets legacy-peer-deps (works around an npm 10 peer-resolution bug)
-npm run dev        # http://localhost:5173
+npm run dev        # http://localhost:3001 (JornadaPulse uses 3002)
 npm test           # Vitest: BRD acceptance scenarios against the service layer
 npm run build      # type-check + production build
 ```

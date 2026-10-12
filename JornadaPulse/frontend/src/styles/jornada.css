@@ -1,0 +1,22 @@
+/* JornadaPulse-specific styles. Area files keep each screen group's styles separate. */
+@import './areas/time.css';
+@import './areas/absences.css';
+@import './areas/corrections.css';
+@import './areas/team.css';
+@import './areas/control.css';
+@import './areas/home.css';
+@import './areas/planning.css';
+
+
+/* Narrow screens: key/value labels and audit dates may wrap instead of widening the page. */
+.kv { grid-template-columns: minmax(110px, min(40%, max-content)) minmax(0, 1fr); }
+.kv dt { overflow-wrap: anywhere; }
+@media (max-width: 520px) {
+  .timeline .nowrap { white-space: normal; }
+  .timeline .row.between { flex-wrap: wrap; }
+}
+
+/* Nested lists inside a timeline item (audit change lists) are plain lists, not timeline steps. */
+.timeline li li { padding: 0; }
+.timeline li li::before,
+.timeline li li::after { display: none; }

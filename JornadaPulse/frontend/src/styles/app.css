@@ -40,6 +40,47 @@
   --sidebar-w: 248px;
 }
 
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #111418;
+  --surface: #1a1e23;
+  --surface-2: #1f242a;
+  --surface-sunken: #15191d;
+  --border: #2d343c;
+  --border-strong: #3d4651;
+  --text: #e8ebef;
+  --text-2: #b3bcc7;
+  --text-3: #8d97a3;
+  --brand: #9fc1e6;
+  --brand-2: #c3d9f0;
+  --accent: #5cc2b9;
+  --accent-soft: #163331;
+  --focus: #6da7ec;
+  --info: #8fbcf2;
+  --info-bg: #17283d;
+  --success: #6fcf97;
+  --success-bg: #14301f;
+  --warning: #f2b85b;
+  --warning-bg: #352812;
+  --danger: #f2877e;
+  --danger-bg: #3a1a18;
+  --neutral: #b3bcc7;
+  --neutral-bg: #262c33;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+:root[data-theme='dark'] .sidebar { background: #0d1b2a; }
+:root[data-theme='dark'] .btn.primary { color: #0d1b2a; }
+:root[data-theme='dark'] .tabs button[aria-selected='true'] { border-bottom-color: var(--brand); }
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+:root[data-theme='light'] .sidebar { background: #173450; }
+:root[data-theme='light'] .btn.primary { color: #ffffff; }
+
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme='light'])) {
     color-scheme: dark;

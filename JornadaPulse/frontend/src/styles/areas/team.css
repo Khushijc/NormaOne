@@ -1,0 +1,45 @@
+/* Styles for the team screens (owned by that area). Use the design tokens from app.css. */
+
+/* ── Equipo: directory ── */
+.team-summary { margin-top: -4px; }
+.team-table td { vertical-align: top; }
+.team-table tr.team-inactive td { background: var(--surface-2); color: var(--text-2); }
+.team-table tr.team-inactive a { color: var(--text-2); }
+
+/* ── Employee detail ── */
+.table tr.team-current td { background: var(--success-bg); }
+.team-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.team-list li { padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.team-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+
+/* Worksite multi-select inside the employee form */
+.team-sites[aria-invalid='true'] { border-color: var(--danger); }
+.team-sites-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px 16px; }
+.team-error, .settings-error { font-size: 12px; color: var(--danger); display: flex; gap: 4px; align-items: center; margin-top: 6px; }
+
+/* ── Configuración ── */
+.settings-gap { margin-top: 12px; }
+.settings-types td { min-width: 110px; }
+.settings-types td:first-child { min-width: 200px; }
+.settings-types td.small { min-width: 220px; }
+.table tr.settings-muted-row td { color: var(--text-3); background: var(--surface-2); }
+.table tr.settings-expired td { background: var(--danger-bg); }
+.settings-role-term { font-weight: 400; opacity: 0.85; margin-left: 4px; }
+.settings-role-term::before { content: '· '; }
+.settings-roles { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.settings-role { border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; background: var(--surface-2); display: flex; flex-direction: column; gap: 4px; }
+.settings-matrix th.settings-matrix-role { white-space: normal; min-width: 96px; max-width: 130px; vertical-align: bottom; text-align: center; }
+.settings-matrix th.settings-matrix-perm { position: static; background: var(--surface); font-weight: 500; color: var(--text); white-space: normal; min-width: 240px; font-size: 13px; border-bottom: 1px solid var(--border); }
+.settings-matrix td.settings-matrix-cell { text-align: center; vertical-align: middle; }
+.settings-matrix tr:last-child th { border-bottom: 0; }
+.settings-yes { color: var(--success); }
+.settings-sources { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px 16px; margin-bottom: 6px; }
+
+/* Key/value lists and badges inside the team/settings screens wrap on narrow screens. */
+.team-area .kv .badge { white-space: normal; }
+@media (max-width: 720px) {
+  .team-area .kv { grid-template-columns: minmax(0, 1fr); gap: 2px 0; }
+  .team-area .kv dd { margin-bottom: 8px; }
+  .settings-types td:first-child, .settings-types td.small { min-width: 160px; }
+  .settings-matrix th.settings-matrix-perm { min-width: 180px; }
+}

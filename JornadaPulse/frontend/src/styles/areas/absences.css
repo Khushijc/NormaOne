@@ -1,0 +1,32 @@
+/* Styles for the absences screens (owned by that area). Use the design tokens from app.css. */
+
+.abs-h3 { font-size: 13.5px; font-weight: 650; margin: 0; }
+.abs-break { overflow-wrap: anywhere; white-space: pre-wrap; }
+
+/* Category information inside the request form. */
+.abs-type-info { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; }
+.abs-type-info .kv { font-size: 13px; }
+
+.abs-dates { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 520px) { .abs-dates { grid-template-columns: minmax(0, 1fr); } }
+
+.abs-file { padding-top: 5px; height: auto; min-height: 36px; }
+
+/* Balance cards (only categories with an adviser-approved allowance). */
+.abs-balances { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.abs-balance { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px 14px; background: var(--surface); display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.abs-balance dl { margin: 6px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; }
+.abs-balance dl > div { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.abs-balance dt { font-size: 12px; color: var(--text-2); }
+.abs-balance dd { margin: 0; font-size: 20px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.abs-balance .abs-available dd { color: var(--success); }
+.abs-balance dd.abs-negative { color: var(--danger); }
+
+/* Evidence list. */
+.abs-files { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.abs-files li { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); flex-wrap: wrap; }
+.abs-files li > svg { color: var(--text-3); flex: none; }
+
+/* Approval acknowledgements. */
+.abs-ack { border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.abs-ack legend { padding: 0 4px; }

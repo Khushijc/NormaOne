@@ -10,7 +10,10 @@ import { absences } from './absences';
 import { corrections } from './corrections';
 import { team } from './team';
 import { control } from './control';
+import { home } from './home';
+import { planning } from './planning';
+import { reference } from './reference';
 
-export const EN_PARTS: Record<string, Record<string, string>> = { common, shell, time, absences, corrections, team, control };
+export const EN_PARTS: Record<string, Record<string, string>> = { common, shell, home, time, absences, corrections, team, planning, control, reference };
 
 export const EN: Record<string, string> = Object.assign({}, ...Object.values(EN_PARTS));

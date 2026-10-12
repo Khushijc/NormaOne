@@ -10,12 +10,18 @@ import { newId } from '../domain/ids';
 import { BusinessRuleError, PermissionError } from '../domain/permissions';
 import { effectiveValues } from '../domain/records';
 import { canTransition, ABSENCE_TRANSITIONS } from '../domain/status';
-import { eachDay, isValidISODate, nowInstant, periodOf, weekday } from '../domain/time';
+import { eachDay, isValidISODate, localToInstant, nowInstant, periodOf, weekday } from '../domain/time';
 import type { AbsenceRequest, AbsenceType, Attachment, ID, ISODate } from '../domain/types';
 import { transact, type Tx } from '../store/db';
 import { can, canReview, canSeeAbsenceDetail, employeeName, getCtx, latency, ownCompany, visibleAbsenceEmployeeIds, type Ctx } from './context';
 
 const ACTIVE: AbsenceRequest['status'][] = ['draft', 'pending', 'approved', 'cancel_requested'];
+
+/** Detail shown when a reviewer approves without confirming a warning. */
+const CONFLICT_CONFIRM: Record<string, string> = {
+  planned_shifts: 'Confirme que ha revisado los turnos planificados en esas fechas.',
+  recorded_work: 'Confirme que ha revisado el trabajo registrado en esas fechas.',
+};
 
 export interface AbsenceInput {
   employeeId: ID;
@@ -84,7 +90,14 @@ export function validateAbsence(ctx: Ctx, input: AbsenceInput, ignoreId: ID | nu
 export function conflictsFor(ctx: Ctx, a: Pick<AbsenceRequest, 'id' | 'employeeId' | 'startDate' | 'endDate' | 'partial'>): Conflict[] {
   const out: Conflict[] = [];
   if (!isValidISODate(a.startDate) || !isValidISODate(a.endDate) || a.endDate < a.startDate) return out;
-  const shifts = ctx.db.shifts.filter((s) => s.employeeId === a.employeeId && s.status === 'planned' && s.date >= a.startDate && s.date <= a.endDate);
+  const shifts = ctx.db.shifts.filter((s) => {
+    if (s.employeeId !== a.employeeId || s.status !== 'planned' || s.date < a.startDate || s.date > a.endDate) return false;
+    if (!a.partial) return true;
+    const from = localToInstant(s.date, a.partial.startTime, s.timezone);
+    const to = localToInstant(s.date, a.partial.endTime, s.timezone);
+    if (from.kind !== 'ok' || to.kind !== 'ok') return true;
+    return from.instant < s.end && s.start < to.instant;
+  });
   if (shifts.length) out.push({ code: 'planned_shifts', severity: 'warning', message: { text: 'Hay {n} turno(s) planificado(s) en estas fechas: revise la planificación (la ausencia no los cancela automáticamente).', params: { n: shifts.length } } });
   const worked = ctx.db.sessions.filter((s) => s.employeeId === a.employeeId && s.date >= a.startDate && s.date <= a.endDate && effectiveValues(ctx.db, s).start);
   if (worked.length && !a.partial) out.push({ code: 'recorded_work', severity: 'warning', message: { text: 'Constan {n} registro(s) de trabajo en estas fechas. La ausencia no los modifica.', params: { n: worked.length } } });
@@ -201,7 +214,7 @@ export async function reviewAbsence(id: ID, decision: 'approve' | 'reject', reas
   if (!canTransition(ABSENCE_TRANSITIONS, a.status, to) || a.status !== 'pending') throw new BusinessRuleError('Esta solicitud ya fue resuelta o no está pendiente.');
   if (decision === 'reject' && reason.trim().length < 5) throw new BusinessRuleError('El motivo del rechazo es obligatorio.');
   const warnings = conflictsFor(ctx, a).filter((c) => c.severity === 'warning').map((c) => c.code);
-  if (decision === 'approve' && warnings.some((w) => !acknowledged.includes(w))) throw new BusinessRuleError('Revise y confirme los conflictos antes de aprobar.', warnings.map((w) => `Conflicto pendiente de confirmar: ${w}`));
+  if (decision === 'approve' && warnings.some((w) => !acknowledged.includes(w))) throw new BusinessRuleError('Revise y confirme los conflictos antes de aprobar.', warnings.map((w) => CONFLICT_CONFIRM[w] ?? 'Hay un conflicto pendiente de confirmar.'));
   const at = nowInstant();
   return transact(ctx.actor, ctx.company.id, (tx) => {
     const updated = tx.update('absences', id, (x): Partial<AbsenceRequest> => ({ status: to, reviewerId: ctx.user.id, decidedAt: at, decisionReason: reason.trim() || null, acknowledgedConflicts: decision === 'approve' ? warnings : [], updatedAt: at, history: [...x.history, { at, by: ctx.user.id, action: to, note: reason.trim() || null }] }));
@@ -280,7 +293,7 @@ export async function addAbsenceAttachment(absenceId: ID, file: { name: string; 
   return transact(ctx.actor, ctx.company.id, (tx) => {
     tx.insert('attachments', att);
     tx.update('absences', a.id, (x) => ({ attachmentIds: [...x.attachmentIds, att.id], updatedAt: att.uploadedAt }));
-    tx.audit({ action: 'absence.create', entityType: 'absence', entityId: a.id, entityLabel: employeeName(ctx.db, a.employeeId), employeeId: a.employeeId, summary: `Justificante adjuntado (${file.name}). Acceso restringido; adjuntar no implica aprobación.` });
+    tx.audit({ action: 'absence.attachment', entityType: 'absence', entityId: a.id, entityLabel: employeeName(ctx.db, a.employeeId), employeeId: a.employeeId, summary: `Justificante adjuntado (${file.name}). Acceso restringido; adjuntar no implica aprobación.` });
     return att;
   });
 }

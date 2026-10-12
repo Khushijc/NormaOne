@@ -235,6 +235,7 @@ export async function reviewCorrection(id: ID, decision: 'approve' | 'reject', r
     throw new PermissionError();
   }
   if (c.status !== 'pending') throw new BusinessRuleError('Esta corrección ya fue resuelta o no está pendiente de revisión.');
+  if (c.requestedBy === ctx.user.id) throw new PermissionError('Quien registró la solicitud no puede decidirla: debe revisarla otra persona autorizada.');
   if (decision === 'reject' && reason.trim().length < 5) throw new BusinessRuleError('Indique el motivo del rechazo.');
   const approved = approvedValues ?? c.requested;
   if (decision === 'approve') {
@@ -264,7 +265,10 @@ export async function respondToProposal(id: ID, agreed: boolean, comment: string
   await latency();
   const ctx = getCtx();
   const c = ownCompany(ctx, ctx.db.corrections.find((x) => x.id === id));
-  if (ctx.employee?.id !== c.employeeId) throw new PermissionError('Solo el empleado afectado puede responder a la propuesta.');
+  const emp = ctx.db.employees.find((e) => e.id === c.employeeId);
+  // An employee without app access answers through HR, who records the answer on their behalf.
+  const onBehalf = ctx.employee?.id !== c.employeeId;
+  if (onBehalf && !(can(ctx, 'corrections.propose') && !emp?.userId)) throw new PermissionError('Solo el empleado afectado puede responder a la propuesta.');
   if (c.status !== 'pending_employee' || c.employeeResponse) throw new BusinessRuleError('Esta propuesta ya tiene respuesta.');
   if (!agreed && comment.trim().length < 5) throw new BusinessRuleError('Explique brevemente su discrepancia.');
   const at = nowInstant();
@@ -276,7 +280,7 @@ export async function respondToProposal(id: ID, agreed: boolean, comment: string
       decidedAt: agreed ? at : null,
       decisionReason: agreed ? 'Conformidad del empleado.' : null,
       employeeResponse: { at, agreed, comment: comment.trim() },
-      history: [...x.history, { at, by: ctx.user.id, action: agreed ? 'employee_agreed' : 'employee_disagreed', note: comment.trim() || null }],
+      history: [...x.history, { at, by: ctx.user.id, action: agreed ? 'employee_agreed' : 'employee_disagreed', note: onBehalf ? `Respuesta del empleado recogida por RR. HH. (sin acceso a la aplicación). ${comment.trim()}`.trim() : comment.trim() || null }],
     }));
     if (agreed) apply(tx, ctx, updated, updated.requested);
     tx.audit({ action: 'correction.employee_response', entityType: 'correction', entityId: id, entityLabel: employeeName(ctx.db, c.employeeId), employeeId: c.employeeId, summary: agreed ? 'El empleado da su conformidad: corrección aplicada.' : 'El empleado manifiesta su discrepancia.', reason: comment.trim() || null });
