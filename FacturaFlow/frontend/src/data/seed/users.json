@@ -1,0 +1,72 @@
+[
+  {
+    "id": "usr_laura",
+    "name": "Laura Martín Soler",
+    "email": "laura.martin@mantenimientoslevante.example",
+    "title": "Gerente y socia",
+    "organisation": null
+  },
+  {
+    "id": "usr_javier",
+    "name": "Javier Ortega Pons",
+    "email": "javier.ortega@mantenimientoslevante.example",
+    "title": "Administración",
+    "organisation": null
+  },
+  {
+    "id": "usr_marta",
+    "name": "Marta Soler Vidal",
+    "email": "marta.soler@mantenimientoslevante.example",
+    "title": "Responsable financiera",
+    "organisation": null
+  },
+  {
+    "id": "usr_elena",
+    "name": "Elena Navarro Gil",
+    "email": "elena.navarro@mantenimientoslevante.example",
+    "title": "Jefa de equipo técnico",
+    "organisation": null
+  },
+  {
+    "id": "usr_pablo",
+    "name": "Pablo Ruiz Esteve",
+    "email": "pablo.ruiz@mantenimientoslevante.example",
+    "title": "Técnico de mantenimiento",
+    "organisation": null
+  },
+  {
+    "id": "usr_sergio",
+    "name": "Sergio Llopis Mora",
+    "email": "sergio.llopis@mantenimientoslevante.example",
+    "title": "Técnico de instalaciones",
+    "organisation": null
+  },
+  {
+    "id": "usr_carlos",
+    "name": "Carlos Gil Ferrando",
+    "email": "carlos.gil@asesoriaturia.example",
+    "title": "Asesor fiscal y contable",
+    "organisation": "Asesoría Turia, S.L.P."
+  },
+  {
+    "id": "usr_nuria",
+    "name": "Nuria Campos Sáez",
+    "email": "nuria@gestoriaanterior.example",
+    "title": "Gestora (mandato finalizado)",
+    "organisation": "Gestoría Campos"
+  },
+  {
+    "id": "usr_carmen",
+    "name": "Carmen Ruiz Vidal",
+    "email": "carmen@carmenruiz-at.example",
+    "title": "Arquitecta técnica (titular)",
+    "organisation": null
+  },
+  {
+    "id": "usr_iker",
+    "name": "Iker Etxeberria Uriarte",
+    "email": "iker@ibaigane.example",
+    "title": "Gerente",
+    "organisation": null
+  }
+]

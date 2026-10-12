@@ -1,0 +1,33 @@
+[
+  {
+    "companyId": "cmp_levante",
+    "reminderOffsetsDays": [
+      3,
+      15,
+      30
+    ],
+    "channel": "email",
+    "suppressWhenDisputed": true,
+    "showLatePaymentNotice": true
+  },
+  {
+    "companyId": "cmp_ibaigane",
+    "reminderOffsetsDays": [
+      7,
+      30
+    ],
+    "channel": "email",
+    "suppressWhenDisputed": true,
+    "showLatePaymentNotice": true
+  },
+  {
+    "companyId": "cmp_ruiz",
+    "reminderOffsetsDays": [
+      7,
+      21
+    ],
+    "channel": "email",
+    "suppressWhenDisputed": true,
+    "showLatePaymentNotice": false
+  }
+]

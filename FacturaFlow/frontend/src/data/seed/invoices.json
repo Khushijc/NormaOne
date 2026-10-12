@@ -1,0 +1,2920 @@
+[
+  {
+    "id": "inv_lev_001",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0001",
+    "customerId": "cus_torre",
+    "customerSnapshot": {
+      "legalName": "Comunidad de Propietarios Torre Turia",
+      "idType": "NIF",
+      "idNumber": "H46128732",
+      "address": {
+        "street": "Av. de Pius XII, 46",
+        "postalCode": "46015",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-04-03",
+    "operationDate": "2026-03-31",
+    "dueDate": "2026-05-03",
+    "lines": [
+      {
+        "id": "lin_0001",
+        "description": "Mantenimiento preventivo mensual de instalaciones (contrato)",
+        "quantity": 1,
+        "unitPriceCents": 42000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0002",
+        "description": "Coordinación con mantenedor de ascensores",
+        "quantity": 2,
+        "unitPriceCents": 4500,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-04-03T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-04-03T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260403-0002",
+    "fiscalRecordId": "SIM-RF-0001",
+    "fiscalHash": "demo-sim-rf-0001",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-04-01T08:12:00.000Z",
+    "updatedAt": "2026-04-03T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_002",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0002",
+    "customerId": "cus_marblau",
+    "customerSnapshot": {
+      "legalName": "Hotel Mar Blau, S.L.",
+      "idType": "NIF",
+      "idNumber": "B98315427",
+      "address": {
+        "street": "Passeig de Neptú, 18",
+        "postalCode": "46011",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-04-10",
+    "operationDate": "2026-04-07",
+    "dueDate": "2026-05-25",
+    "lines": [
+      {
+        "id": "lin_0003",
+        "description": "Revisión y limpieza de equipos de climatización",
+        "quantity": 6,
+        "unitPriceCents": 6500,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0004",
+        "description": "Material eléctrico según albarán",
+        "quantity": 1,
+        "unitPriceCents": 18640,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 45 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-04-10T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-04-10T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260410-0003",
+    "fiscalRecordId": "SIM-RF-0002",
+    "fiscalHash": "demo-sim-rf-0002",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-04-08T08:12:00.000Z",
+    "updatedAt": "2026-04-10T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_003",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0003",
+    "customerId": "cus_dental",
+    "customerSnapshot": {
+      "legalName": "Clínica Dental Benimaclet, S.L.P.",
+      "idType": "NIF",
+      "idNumber": "B98773161",
+      "address": {
+        "street": "Carrer de Murta, 9",
+        "postalCode": "46020",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-04-24",
+    "operationDate": "2026-04-21",
+    "dueDate": "2026-05-24",
+    "lines": [
+      {
+        "id": "lin_0005",
+        "description": "Revisión de cuadro eléctrico y sustitución de diferenciales",
+        "quantity": 1,
+        "unitPriceCents": 29500,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0006",
+        "description": "Mano de obra técnico (horas)",
+        "quantity": 8,
+        "unitPriceCents": 3800,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-04-24T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-04-24T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260424-0004",
+    "fiscalRecordId": "SIM-RF-0003",
+    "fiscalHash": "demo-sim-rf-0003",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-04-22T08:12:00.000Z",
+    "updatedAt": "2026-04-24T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_004",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0004",
+    "customerId": "cus_torre",
+    "customerSnapshot": {
+      "legalName": "Comunidad de Propietarios Torre Turia",
+      "idType": "NIF",
+      "idNumber": "H46128732",
+      "address": {
+        "street": "Av. de Pius XII, 46",
+        "postalCode": "46015",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-05-04",
+    "operationDate": "2026-05-01",
+    "dueDate": "2026-06-03",
+    "lines": [
+      {
+        "id": "lin_0007",
+        "description": "Mantenimiento preventivo mensual de instalaciones (contrato)",
+        "quantity": 1,
+        "unitPriceCents": 42000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-05-04T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-05-04T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260504-0005",
+    "fiscalRecordId": "SIM-RF-0004",
+    "fiscalHash": "demo-sim-rf-0004",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-05-02T08:12:00.000Z",
+    "updatedAt": "2026-05-04T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_005",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0005",
+    "customerId": "cus_horta",
+    "customerSnapshot": {
+      "legalName": "Supermercados Horta, S.A.",
+      "idType": "NIF",
+      "idNumber": "A96245196",
+      "address": {
+        "street": "Ctra. de Barcelona, km 3",
+        "postalCode": "46120",
+        "city": "Alboraia",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-05-12",
+    "operationDate": "2026-05-09",
+    "dueDate": "2026-07-11",
+    "lines": [
+      {
+        "id": "lin_0008",
+        "description": "Revisión y limpieza de equipos de climatización",
+        "quantity": 6,
+        "unitPriceCents": 6500,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0009",
+        "description": "Mano de obra técnico (horas)",
+        "quantity": 8,
+        "unitPriceCents": 3800,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0010",
+        "description": "Salida de urgencia fuera de horario",
+        "quantity": 1,
+        "unitPriceCents": 9000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 60 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-05-12T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-05-12T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260512-0006",
+    "fiscalRecordId": "SIM-RF-0005",
+    "fiscalHash": "demo-sim-rf-0005",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-05-10T08:12:00.000Z",
+    "updatedAt": "2026-05-12T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_006",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0006",
+    "customerId": "cus_albufera",
+    "customerSnapshot": {
+      "legalName": "Restaurante La Albufera, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97124085",
+      "address": {
+        "street": "Carretera del Palmar, 3",
+        "postalCode": "46012",
+        "city": "El Palmar",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-05-20",
+    "operationDate": "2026-05-17",
+    "dueDate": "2026-06-19",
+    "lines": [
+      {
+        "id": "lin_0011",
+        "description": "Reparación de fontanería — sustitución de bajante",
+        "quantity": 1,
+        "unitPriceCents": 38000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-05-20T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-05-20T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260520-0007",
+    "fiscalRecordId": "SIM-RF-0006",
+    "fiscalHash": "demo-sim-rf-0006",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-05-18T08:12:00.000Z",
+    "updatedAt": "2026-05-20T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_007",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0007",
+    "customerId": "cus_ruzafa",
+    "customerSnapshot": {
+      "legalName": "Gestión Inmobiliaria Ruzafa, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97902332",
+      "address": {
+        "street": "Carrer de Cuba, 22",
+        "postalCode": "46006",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-05-28",
+    "operationDate": "2026-05-25",
+    "dueDate": "2026-06-27",
+    "lines": [
+      {
+        "id": "lin_0012",
+        "description": "Pintura de zonas comunes (m²)",
+        "quantity": 140,
+        "unitPriceCents": 750,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0013",
+        "description": "Mano de obra pintor (horas)",
+        "quantity": 24,
+        "unitPriceCents": 3200,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "rectified",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-05-28T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-05-28T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260528-0008",
+    "fiscalRecordId": "SIM-RF-0007",
+    "fiscalHash": "demo-sim-rf-0007",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [
+      "inv_lev_r01"
+    ],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-05-26T08:12:00.000Z",
+    "updatedAt": "2026-05-28T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_008",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0008",
+    "customerId": "cus_torre",
+    "customerSnapshot": {
+      "legalName": "Comunidad de Propietarios Torre Turia",
+      "idType": "NIF",
+      "idNumber": "H46128732",
+      "address": {
+        "street": "Av. de Pius XII, 46",
+        "postalCode": "46015",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-06-03",
+    "operationDate": "2026-05-31",
+    "dueDate": "2026-07-03",
+    "lines": [
+      {
+        "id": "lin_0014",
+        "description": "Mantenimiento preventivo mensual de instalaciones (contrato)",
+        "quantity": 1,
+        "unitPriceCents": 42000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0015",
+        "description": "Coordinación con mantenedor de ascensores",
+        "quantity": 2,
+        "unitPriceCents": 4500,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-06-03T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-06-03T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260603-0009",
+    "fiscalRecordId": "SIM-RF-0008",
+    "fiscalHash": "demo-sim-rf-0008",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-06-01T08:12:00.000Z",
+    "updatedAt": "2026-06-03T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_009",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0009",
+    "customerId": "cus_colegio",
+    "customerSnapshot": {
+      "legalName": "Colegio Santa Ana, Coop. V.",
+      "idType": "NIF",
+      "idNumber": "F46311759",
+      "address": {
+        "street": "Carrer de la Reina, 101",
+        "postalCode": "46011",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-06-15",
+    "operationDate": "2026-06-12",
+    "dueDate": "2026-08-14",
+    "lines": [
+      {
+        "id": "lin_0016",
+        "description": "Revisión anual de instalación de protección contra incendios",
+        "quantity": 1,
+        "unitPriceCents": 64000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0017",
+        "description": "Mano de obra técnico (horas)",
+        "quantity": 8,
+        "unitPriceCents": 3800,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 60 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-06-15T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-06-15T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260615-0010",
+    "fiscalRecordId": "SIM-RF-0009",
+    "fiscalHash": "demo-sim-rf-0009",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-06-13T08:12:00.000Z",
+    "updatedAt": "2026-06-15T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_010",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0010",
+    "customerId": "cus_marblau",
+    "customerSnapshot": {
+      "legalName": "Hotel Mar Blau, S.L.",
+      "idType": "NIF",
+      "idNumber": "B98315427",
+      "address": {
+        "street": "Passeig de Neptú, 18",
+        "postalCode": "46011",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-06-22",
+    "operationDate": "2026-06-19",
+    "dueDate": "2026-08-06",
+    "lines": [
+      {
+        "id": "lin_0018",
+        "description": "Revisión y limpieza de equipos de climatización",
+        "quantity": 6,
+        "unitPriceCents": 6500,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0019",
+        "description": "Revisión y limpieza de equipos de climatización",
+        "quantity": 4,
+        "unitPriceCents": 6500,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0020",
+        "description": "Material eléctrico según albarán",
+        "quantity": 1,
+        "unitPriceCents": 18640,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 45 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-06-22T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-06-22T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260622-0011",
+    "fiscalRecordId": "SIM-RF-0010",
+    "fiscalHash": "demo-sim-rf-0010",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-06-20T08:12:00.000Z",
+    "updatedAt": "2026-06-22T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_011",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0011",
+    "customerId": "cus_torre",
+    "customerSnapshot": {
+      "legalName": "Comunidad de Propietarios Torre Turia",
+      "idType": "NIF",
+      "idNumber": "H46128732",
+      "address": {
+        "street": "Av. de Pius XII, 46",
+        "postalCode": "46015",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-07-02",
+    "operationDate": "2026-06-29",
+    "dueDate": "2026-08-01",
+    "lines": [
+      {
+        "id": "lin_0021",
+        "description": "Mantenimiento preventivo mensual de instalaciones (contrato)",
+        "quantity": 1,
+        "unitPriceCents": 42000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-07-02T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-07-02T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260702-0012",
+    "fiscalRecordId": "SIM-RF-0011",
+    "fiscalHash": "demo-sim-rf-0011",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-06-30T08:12:00.000Z",
+    "updatedAt": "2026-07-02T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_012",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0012",
+    "customerId": "cus_cowork",
+    "customerSnapshot": {
+      "legalName": "Coworking Cabanyal, S.L.",
+      "idType": "NIF",
+      "idNumber": "B98550940",
+      "address": {
+        "street": "Carrer de la Reina, 205",
+        "postalCode": "46011",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-07-08",
+    "operationDate": "2026-07-05",
+    "dueDate": "2026-07-23",
+    "lines": [
+      {
+        "id": "lin_0022",
+        "description": "Instalación de puntos de red y canaletas",
+        "quantity": 12,
+        "unitPriceCents": 4800,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0023",
+        "description": "Material eléctrico según albarán",
+        "quantity": 1,
+        "unitPriceCents": 18640,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 15 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-07-08T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-07-08T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260708-0013",
+    "fiscalRecordId": "SIM-RF-0012",
+    "fiscalHash": "demo-sim-rf-0012",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-07-06T08:12:00.000Z",
+    "updatedAt": "2026-07-08T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_013",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0013",
+    "customerId": "cus_perez",
+    "customerSnapshot": {
+      "legalName": "Laura Pérez Gil",
+      "idType": "NIF",
+      "idNumber": "48291736Q",
+      "address": {
+        "street": "Carrer de Sueca, 61, 4.ª",
+        "postalCode": "46006",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-07-15",
+    "operationDate": null,
+    "dueDate": "2026-07-15",
+    "lines": [
+      {
+        "id": "lin_0024",
+        "description": "Reparación de fuga en cocina (vivienda particular)",
+        "quantity": 1,
+        "unitPriceCents": 14000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0025",
+        "description": "Desplazamiento",
+        "quantity": 1,
+        "unitPriceCents": 2500,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Pago al contado",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-07-15T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-07-15T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260715-0014",
+    "fiscalRecordId": "SIM-RF-0013",
+    "fiscalHash": "demo-sim-rf-0013",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-07-13T08:12:00.000Z",
+    "updatedAt": "2026-07-15T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_014",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0014",
+    "customerId": "cus_horta",
+    "customerSnapshot": {
+      "legalName": "Supermercados Horta, S.A.",
+      "idType": "NIF",
+      "idNumber": "A96245196",
+      "address": {
+        "street": "Ctra. de Barcelona, km 3",
+        "postalCode": "46120",
+        "city": "Alboraia",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-07-23",
+    "operationDate": "2026-07-20",
+    "dueDate": "2026-09-21",
+    "lines": [
+      {
+        "id": "lin_0026",
+        "description": "Revisión y limpieza de equipos de climatización",
+        "quantity": 6,
+        "unitPriceCents": 6500,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0027",
+        "description": "Mano de obra técnico (horas)",
+        "quantity": 8,
+        "unitPriceCents": 3800,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0028",
+        "description": "Material eléctrico según albarán",
+        "quantity": 1,
+        "unitPriceCents": 18640,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0029",
+        "description": "Sustitución de compresor cámara frigorífica",
+        "quantity": 1,
+        "unitPriceCents": 124000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 60 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-07-23T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-07-23T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260723-0015",
+    "fiscalRecordId": "SIM-RF-0014",
+    "fiscalHash": "demo-sim-rf-0014",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-07-21T08:12:00.000Z",
+    "updatedAt": "2026-07-23T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_015",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0015",
+    "customerId": "cus_torre",
+    "customerSnapshot": {
+      "legalName": "Comunidad de Propietarios Torre Turia",
+      "idType": "NIF",
+      "idNumber": "H46128732",
+      "address": {
+        "street": "Av. de Pius XII, 46",
+        "postalCode": "46015",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-08-03",
+    "operationDate": "2026-07-31",
+    "dueDate": "2026-09-02",
+    "lines": [
+      {
+        "id": "lin_0030",
+        "description": "Mantenimiento preventivo mensual de instalaciones (contrato)",
+        "quantity": 1,
+        "unitPriceCents": 42000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0031",
+        "description": "Salida de urgencia fuera de horario",
+        "quantity": 1,
+        "unitPriceCents": 9000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-08-03T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-08-03T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260803-0016",
+    "fiscalRecordId": "SIM-RF-0015",
+    "fiscalHash": "demo-sim-rf-0015",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-08-01T08:12:00.000Z",
+    "updatedAt": "2026-08-03T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_016",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0016",
+    "customerId": "cus_dental",
+    "customerSnapshot": {
+      "legalName": "Clínica Dental Benimaclet, S.L.P.",
+      "idType": "NIF",
+      "idNumber": "B98773161",
+      "address": {
+        "street": "Carrer de Murta, 9",
+        "postalCode": "46020",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-08-18",
+    "operationDate": "2026-08-15",
+    "dueDate": "2026-09-17",
+    "lines": [
+      {
+        "id": "lin_0032",
+        "description": "Mano de obra técnico (horas)",
+        "quantity": 8,
+        "unitPriceCents": 3800,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0033",
+        "description": "Mano de obra adicional (horas)",
+        "quantity": 6,
+        "unitPriceCents": 3800,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0034",
+        "description": "Revisión de cuadro eléctrico y sustitución de diferenciales",
+        "quantity": 1,
+        "unitPriceCents": 29500,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-08-18T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-08-18T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260818-0017",
+    "fiscalRecordId": "SIM-RF-0016",
+    "fiscalHash": "demo-sim-rf-0016",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-08-16T08:12:00.000Z",
+    "updatedAt": "2026-08-18T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_017",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0017",
+    "customerId": "cus_ferrer",
+    "customerSnapshot": {
+      "legalName": "Vicent Ferrer Climent",
+      "idType": "NIF",
+      "idNumber": "20817364H",
+      "address": {
+        "street": "Carrer Major, 14",
+        "postalCode": "46470",
+        "city": "Catarroja",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-08-26",
+    "operationDate": "2026-08-23",
+    "dueDate": "2026-09-25",
+    "lines": [
+      {
+        "id": "lin_0035",
+        "description": "Instalación eléctrica de taller — fase 1",
+        "quantity": 1,
+        "unitPriceCents": 98000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0036",
+        "description": "Material eléctrico según albarán",
+        "quantity": 1,
+        "unitPriceCents": 18640,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-08-26T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-08-26T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260826-0018",
+    "fiscalRecordId": "SIM-RF-0017",
+    "fiscalHash": "demo-sim-rf-0017",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-08-24T08:12:00.000Z",
+    "updatedAt": "2026-08-26T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_018",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0018",
+    "customerId": "cus_torre",
+    "customerSnapshot": {
+      "legalName": "Comunidad de Propietarios Torre Turia",
+      "idType": "NIF",
+      "idNumber": "H46128732",
+      "address": {
+        "street": "Av. de Pius XII, 46",
+        "postalCode": "46015",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-09-02",
+    "operationDate": "2026-08-30",
+    "dueDate": "2026-10-02",
+    "lines": [
+      {
+        "id": "lin_0037",
+        "description": "Mantenimiento preventivo mensual de instalaciones (contrato)",
+        "quantity": 1,
+        "unitPriceCents": 42000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0038",
+        "description": "Coordinación con mantenedor de ascensores",
+        "quantity": 2,
+        "unitPriceCents": 4500,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-09-02T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-09-02T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260902-0019",
+    "fiscalRecordId": "SIM-RF-0018",
+    "fiscalHash": "demo-sim-rf-0018",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-08-31T08:12:00.000Z",
+    "updatedAt": "2026-09-02T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_019",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0019",
+    "customerId": "cus_patraix",
+    "customerSnapshot": {
+      "legalName": "Asociación Vecinal Patraix",
+      "idType": "NIF",
+      "idNumber": "G46277190",
+      "address": {
+        "street": "Carrer del Patraix, 30",
+        "postalCode": "46018",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-09-07",
+    "operationDate": "2026-09-04",
+    "dueDate": "2026-09-22",
+    "lines": [
+      {
+        "id": "lin_0039",
+        "description": "Mantenimiento de local social (trimestral)",
+        "quantity": 1,
+        "unitPriceCents": 36000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 15 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-09-07T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-09-07T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260907-0020",
+    "fiscalRecordId": "SIM-RF-0019",
+    "fiscalHash": "demo-sim-rf-0019",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-09-05T08:12:00.000Z",
+    "updatedAt": "2026-09-07T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_020",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0020",
+    "customerId": "cus_colegio",
+    "customerSnapshot": {
+      "legalName": "Colegio Santa Ana, Coop. V.",
+      "idType": "NIF",
+      "idNumber": "F46311759",
+      "address": {
+        "street": "Carrer de la Reina, 101",
+        "postalCode": "46011",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-09-10",
+    "operationDate": "2026-09-07",
+    "dueDate": "2026-11-09",
+    "lines": [
+      {
+        "id": "lin_0040",
+        "description": "Pintura de zonas comunes (m²)",
+        "quantity": 140,
+        "unitPriceCents": 750,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0041",
+        "description": "Mano de obra técnico (horas)",
+        "quantity": 8,
+        "unitPriceCents": 3800,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 60 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-09-10T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-09-10T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260910-0021",
+    "fiscalRecordId": "SIM-RF-0020",
+    "fiscalHash": "demo-sim-rf-0020",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-09-08T08:12:00.000Z",
+    "updatedAt": "2026-09-10T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_021",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0021",
+    "customerId": "cus_marblau",
+    "customerSnapshot": {
+      "legalName": "Hotel Mar Blau, S.L.",
+      "idType": "NIF",
+      "idNumber": "B98315427",
+      "address": {
+        "street": "Passeig de Neptú, 18",
+        "postalCode": "46011",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-09-16",
+    "operationDate": "2026-09-17",
+    "dueDate": "2026-10-31",
+    "lines": [
+      {
+        "id": "lin_0042",
+        "description": "Revisión y limpieza de equipos de climatización",
+        "quantity": 6,
+        "unitPriceCents": 6500,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0043",
+        "description": "Salida de urgencia fuera de horario",
+        "quantity": 1,
+        "unitPriceCents": 9000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 45 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-09-16T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-09-16T09:20:00.000Z",
+    "fiscalStatus": "needs_review",
+    "providerInvoiceId": "PRV-LEV-20260916-0022",
+    "fiscalRecordId": "SIM-RF-0021",
+    "fiscalHash": "demo-sim-rf-0021",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-09-14T08:12:00.000Z",
+    "updatedAt": "2026-09-16T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_022",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0022",
+    "customerId": "cus_cowork",
+    "customerSnapshot": {
+      "legalName": "Coworking Cabanyal, S.L.",
+      "idType": "NIF",
+      "idNumber": "B98550940",
+      "address": {
+        "street": "Carrer de la Reina, 205",
+        "postalCode": "46011",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-09-22",
+    "operationDate": "2026-09-19",
+    "dueDate": "2026-10-07",
+    "lines": [
+      {
+        "id": "lin_0044",
+        "description": "Revisión de SAI y cableado",
+        "quantity": 1,
+        "unitPriceCents": 21000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 15 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-09-22T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-09-22T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260922-0023",
+    "fiscalRecordId": "SIM-RF-0022",
+    "fiscalHash": "demo-sim-rf-0022",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivery_failed",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-09-20T08:12:00.000Z",
+    "updatedAt": "2026-09-22T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_023",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0023",
+    "customerId": "cus_ruzafa",
+    "customerSnapshot": {
+      "legalName": "Gestión Inmobiliaria Ruzafa, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97902332",
+      "address": {
+        "street": "Carrer de Cuba, 22",
+        "postalCode": "46006",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-09-29",
+    "operationDate": "2026-09-26",
+    "dueDate": "2026-10-29",
+    "lines": [
+      {
+        "id": "lin_0045",
+        "description": "Reparación de persianas motorizadas",
+        "quantity": 3,
+        "unitPriceCents": 8500,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0046",
+        "description": "Mano de obra técnico (horas)",
+        "quantity": 8,
+        "unitPriceCents": 3800,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-09-29T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-09-29T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260929-0024",
+    "fiscalRecordId": "SIM-RF-0023",
+    "fiscalHash": "demo-sim-rf-0023",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-09-27T08:12:00.000Z",
+    "updatedAt": "2026-09-29T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_024",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0024",
+    "customerId": "cus_torre",
+    "customerSnapshot": {
+      "legalName": "Comunidad de Propietarios Torre Turia",
+      "idType": "NIF",
+      "idNumber": "H46128732",
+      "address": {
+        "street": "Av. de Pius XII, 46",
+        "postalCode": "46015",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-10-01",
+    "operationDate": "2026-09-28",
+    "dueDate": "2026-10-31",
+    "lines": [
+      {
+        "id": "lin_0047",
+        "description": "Mantenimiento preventivo mensual de instalaciones (contrato)",
+        "quantity": 1,
+        "unitPriceCents": 42000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-10-01T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-10-01T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20261001-0025",
+    "fiscalRecordId": "SIM-RF-0024",
+    "fiscalHash": "demo-sim-rf-0024",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-09-29T08:12:00.000Z",
+    "updatedAt": "2026-10-01T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_025",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": "F2026-0025",
+    "customerId": "cus_horta",
+    "customerSnapshot": {
+      "legalName": "Supermercados Horta, S.A.",
+      "idType": "NIF",
+      "idNumber": "A96245196",
+      "address": {
+        "street": "Ctra. de Barcelona, km 3",
+        "postalCode": "46120",
+        "city": "Alboraia",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-10-05",
+    "operationDate": "2026-10-02",
+    "dueDate": "2026-12-04",
+    "lines": [
+      {
+        "id": "lin_0048",
+        "description": "Revisión de cuadro eléctrico y sustitución de diferenciales",
+        "quantity": 1,
+        "unitPriceCents": 29500,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0049",
+        "description": "Salida de urgencia fuera de horario",
+        "quantity": 1,
+        "unitPriceCents": 9000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 60 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-10-05T09:05:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-10-05T09:20:00.000Z",
+    "fiscalStatus": "rejected",
+    "providerInvoiceId": null,
+    "fiscalRecordId": null,
+    "fiscalHash": null,
+    "pendingOperationId": null,
+    "exchangeStatus": "not_sent",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-10-03T08:12:00.000Z",
+    "updatedAt": "2026-10-05T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_026",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": null,
+    "customerId": "cus_marblau",
+    "customerSnapshot": null,
+    "issuerSnapshot": null,
+    "issueDate": null,
+    "operationDate": "2026-10-05",
+    "dueDate": "2026-11-22",
+    "lines": [
+      {
+        "id": "lin_0050",
+        "description": "Sustitución de termo eléctrico 80 L",
+        "quantity": 1,
+        "unitPriceCents": 41000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0051",
+        "description": "Mano de obra técnico (horas)",
+        "quantity": 8,
+        "unitPriceCents": 3800,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 45 días",
+    "documentStatus": "approved",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-10-08T09:05:00.000Z",
+    "issuedBy": null,
+    "issuedAt": null,
+    "fiscalStatus": "needs_review",
+    "providerInvoiceId": null,
+    "fiscalRecordId": null,
+    "fiscalHash": null,
+    "pendingOperationId": "fop_0026",
+    "exchangeStatus": "not_sent",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-10-06T08:12:00.000Z",
+    "updatedAt": "2026-10-08T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_lev_027",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": null,
+    "customerId": "cus_dental",
+    "customerSnapshot": null,
+    "issuerSnapshot": null,
+    "issueDate": null,
+    "operationDate": "2026-10-06",
+    "dueDate": "2026-11-08",
+    "lines": [
+      {
+        "id": "lin_0052",
+        "description": "Revisión y limpieza de equipos de climatización",
+        "quantity": 3,
+        "unitPriceCents": 6500,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "approved",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-10-09T09:05:00.000Z",
+    "issuedBy": null,
+    "issuedAt": null,
+    "fiscalStatus": "not_submitted",
+    "providerInvoiceId": null,
+    "fiscalRecordId": null,
+    "fiscalHash": null,
+    "pendingOperationId": null,
+    "exchangeStatus": "not_sent",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-10-08T08:12:00.000Z",
+    "updatedAt": "2026-10-09T09:20:00.000Z",
+    "version": 1
+  },
+  {
+    "id": "inv_lev_028",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": null,
+    "customerId": "cus_torre",
+    "customerSnapshot": null,
+    "issuerSnapshot": null,
+    "issueDate": null,
+    "operationDate": "2026-10-08",
+    "dueDate": "2026-11-08",
+    "lines": [
+      {
+        "id": "lin_0053",
+        "description": "Mantenimiento preventivo mensual de instalaciones (contrato)",
+        "quantity": 1,
+        "unitPriceCents": 42000,
+        "discountPct": 5,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "draft",
+    "review": {
+      "state": "requested",
+      "by": "usr_javier",
+      "at": "2026-10-09T07:40:00.000Z",
+      "comment": "Revisar descuento pactado con el cliente."
+    },
+    "approvedBy": null,
+    "approvedAt": null,
+    "issuedBy": null,
+    "issuedAt": null,
+    "fiscalStatus": "not_submitted",
+    "providerInvoiceId": null,
+    "fiscalRecordId": null,
+    "fiscalHash": null,
+    "pendingOperationId": null,
+    "exchangeStatus": "not_sent",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-10-08T08:12:00.000Z",
+    "updatedAt": "2026-10-09T09:20:00.000Z",
+    "version": 1
+  },
+  {
+    "id": "inv_lev_029",
+    "companyId": "cmp_levante",
+    "kind": "ordinary",
+    "seriesId": "ser_lev_f26",
+    "number": null,
+    "customerId": "cus_patraix",
+    "customerSnapshot": null,
+    "issuerSnapshot": null,
+    "issueDate": null,
+    "operationDate": null,
+    "dueDate": "2026-11-08",
+    "lines": [
+      {
+        "id": "lin_0054",
+        "description": "Presupuesto: impermeabilización de cubierta",
+        "quantity": 1,
+        "unitPriceCents": 185000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0055",
+        "description": "Descripción pendiente",
+        "quantity": 1,
+        "unitPriceCents": 0,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "draft",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": null,
+    "approvedAt": null,
+    "issuedBy": null,
+    "issuedAt": null,
+    "fiscalStatus": "not_submitted",
+    "providerInvoiceId": null,
+    "fiscalRecordId": null,
+    "fiscalHash": null,
+    "pendingOperationId": null,
+    "exchangeStatus": "not_sent",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-10-08T08:12:00.000Z",
+    "updatedAt": "2026-10-09T09:20:00.000Z",
+    "version": 1
+  },
+  {
+    "id": "inv_lev_r01",
+    "companyId": "cmp_levante",
+    "kind": "rectifying",
+    "seriesId": "ser_lev_r26",
+    "number": "R2026-001",
+    "customerId": "cus_ruzafa",
+    "customerSnapshot": {
+      "legalName": "Gestión Inmobiliaria Ruzafa, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97902332",
+      "address": {
+        "street": "Carrer de Cuba, 22",
+        "postalCode": "46006",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Mantenimientos Levante, S.L.",
+      "idType": "NIF",
+      "idNumber": "B97482152",
+      "address": {
+        "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+        "postalCode": "46007",
+        "city": "València",
+        "province": "Valencia",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-06-09",
+    "operationDate": null,
+    "dueDate": "2026-06-09",
+    "lines": [
+      {
+        "id": "lin_0056",
+        "description": "Rectificación por diferencias: m² de pintura facturados de más (140 → 120)",
+        "quantity": -20,
+        "unitPriceCents": 750,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "Abono aplicado en el cobro de la factura original.",
+    "paymentTerms": "Compensación con factura original",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_marta",
+    "approvedAt": "2026-06-09T08:00:00.000Z",
+    "issuedBy": "usr_marta",
+    "issuedAt": "2026-06-09T08:15:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-LEV-20260609-R001",
+    "fiscalRecordId": "SIM-RF-R001",
+    "fiscalHash": "demo-sim-rf-r001",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": {
+      "originalInvoiceId": "inv_lev_007",
+      "reasonCode": "R1",
+      "method": "differences",
+      "reasonText": "Error en la medición: se facturaron 140 m² y la superficie real ejecutada fue de 120 m² (acta de medición del 05/06/2026).",
+      "requestedBy": "usr_javier",
+      "requestedAt": "2026-06-08T15:00:00.000Z"
+    },
+    "rectifiedByIds": [],
+    "createdBy": "usr_javier",
+    "createdAt": "2026-06-08T15:00:00.000Z",
+    "updatedAt": "2026-06-09T08:15:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_crv_001",
+    "companyId": "cmp_ruiz",
+    "kind": "ordinary",
+    "seriesId": "ser_crv_f26",
+    "number": "CR26-001",
+    "customerId": "cus_crv_promo",
+    "customerSnapshot": {
+      "legalName": "Promociones Ses Fontanelles, S.L.",
+      "idType": "NIF",
+      "idNumber": "B07841232",
+      "address": {
+        "street": "Carrer de Joan Miró, 120",
+        "postalCode": "07015",
+        "city": "Palma",
+        "province": "Illes Balears",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Carmen Ruiz Vidal",
+      "idType": "NIF",
+      "idNumber": "43187264A",
+      "address": {
+        "street": "Carrer de Blanquerna, 38, 3.º 1.ª",
+        "postalCode": "07003",
+        "city": "Palma",
+        "province": "Illes Balears",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-07-10",
+    "operationDate": "2026-07-08",
+    "dueDate": "2026-08-09",
+    "lines": [
+      {
+        "id": "lin_0057",
+        "description": "Dirección de ejecución de obra — julio (Ses Fontanelles, 12 viviendas)",
+        "quantity": 1,
+        "unitPriceCents": 180000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 15
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_carmen",
+    "approvedAt": "2026-07-10T09:05:00.000Z",
+    "issuedBy": "usr_carmen",
+    "issuedAt": "2026-07-10T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-CRV-20260710-0029",
+    "fiscalRecordId": "SIM-RF-0028",
+    "fiscalHash": "demo-sim-rf-0028",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_carmen",
+    "createdAt": "2026-07-08T08:12:00.000Z",
+    "updatedAt": "2026-07-10T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_crv_002",
+    "companyId": "cmp_ruiz",
+    "kind": "ordinary",
+    "seriesId": "ser_crv_f26",
+    "number": "CR26-002",
+    "customerId": "cus_crv_cp",
+    "customerSnapshot": {
+      "legalName": "Comunidad de Propietarios Edificio Born",
+      "idType": "NIF",
+      "idNumber": "H07593213",
+      "address": {
+        "street": "Passeig des Born, 7",
+        "postalCode": "07012",
+        "city": "Palma",
+        "province": "Illes Balears",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Carmen Ruiz Vidal",
+      "idType": "NIF",
+      "idNumber": "43187264A",
+      "address": {
+        "street": "Carrer de Blanquerna, 38, 3.º 1.ª",
+        "postalCode": "07003",
+        "city": "Palma",
+        "province": "Illes Balears",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-07-24",
+    "operationDate": "2026-07-22",
+    "dueDate": "2026-08-23",
+    "lines": [
+      {
+        "id": "lin_0058",
+        "description": "Informe de evaluación del edificio (IEE)",
+        "quantity": 1,
+        "unitPriceCents": 95000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 15
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_carmen",
+    "approvedAt": "2026-07-24T09:05:00.000Z",
+    "issuedBy": "usr_carmen",
+    "issuedAt": "2026-07-24T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-CRV-20260724-0030",
+    "fiscalRecordId": "SIM-RF-0029",
+    "fiscalHash": "demo-sim-rf-0029",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_carmen",
+    "createdAt": "2026-07-22T08:12:00.000Z",
+    "updatedAt": "2026-07-24T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_crv_003",
+    "companyId": "cmp_ruiz",
+    "kind": "ordinary",
+    "seriesId": "ser_crv_f26",
+    "number": "CR26-003",
+    "customerId": "cus_crv_promo",
+    "customerSnapshot": {
+      "legalName": "Promociones Ses Fontanelles, S.L.",
+      "idType": "NIF",
+      "idNumber": "B07841232",
+      "address": {
+        "street": "Carrer de Joan Miró, 120",
+        "postalCode": "07015",
+        "city": "Palma",
+        "province": "Illes Balears",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Carmen Ruiz Vidal",
+      "idType": "NIF",
+      "idNumber": "43187264A",
+      "address": {
+        "street": "Carrer de Blanquerna, 38, 3.º 1.ª",
+        "postalCode": "07003",
+        "city": "Palma",
+        "province": "Illes Balears",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-08-10",
+    "operationDate": "2026-08-08",
+    "dueDate": "2026-09-09",
+    "lines": [
+      {
+        "id": "lin_0059",
+        "description": "Dirección de ejecución de obra — agosto",
+        "quantity": 1,
+        "unitPriceCents": 180000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 15
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_carmen",
+    "approvedAt": "2026-08-10T09:05:00.000Z",
+    "issuedBy": "usr_carmen",
+    "issuedAt": "2026-08-10T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-CRV-20260810-0031",
+    "fiscalRecordId": "SIM-RF-0030",
+    "fiscalHash": "demo-sim-rf-0030",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_carmen",
+    "createdAt": "2026-08-08T08:12:00.000Z",
+    "updatedAt": "2026-08-10T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_crv_004",
+    "companyId": "cmp_ruiz",
+    "kind": "ordinary",
+    "seriesId": "ser_crv_f26",
+    "number": "CR26-004",
+    "customerId": "cus_crv_arq",
+    "customerSnapshot": {
+      "legalName": "Estudio Arquitectura Llevant, S.L.P.",
+      "idType": "NIF",
+      "idNumber": "B07318744",
+      "address": {
+        "street": "Carrer de Sant Miquel, 50",
+        "postalCode": "07002",
+        "city": "Palma",
+        "province": "Illes Balears",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Carmen Ruiz Vidal",
+      "idType": "NIF",
+      "idNumber": "43187264A",
+      "address": {
+        "street": "Carrer de Blanquerna, 38, 3.º 1.ª",
+        "postalCode": "07003",
+        "city": "Palma",
+        "province": "Illes Balears",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-08-28",
+    "operationDate": "2026-08-26",
+    "dueDate": "2026-09-27",
+    "lines": [
+      {
+        "id": "lin_0060",
+        "description": "Mediciones y presupuesto de proyecto básico",
+        "quantity": 1,
+        "unitPriceCents": 120000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      },
+      {
+        "id": "lin_0061",
+        "description": "Visitas de obra adicionales",
+        "quantity": 3,
+        "unitPriceCents": 9000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 15
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_carmen",
+    "approvedAt": "2026-08-28T09:05:00.000Z",
+    "issuedBy": "usr_carmen",
+    "issuedAt": "2026-08-28T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-CRV-20260828-0032",
+    "fiscalRecordId": "SIM-RF-0031",
+    "fiscalHash": "demo-sim-rf-0031",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_carmen",
+    "createdAt": "2026-08-26T08:12:00.000Z",
+    "updatedAt": "2026-08-28T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_crv_005",
+    "companyId": "cmp_ruiz",
+    "kind": "ordinary",
+    "seriesId": "ser_crv_f26",
+    "number": "CR26-005",
+    "customerId": "cus_crv_promo",
+    "customerSnapshot": {
+      "legalName": "Promociones Ses Fontanelles, S.L.",
+      "idType": "NIF",
+      "idNumber": "B07841232",
+      "address": {
+        "street": "Carrer de Joan Miró, 120",
+        "postalCode": "07015",
+        "city": "Palma",
+        "province": "Illes Balears",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Carmen Ruiz Vidal",
+      "idType": "NIF",
+      "idNumber": "43187264A",
+      "address": {
+        "street": "Carrer de Blanquerna, 38, 3.º 1.ª",
+        "postalCode": "07003",
+        "city": "Palma",
+        "province": "Illes Balears",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-09-10",
+    "operationDate": "2026-09-08",
+    "dueDate": "2026-10-10",
+    "lines": [
+      {
+        "id": "lin_0062",
+        "description": "Dirección de ejecución de obra — septiembre",
+        "quantity": 1,
+        "unitPriceCents": 180000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 15
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_carmen",
+    "approvedAt": "2026-09-10T09:05:00.000Z",
+    "issuedBy": "usr_carmen",
+    "issuedAt": "2026-09-10T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-CRV-20260910-0033",
+    "fiscalRecordId": "SIM-RF-0032",
+    "fiscalHash": "demo-sim-rf-0032",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_carmen",
+    "createdAt": "2026-09-08T08:12:00.000Z",
+    "updatedAt": "2026-09-10T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_crv_006",
+    "companyId": "cmp_ruiz",
+    "kind": "ordinary",
+    "seriesId": "ser_crv_f26",
+    "number": "CR26-006",
+    "customerId": "cus_crv_part",
+    "customerSnapshot": {
+      "legalName": "Tomeu Vidal Serra",
+      "idType": "NIF",
+      "idNumber": "43098125N",
+      "address": {
+        "street": "Carrer de la Fàbrica, 12",
+        "postalCode": "07013",
+        "city": "Palma",
+        "province": "Illes Balears",
+        "country": "ES"
+      }
+    },
+    "issuerSnapshot": {
+      "legalName": "Carmen Ruiz Vidal",
+      "idType": "NIF",
+      "idNumber": "43187264A",
+      "address": {
+        "street": "Carrer de Blanquerna, 38, 3.º 1.ª",
+        "postalCode": "07003",
+        "city": "Palma",
+        "province": "Illes Balears",
+        "country": "ES"
+      }
+    },
+    "issueDate": "2026-09-18",
+    "operationDate": null,
+    "dueDate": "2026-09-18",
+    "lines": [
+      {
+        "id": "lin_0063",
+        "description": "Certificado de eficiencia energética de vivienda",
+        "quantity": 1,
+        "unitPriceCents": 18000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Pago al contado",
+    "documentStatus": "issued",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_carmen",
+    "approvedAt": "2026-09-18T09:05:00.000Z",
+    "issuedBy": "usr_carmen",
+    "issuedAt": "2026-09-18T09:20:00.000Z",
+    "fiscalStatus": "accepted",
+    "providerInvoiceId": "PRV-CRV-20260918-0034",
+    "fiscalRecordId": "SIM-RF-0033",
+    "fiscalHash": "demo-sim-rf-0033",
+    "pendingOperationId": null,
+    "exchangeStatus": "delivered",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_carmen",
+    "createdAt": "2026-09-16T08:12:00.000Z",
+    "updatedAt": "2026-09-18T09:20:00.000Z",
+    "version": 4
+  },
+  {
+    "id": "inv_crv_007",
+    "companyId": "cmp_ruiz",
+    "kind": "ordinary",
+    "seriesId": "ser_crv_f26",
+    "number": null,
+    "customerId": "cus_crv_promo",
+    "customerSnapshot": null,
+    "issuerSnapshot": null,
+    "issueDate": null,
+    "operationDate": "2026-10-05",
+    "dueDate": "2026-11-06",
+    "lines": [
+      {
+        "id": "lin_0064",
+        "description": "Dirección de ejecución de obra — octubre",
+        "quantity": 1,
+        "unitPriceCents": 180000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 15
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "draft",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": null,
+    "approvedAt": null,
+    "issuedBy": null,
+    "issuedAt": null,
+    "fiscalStatus": "not_submitted",
+    "providerInvoiceId": null,
+    "fiscalRecordId": null,
+    "fiscalHash": null,
+    "pendingOperationId": null,
+    "exchangeStatus": "not_sent",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_carmen",
+    "createdAt": "2026-10-06T08:12:00.000Z",
+    "updatedAt": "2026-10-09T09:20:00.000Z",
+    "version": 1
+  },
+  {
+    "id": "inv_ibg_001",
+    "companyId": "cmp_ibaigane",
+    "kind": "ordinary",
+    "seriesId": "ser_ibg_f26",
+    "number": null,
+    "customerId": "cus_ibg_bilbao",
+    "customerSnapshot": null,
+    "issuerSnapshot": null,
+    "issueDate": null,
+    "operationDate": "2026-10-02",
+    "dueDate": "2026-11-08",
+    "lines": [
+      {
+        "id": "lin_0065",
+        "description": "Mantenimiento de climatización — oficinas Gran Vía",
+        "quantity": 1,
+        "unitPriceCents": 76000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "approved",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": "usr_iker",
+    "approvedAt": "2026-10-09T09:05:00.000Z",
+    "issuedBy": null,
+    "issuedAt": null,
+    "fiscalStatus": "not_submitted",
+    "providerInvoiceId": null,
+    "fiscalRecordId": null,
+    "fiscalHash": null,
+    "pendingOperationId": null,
+    "exchangeStatus": "not_sent",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_iker",
+    "createdAt": "2026-10-08T08:12:00.000Z",
+    "updatedAt": "2026-10-09T09:20:00.000Z",
+    "version": 1
+  },
+  {
+    "id": "inv_ibg_002",
+    "companyId": "cmp_ibaigane",
+    "kind": "ordinary",
+    "seriesId": "ser_ibg_f26",
+    "number": null,
+    "customerId": "cus_ibg_getxo",
+    "customerSnapshot": null,
+    "issuerSnapshot": null,
+    "issueDate": null,
+    "operationDate": "2026-10-06",
+    "dueDate": "2026-11-08",
+    "lines": [
+      {
+        "id": "lin_0066",
+        "description": "Instalación de punto de recarga en garaje comunitario",
+        "quantity": 1,
+        "unitPriceCents": 145000,
+        "discountPct": 0,
+        "taxCode": "IVA21"
+      }
+    ],
+    "totals": {
+      "withholdingPct": 0
+    },
+    "notes": "",
+    "paymentTerms": "Transferencia bancaria a 30 días",
+    "documentStatus": "draft",
+    "review": {
+      "state": "none",
+      "by": null,
+      "at": null,
+      "comment": ""
+    },
+    "approvedBy": null,
+    "approvedAt": null,
+    "issuedBy": null,
+    "issuedAt": null,
+    "fiscalStatus": "not_submitted",
+    "providerInvoiceId": null,
+    "fiscalRecordId": null,
+    "fiscalHash": null,
+    "pendingOperationId": null,
+    "exchangeStatus": "not_sent",
+    "rectification": null,
+    "rectifiedByIds": [],
+    "createdBy": "usr_iker",
+    "createdAt": "2026-10-08T08:12:00.000Z",
+    "updatedAt": "2026-10-09T09:20:00.000Z",
+    "version": 1
+  }
+]

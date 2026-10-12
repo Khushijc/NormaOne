@@ -1,0 +1,197 @@
+[
+  {
+    "id": "mbr_laura_lev",
+    "userId": "usr_laura",
+    "companyId": "cmp_levante",
+    "roles": [
+      "owner"
+    ],
+    "status": "active",
+    "grantedBy": null,
+    "grantedAt": "2026-03-02T08:00:00.000Z",
+    "validUntil": null,
+    "revokedAt": null,
+    "revokedBy": null,
+    "approvalLimitCents": null,
+    "teamUserIds": [],
+    "mandateRef": null
+  },
+  {
+    "id": "mbr_javier_lev",
+    "userId": "usr_javier",
+    "companyId": "cmp_levante",
+    "roles": [
+      "admin"
+    ],
+    "status": "active",
+    "grantedBy": "usr_laura",
+    "grantedAt": "2026-03-02T08:00:00.000Z",
+    "validUntil": null,
+    "revokedAt": null,
+    "revokedBy": null,
+    "approvalLimitCents": null,
+    "teamUserIds": [],
+    "mandateRef": null
+  },
+  {
+    "id": "mbr_marta_lev",
+    "userId": "usr_marta",
+    "companyId": "cmp_levante",
+    "roles": [
+      "issuer"
+    ],
+    "status": "active",
+    "grantedBy": "usr_laura",
+    "grantedAt": "2026-03-02T08:00:00.000Z",
+    "validUntil": null,
+    "revokedAt": null,
+    "revokedBy": null,
+    "approvalLimitCents": null,
+    "teamUserIds": [],
+    "mandateRef": null
+  },
+  {
+    "id": "mbr_elena_lev",
+    "userId": "usr_elena",
+    "companyId": "cmp_levante",
+    "roles": [
+      "supervisor",
+      "employee"
+    ],
+    "status": "active",
+    "grantedBy": "usr_laura",
+    "grantedAt": "2026-03-02T08:00:00.000Z",
+    "validUntil": null,
+    "revokedAt": null,
+    "revokedBy": null,
+    "approvalLimitCents": 30000,
+    "teamUserIds": [
+      "usr_pablo",
+      "usr_sergio"
+    ],
+    "mandateRef": null
+  },
+  {
+    "id": "mbr_pablo_lev",
+    "userId": "usr_pablo",
+    "companyId": "cmp_levante",
+    "roles": [
+      "employee"
+    ],
+    "status": "active",
+    "grantedBy": "usr_laura",
+    "grantedAt": "2026-03-02T08:00:00.000Z",
+    "validUntil": null,
+    "revokedAt": null,
+    "revokedBy": null,
+    "approvalLimitCents": null,
+    "teamUserIds": [],
+    "mandateRef": null
+  },
+  {
+    "id": "mbr_sergio_lev",
+    "userId": "usr_sergio",
+    "companyId": "cmp_levante",
+    "roles": [
+      "employee"
+    ],
+    "status": "active",
+    "grantedBy": "usr_laura",
+    "grantedAt": "2026-03-02T08:00:00.000Z",
+    "validUntil": null,
+    "revokedAt": null,
+    "revokedBy": null,
+    "approvalLimitCents": null,
+    "teamUserIds": [],
+    "mandateRef": null
+  },
+  {
+    "id": "mbr_carlos_lev",
+    "userId": "usr_carlos",
+    "companyId": "cmp_levante",
+    "roles": [
+      "gestoria"
+    ],
+    "status": "active",
+    "grantedBy": "usr_laura",
+    "grantedAt": "2026-04-01T07:00:00.000Z",
+    "validUntil": "2027-03-31",
+    "revokedAt": null,
+    "revokedBy": null,
+    "approvalLimitCents": null,
+    "teamUserIds": [],
+    "mandateRef": "Mandato de representación y servicios contables MR-2026-117"
+  },
+  {
+    "id": "mbr_nuria_lev",
+    "userId": "usr_nuria",
+    "companyId": "cmp_levante",
+    "roles": [
+      "gestoria"
+    ],
+    "status": "revoked",
+    "grantedBy": "usr_laura",
+    "grantedAt": "2026-03-02T08:00:00.000Z",
+    "validUntil": null,
+    "revokedAt": "2026-03-31T16:00:00.000Z",
+    "revokedBy": "usr_laura",
+    "approvalLimitCents": null,
+    "teamUserIds": [],
+    "mandateRef": "Mandato 2025 (finalizado)"
+  },
+  {
+    "id": "mbr_carmen_crv",
+    "userId": "usr_carmen",
+    "companyId": "cmp_ruiz",
+    "roles": [
+      "owner",
+      "issuer",
+      "admin"
+    ],
+    "status": "active",
+    "grantedBy": null,
+    "grantedAt": "2026-07-01T07:00:00.000Z",
+    "validUntil": null,
+    "revokedAt": null,
+    "revokedBy": null,
+    "approvalLimitCents": null,
+    "teamUserIds": [],
+    "mandateRef": null
+  },
+  {
+    "id": "mbr_carlos_crv",
+    "userId": "usr_carlos",
+    "companyId": "cmp_ruiz",
+    "roles": [
+      "gestoria"
+    ],
+    "status": "active",
+    "grantedBy": "usr_carmen",
+    "grantedAt": "2026-07-01T07:00:00.000Z",
+    "validUntil": "2027-06-30",
+    "revokedAt": null,
+    "revokedBy": null,
+    "approvalLimitCents": null,
+    "teamUserIds": [],
+    "mandateRef": "Hoja de encargo HE-2026-031"
+  },
+  {
+    "id": "mbr_iker_ibg",
+    "userId": "usr_iker",
+    "companyId": "cmp_ibaigane",
+    "roles": [
+      "owner",
+      "issuer",
+      "admin"
+    ],
+    "status": "active",
+    "grantedBy": null,
+    "grantedAt": "2026-09-20T09:00:00.000Z",
+    "validUntil": null,
+    "revokedAt": null,
+    "revokedBy": null,
+    "approvalLimitCents": null,
+    "teamUserIds": [],
+    "mandateRef": null
+  }
+]

@@ -1,0 +1,68 @@
+[
+  {
+    "id": "ser_lev_f25",
+    "companyId": "cmp_levante",
+    "code": "F2025",
+    "prefix": "F2025-",
+    "kind": "ordinary",
+    "nextNumber": 214,
+    "padding": 4,
+    "active": false,
+    "description": "Serie ordinaria 2025 (cerrada; facturas en el sistema anterior)"
+  },
+  {
+    "id": "ser_lev_f26",
+    "companyId": "cmp_levante",
+    "code": "F2026",
+    "prefix": "F2026-",
+    "kind": "ordinary",
+    "nextNumber": 27,
+    "padding": 4,
+    "active": true,
+    "description": "Serie ordinaria 2026"
+  },
+  {
+    "id": "ser_lev_r26",
+    "companyId": "cmp_levante",
+    "code": "R2026",
+    "prefix": "R2026-",
+    "kind": "rectifying",
+    "nextNumber": 2,
+    "padding": 3,
+    "active": true,
+    "description": "Serie de facturas rectificativas 2026"
+  },
+  {
+    "id": "ser_ibg_f26",
+    "companyId": "cmp_ibaigane",
+    "code": "A26",
+    "prefix": "A26/",
+    "kind": "ordinary",
+    "nextNumber": 1,
+    "padding": 4,
+    "active": true,
+    "description": "Serie ordinaria (no aprobada)"
+  },
+  {
+    "id": "ser_crv_f26",
+    "companyId": "cmp_ruiz",
+    "code": "CR26",
+    "prefix": "CR26-",
+    "kind": "ordinary",
+    "nextNumber": 7,
+    "padding": 3,
+    "active": true,
+    "description": "Honorarios 2026"
+  },
+  {
+    "id": "ser_crv_r26",
+    "companyId": "cmp_ruiz",
+    "code": "CRR26",
+    "prefix": "CRR26-",
+    "kind": "rectifying",
+    "nextNumber": 1,
+    "padding": 3,
+    "active": true,
+    "description": "Rectificativas 2026"
+  }
+]

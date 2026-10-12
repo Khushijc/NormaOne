@@ -1,0 +1,99 @@
+[
+  {
+    "id": "cmp_levante",
+    "legalName": "Mantenimientos Levante, S.L.",
+    "tradeName": "Mantenimientos Levante",
+    "nif": "B97482152",
+    "legalForm": "SL",
+    "registeredAddress": {
+      "street": "Carrer de Sant Vicent Màrtir, 214, bajo",
+      "postalCode": "46007",
+      "city": "València",
+      "province": "Valencia",
+      "country": "ES"
+    },
+    "worksites": [
+      "Nave Polígono Fuente del Jarro (Paterna)",
+      "Oficina Ruzafa (València)"
+    ],
+    "activity": "Mantenimiento integral de edificios e instalaciones",
+    "cnae": "4329",
+    "employeeCount": 18,
+    "taxAdministration": "AEAT — Delegación Especial de Valencia",
+    "timezone": "Europe/Madrid",
+    "profileReviewedBy": "Laura Martín Soler (propietaria) y Asesoría Turia",
+    "profileReviewedAt": "2026-09-02",
+    "modules": {
+      "finance": true,
+      "time": false,
+      "prl": false,
+      "privacy": false,
+      "notices": false
+    },
+    "createdAt": "2026-03-02T08:00:00.000Z"
+  },
+  {
+    "id": "cmp_ibaigane",
+    "legalName": "Instalaciones Ibaigane, S.L.",
+    "tradeName": "Ibaigane Instalaciones",
+    "nif": "B95326070",
+    "legalForm": "SL",
+    "registeredAddress": {
+      "street": "Ibaigane Kalea, 12, 2.º",
+      "postalCode": "48930",
+      "city": "Getxo",
+      "province": "Bizkaia",
+      "country": "ES"
+    },
+    "worksites": [
+      "Taller Erandio"
+    ],
+    "activity": "Instalaciones eléctricas y de climatización",
+    "cnae": "4321",
+    "employeeCount": 9,
+    "taxAdministration": "Hacienda Foral de Bizkaia",
+    "timezone": "Europe/Madrid",
+    "profileReviewedBy": null,
+    "profileReviewedAt": null,
+    "modules": {
+      "finance": true,
+      "time": false,
+      "prl": false,
+      "privacy": false,
+      "notices": false
+    },
+    "createdAt": "2026-09-20T09:00:00.000Z"
+  },
+  {
+    "id": "cmp_ruiz",
+    "legalName": "Carmen Ruiz Vidal",
+    "tradeName": "Carmen Ruiz · Arquitectura Técnica",
+    "nif": "43187264A",
+    "legalForm": "autonomo",
+    "registeredAddress": {
+      "street": "Carrer de Blanquerna, 38, 3.º 1.ª",
+      "postalCode": "07003",
+      "city": "Palma",
+      "province": "Illes Balears",
+      "country": "ES"
+    },
+    "worksites": [
+      "Despacho Palma"
+    ],
+    "activity": "Servicios técnicos de arquitectura (aparejadora)",
+    "cnae": "7112",
+    "employeeCount": 1,
+    "taxAdministration": "AEAT — Delegación de Illes Balears",
+    "timezone": "Europe/Madrid",
+    "profileReviewedBy": "Asesoría Turia",
+    "profileReviewedAt": "2026-07-14",
+    "modules": {
+      "finance": true,
+      "time": false,
+      "prl": false,
+      "privacy": false,
+      "notices": false
+    },
+    "createdAt": "2026-07-01T07:00:00.000Z"
+  }
+]

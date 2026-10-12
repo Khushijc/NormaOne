@@ -1,0 +1,138 @@
+[
+  {
+    "companyId": "cmp_levante",
+    "taxpayerType": "IS",
+    "territory": "common_mainland",
+    "siiParticipant": false,
+    "vatRegime": "general",
+    "priorYearTurnoverBand": "up_to_8m",
+    "sifMode": "verifactu",
+    "sif": {
+      "state": "applicable",
+      "deadline": "2027-01-01",
+      "ruleIds": [
+        "rule_sif_is_v3"
+      ],
+      "basis": "Sociedad limitada con domicilio fiscal en territorio común, no acogida al SII: obligada por el art. 3.1.a RRSIF.",
+      "decidedBy": null,
+      "reviewer": "Carlos Gil Ferrando (Asesoría Turia)",
+      "reviewedAt": "2026-09-02",
+      "nextReview": "2026-11-15"
+    },
+    "b2b": {
+      "state": "applicable",
+      "deadline": "2028-10-06",
+      "ruleIds": [
+        "rule_b2b_rest_v1"
+      ],
+      "basis": "Volumen de operaciones 2025 ≈ 1,4 M€ (≤ 8 M€). Clientes mayoritariamente empresas establecidas en España.",
+      "decidedBy": null,
+      "reviewer": "Carlos Gil Ferrando (Asesoría Turia)",
+      "reviewedAt": "2026-10-07",
+      "nextReview": "2026-12-01"
+    },
+    "b2bConnectorValidated": false,
+    "irpfWithholding": {
+      "applies": false,
+      "ratePct": 0,
+      "basis": "Sociedad: no es contribuyente del IRPF; no practica retención en sus facturas."
+    },
+    "defaultPaymentTermsDays": 30,
+    "requireDifferentApprover": true,
+    "approvedTaxCodes": [
+      "IVA21",
+      "IVA10"
+    ],
+    "configApprovedBy": "Carlos Gil Ferrando (Asesoría Turia)",
+    "configApprovedAt": "2026-09-02",
+    "responsibleAdviser": "Carlos Gil Ferrando (Asesoría Turia)"
+  },
+  {
+    "companyId": "cmp_ibaigane",
+    "taxpayerType": "IS",
+    "territory": "foral_bizkaia",
+    "siiParticipant": false,
+    "vatRegime": "general",
+    "priorYearTurnoverBand": "up_to_8m",
+    "sifMode": "undecided",
+    "sif": {
+      "state": "pending_review",
+      "deadline": null,
+      "ruleIds": [],
+      "basis": "Domicilio fiscal en Bizkaia: el RRSIF común no aplica; rige Batuz/TicketBAI (normativa foral). Configuración no soportada.",
+      "decidedBy": null,
+      "reviewer": null,
+      "reviewedAt": null,
+      "nextReview": "2026-10-30"
+    },
+    "b2b": {
+      "state": "pending_review",
+      "deadline": null,
+      "ruleIds": [],
+      "basis": "Pendiente de análisis por el asesor.",
+      "decidedBy": null,
+      "reviewer": null,
+      "reviewedAt": null,
+      "nextReview": "2026-10-30"
+    },
+    "b2bConnectorValidated": false,
+    "irpfWithholding": {
+      "applies": false,
+      "ratePct": 0,
+      "basis": "Sociedad."
+    },
+    "defaultPaymentTermsDays": 30,
+    "requireDifferentApprover": true,
+    "approvedTaxCodes": [],
+    "configApprovedBy": null,
+    "configApprovedAt": null,
+    "responsibleAdviser": "Asesor fiscal foral (sin asignar)"
+  },
+  {
+    "companyId": "cmp_ruiz",
+    "taxpayerType": "IRPF",
+    "territory": "common_balearic",
+    "siiParticipant": false,
+    "vatRegime": "general",
+    "priorYearTurnoverBand": "up_to_8m",
+    "sifMode": "verifactu",
+    "sif": {
+      "state": "applicable",
+      "deadline": "2027-07-01",
+      "ruleIds": [
+        "rule_sif_other_v3"
+      ],
+      "basis": "Persona física con actividad profesional en territorio común (art. 3.1.b RRSIF).",
+      "decidedBy": null,
+      "reviewer": "Carlos Gil Ferrando (Asesoría Turia)",
+      "reviewedAt": "2026-07-14",
+      "nextReview": "2026-11-15"
+    },
+    "b2b": {
+      "state": "applicable",
+      "deadline": "2028-10-06",
+      "ruleIds": [
+        "rule_b2b_rest_v1"
+      ],
+      "basis": "Profesional ≤ 8 M€. Comunicación del estado de facturas diferida al 06/10/2029 (DT 3 RD 238/2026).",
+      "decidedBy": null,
+      "reviewer": "Carlos Gil Ferrando (Asesoría Turia)",
+      "reviewedAt": "2026-10-07",
+      "nextReview": "2026-12-01"
+    },
+    "b2bConnectorValidated": false,
+    "irpfWithholding": {
+      "applies": true,
+      "ratePct": 15,
+      "basis": "Profesional persona física (LIRPF art. 101.5.a): retención del 15 % cuando el cliente es empresario o profesional."
+    },
+    "defaultPaymentTermsDays": 30,
+    "requireDifferentApprover": false,
+    "approvedTaxCodes": [
+      "IVA21"
+    ],
+    "configApprovedBy": "Carlos Gil Ferrando (Asesoría Turia)",
+    "configApprovedAt": "2026-07-14",
+    "responsibleAdviser": "Carlos Gil Ferrando (Asesoría Turia)"
+  }
+]

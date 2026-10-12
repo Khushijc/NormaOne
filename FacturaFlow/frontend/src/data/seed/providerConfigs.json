@@ -1,0 +1,67 @@
+[
+  {
+    "companyId": "cmp_levante",
+    "providerName": "Proveedor fiscal simulado (sandbox)",
+    "environment": "sandbox_mock",
+    "status": "approved",
+    "authorisationRef": "MAND-LEV-2026-004",
+    "authorisationExpires": "2027-09-30",
+    "componentVersion": "0.9.3-sandbox",
+    "producerDeclaration": {
+      "softwareName": "FacturaFlow Conector Fiscal (DEMO)",
+      "softwareId": "FF-DEMO-01",
+      "version": "0.9.3-sandbox",
+      "producerName": "Proveedor Fiscal Ejemplo, S.A. (ficticio)",
+      "producerNif": "A00000174",
+      "declarationDate": "2026-06-30",
+      "demo": true
+    },
+    "supportedScenarios": [
+      "Factura completa F1 en territorio común",
+      "Rectificativa R1–R4 por diferencias o sustitución",
+      "IVA 21 / 10 / 4 %",
+      "Retención IRPF profesional"
+    ],
+    "lastHealthCheckAt": "2026-10-09T06:05:00.000Z",
+    "nextScenario": "accept"
+  },
+  {
+    "companyId": "cmp_ibaigane",
+    "providerName": "Sin proveedor",
+    "environment": "sandbox_mock",
+    "status": "not_configured",
+    "authorisationRef": "",
+    "authorisationExpires": null,
+    "componentVersion": "—",
+    "producerDeclaration": null,
+    "supportedScenarios": [],
+    "lastHealthCheckAt": null,
+    "nextScenario": "accept"
+  },
+  {
+    "companyId": "cmp_ruiz",
+    "providerName": "Proveedor fiscal simulado (sandbox)",
+    "environment": "sandbox_mock",
+    "status": "approved",
+    "authorisationRef": "MAND-CRV-2026-001",
+    "authorisationExpires": "2026-10-31",
+    "componentVersion": "0.9.3-sandbox",
+    "producerDeclaration": {
+      "softwareName": "FacturaFlow Conector Fiscal (DEMO)",
+      "softwareId": "FF-DEMO-01",
+      "version": "0.9.3-sandbox",
+      "producerName": "Proveedor Fiscal Ejemplo, S.A. (ficticio)",
+      "producerNif": "A00000174",
+      "declarationDate": "2026-06-30",
+      "demo": true
+    },
+    "supportedScenarios": [
+      "Factura completa F1 en territorio común",
+      "Rectificativa R1–R4 por diferencias o sustitución",
+      "IVA 21 / 10 / 4 %",
+      "Retención IRPF profesional"
+    ],
+    "lastHealthCheckAt": "2026-10-09T06:06:00.000Z",
+    "nextScenario": "accept"
+  }
+]

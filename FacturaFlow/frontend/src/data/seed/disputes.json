@@ -1,0 +1,15 @@
+[
+  {
+    "id": "dsp_inv_lev_016",
+    "companyId": "cmp_levante",
+    "invoiceId": "inv_lev_016",
+    "status": "open",
+    "reason": "El cliente discute 6 horas de mano de obra del parte de trabajo del 14/08. Pendiente de revisión con el jefe de equipo.",
+    "holdReminders": true,
+    "openedBy": "usr_javier",
+    "openedAt": "2026-09-19T10:00:00.000Z",
+    "resolvedBy": null,
+    "resolvedAt": null,
+    "resolution": null
+  }
+]

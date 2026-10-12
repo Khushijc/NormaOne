@@ -1,0 +1,90 @@
+[
+  {
+    "code": "IVA21",
+    "label": "IVA general 21 %",
+    "kind": "vat",
+    "ratePct": 21,
+    "qualification": "S1",
+    "legalRef": "Ley 37/1992, art. 90",
+    "mention": null,
+    "supportStatus": "supported",
+    "note": "Tipo general vigente (verificado 09/10/2026)."
+  },
+  {
+    "code": "IVA10",
+    "label": "IVA reducido 10 %",
+    "kind": "vat",
+    "ratePct": 10,
+    "qualification": "S1",
+    "legalRef": "Ley 37/1992, art. 91.Uno",
+    "mention": null,
+    "supportStatus": "supported",
+    "note": "Solo para servicios enumerados en el art. 91.Uno. El asesor debe confirmar que el servicio cumple los requisitos."
+  },
+  {
+    "code": "IVA4",
+    "label": "IVA superreducido 4 %",
+    "kind": "vat",
+    "ratePct": 4,
+    "qualification": "S1",
+    "legalRef": "Ley 37/1992, art. 91.Dos",
+    "mention": null,
+    "supportStatus": "supported",
+    "note": "Supuestos tasados del art. 91.Dos; poco habitual en pymes de servicios."
+  },
+  {
+    "code": "EXENTA_20",
+    "label": "Exenta (art. 20 LIVA)",
+    "kind": "exempt",
+    "ratePct": 0,
+    "qualification": "E1",
+    "legalRef": "Ley 37/1992, art. 20.Uno; RD 1619/2012, art. 6.1.j",
+    "mention": "Operación exenta de IVA conforme al artículo 20.Uno de la Ley 37/1992",
+    "supportStatus": "requires_review",
+    "note": "La clasificación del supuesto de exención exige revisión profesional y la referencia concreta del apartado."
+  },
+  {
+    "code": "ISP_84",
+    "label": "Inversión del sujeto pasivo (art. 84.Uno.2º)",
+    "kind": "reverse_charge",
+    "ratePct": 0,
+    "qualification": "S2",
+    "legalRef": "Ley 37/1992, art. 84.Uno.2º; RD 1619/2012, art. 6.1.m",
+    "mention": "Inversión del sujeto pasivo",
+    "supportStatus": "requires_review",
+    "note": "P. ej. ejecuciones de obra de urbanización, construcción o rehabilitación entre promotor y contratista (letra f). Requiere revisión profesional."
+  },
+  {
+    "code": "NO_SUJETA_LOC",
+    "label": "No sujeta por reglas de localización",
+    "kind": "not_subject",
+    "ratePct": 0,
+    "qualification": "N2",
+    "legalRef": "Ley 37/1992, arts. 69-70",
+    "mention": "Operación no sujeta al IVA español por aplicación de las reglas de localización",
+    "supportStatus": "unsupported",
+    "note": "Operaciones internacionales fuera del alcance inicial (BRD §02)."
+  },
+  {
+    "code": "RE",
+    "label": "Recargo de equivalencia",
+    "kind": "other_tax",
+    "ratePct": 26.2,
+    "qualification": "S1",
+    "legalRef": "Ley 37/1992, arts. 148-163",
+    "mention": null,
+    "supportStatus": "unsupported",
+    "note": "Régimen especial para minoristas; fuera del alcance inicial."
+  },
+  {
+    "code": "IGIC7",
+    "label": "IGIC general 7 % (Canarias)",
+    "kind": "other_tax",
+    "ratePct": 7,
+    "qualification": "S1",
+    "legalRef": "Ley 20/1991 (REF Canarias)",
+    "mention": null,
+    "supportStatus": "unsupported",
+    "note": "Canarias, Ceuta y Melilla desactivados hasta una configuración revisada (BRD §02)."
+  }
+]

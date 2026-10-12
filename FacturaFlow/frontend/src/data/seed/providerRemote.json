@@ -1,0 +1,12 @@
+{
+  "records": {
+    "inv:inv_lev_026:issue": {
+      "processed": true,
+      "providerInvoiceId": "PRV-LEV-20261008-0027",
+      "fiscalRecordId": "SIM-RF-0026",
+      "number": "F2026-0026",
+      "processedAt": "2026-10-08T09:20:00.000Z",
+      "state": "accepted"
+    }
+  }
+}

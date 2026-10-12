@@ -1,0 +1,151 @@
+[
+  {
+    "id": "hnd_lev_2026_08",
+    "companyId": "cmp_levante",
+    "periodFrom": "2026-08-01",
+    "periodTo": "2026-08-31",
+    "label": "Agosto 2026",
+    "status": "acknowledged",
+    "checklist": [
+      {
+        "key": "invoices_issued_reconciled",
+        "label": "Facturas emitidas con resultado fiscal conciliado",
+        "auto": true,
+        "done": true,
+        "doneBy": "usr_javier",
+        "doneAt": "2026-09-03T15:00:00.000Z"
+      },
+      {
+        "key": "fiscal_exceptions",
+        "label": "Sin excepciones fiscales abiertas (o explicadas)",
+        "auto": true,
+        "done": true,
+        "doneBy": "usr_javier",
+        "doneAt": "2026-09-03T15:00:00.000Z"
+      },
+      {
+        "key": "expenses_reviewed",
+        "label": "Gastos del periodo revisados (sin pendientes)",
+        "auto": true,
+        "done": true,
+        "doneBy": "usr_javier",
+        "doneAt": "2026-09-03T15:00:00.000Z"
+      },
+      {
+        "key": "evidence_attached",
+        "label": "Justificantes adjuntos en todos los gastos aprobados",
+        "auto": true,
+        "done": true,
+        "doneBy": "usr_javier",
+        "doneAt": "2026-09-03T15:00:00.000Z"
+      },
+      {
+        "key": "payments_recorded",
+        "label": "Cobros y pagos del periodo registrados",
+        "auto": false,
+        "done": true,
+        "doneBy": "usr_javier",
+        "doneAt": "2026-09-03T15:00:00.000Z"
+      },
+      {
+        "key": "disputes_noted",
+        "label": "Disputas abiertas documentadas",
+        "auto": false,
+        "done": true,
+        "doneBy": "usr_javier",
+        "doneAt": "2026-09-03T15:00:00.000Z"
+      },
+      {
+        "key": "export_generated",
+        "label": "Exportación del periodo generada",
+        "auto": true,
+        "done": true,
+        "doneBy": "usr_javier",
+        "doneAt": "2026-09-03T15:00:00.000Z"
+      }
+    ],
+    "exportIds": [
+      "exp_rec_0001",
+      "exp_rec_0002"
+    ],
+    "notes": "Disputa abierta con Clínica Dental Benimaclet documentada.",
+    "createdBy": "usr_javier",
+    "createdAt": "2026-09-01T07:00:00.000Z",
+    "deliveredAt": "2026-09-03T15:30:00.000Z",
+    "acknowledgedBy": "usr_carlos",
+    "acknowledgedAt": "2026-09-04T10:05:00.000Z"
+  },
+  {
+    "id": "hnd_lev_2026_09",
+    "companyId": "cmp_levante",
+    "periodFrom": "2026-09-01",
+    "periodTo": "2026-09-30",
+    "label": "Septiembre 2026",
+    "status": "in_preparation",
+    "checklist": [
+      {
+        "key": "invoices_issued_reconciled",
+        "label": "Facturas emitidas con resultado fiscal conciliado",
+        "auto": true,
+        "done": false,
+        "doneBy": null,
+        "doneAt": null
+      },
+      {
+        "key": "fiscal_exceptions",
+        "label": "Sin excepciones fiscales abiertas (o explicadas)",
+        "auto": true,
+        "done": false,
+        "doneBy": null,
+        "doneAt": null
+      },
+      {
+        "key": "expenses_reviewed",
+        "label": "Gastos del periodo revisados (sin pendientes)",
+        "auto": true,
+        "done": false,
+        "doneBy": null,
+        "doneAt": null
+      },
+      {
+        "key": "evidence_attached",
+        "label": "Justificantes adjuntos en todos los gastos aprobados",
+        "auto": true,
+        "done": false,
+        "doneBy": null,
+        "doneAt": null
+      },
+      {
+        "key": "payments_recorded",
+        "label": "Cobros y pagos del periodo registrados",
+        "auto": false,
+        "done": true,
+        "doneBy": "usr_javier",
+        "doneAt": "2026-10-05T15:00:00.000Z"
+      },
+      {
+        "key": "disputes_noted",
+        "label": "Disputas abiertas documentadas",
+        "auto": false,
+        "done": false,
+        "doneBy": null,
+        "doneAt": null
+      },
+      {
+        "key": "export_generated",
+        "label": "Exportación del periodo generada",
+        "auto": true,
+        "done": false,
+        "doneBy": null,
+        "doneAt": null
+      }
+    ],
+    "exportIds": [],
+    "notes": "",
+    "createdBy": "usr_javier",
+    "createdAt": "2026-10-01T07:00:00.000Z",
+    "deliveredAt": null,
+    "acknowledgedBy": null,
+    "acknowledgedAt": null
+  }
+]

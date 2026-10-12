@@ -1,0 +1,98 @@
+[
+  {
+    "id": "rem_0001",
+    "companyId": "cmp_levante",
+    "invoiceId": "inv_lev_014",
+    "offsetDays": 3,
+    "status": "delivered",
+    "reason": "Recordatorio +3 días tras vencimiento.",
+    "channel": "email",
+    "at": "2026-09-24T06:00:00.000Z",
+    "by": "system",
+    "simulated": true
+  },
+  {
+    "id": "rem_0002",
+    "companyId": "cmp_levante",
+    "invoiceId": "inv_lev_014",
+    "offsetDays": 15,
+    "status": "delivered",
+    "reason": "Recordatorio +15 días tras vencimiento.",
+    "channel": "email",
+    "at": "2026-10-06T06:00:00.000Z",
+    "by": "system",
+    "simulated": true
+  },
+  {
+    "id": "rem_0003",
+    "companyId": "cmp_levante",
+    "invoiceId": "inv_lev_016",
+    "offsetDays": 3,
+    "status": "suppressed",
+    "reason": "Suprimido: disputa abierta con retención de recordatorios.",
+    "channel": "email",
+    "at": "2026-09-20T06:00:00.000Z",
+    "by": "system",
+    "simulated": true
+  },
+  {
+    "id": "rem_0004",
+    "companyId": "cmp_levante",
+    "invoiceId": "inv_lev_016",
+    "offsetDays": 15,
+    "status": "suppressed",
+    "reason": "Suprimido: disputa abierta con retención de recordatorios.",
+    "channel": "email",
+    "at": "2026-10-02T06:00:00.000Z",
+    "by": "system",
+    "simulated": true
+  },
+  {
+    "id": "rem_0005",
+    "companyId": "cmp_levante",
+    "invoiceId": "inv_lev_017",
+    "offsetDays": 3,
+    "status": "delivered",
+    "reason": "Recordatorio +3 días tras vencimiento.",
+    "channel": "email",
+    "at": "2026-09-28T06:00:00.000Z",
+    "by": "system",
+    "simulated": true
+  },
+  {
+    "id": "rem_0006",
+    "companyId": "cmp_levante",
+    "invoiceId": "inv_lev_019",
+    "offsetDays": 3,
+    "status": "delivered",
+    "reason": "Recordatorio +3 días tras vencimiento.",
+    "channel": "email",
+    "at": "2026-09-25T06:00:00.000Z",
+    "by": "system",
+    "simulated": true
+  },
+  {
+    "id": "rem_0007",
+    "companyId": "cmp_levante",
+    "invoiceId": "inv_lev_019",
+    "offsetDays": 15,
+    "status": "delivered",
+    "reason": "Recordatorio +15 días tras vencimiento.",
+    "channel": "email",
+    "at": "2026-10-07T06:00:00.000Z",
+    "by": "system",
+    "simulated": true
+  },
+  {
+    "id": "rem_0008",
+    "companyId": "cmp_ruiz",
+    "invoiceId": "inv_crv_004",
+    "offsetDays": 7,
+    "status": "delivered",
+    "reason": "Recordatorio +7 días tras vencimiento.",
+    "channel": "email",
+    "at": "2026-10-04T06:00:00.000Z",
+    "by": "system",
+    "simulated": true
+  }
+]
