@@ -1,5 +1,5 @@
 
-package com.facturaflow.backend.config;
+package com.DatosPilot.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
