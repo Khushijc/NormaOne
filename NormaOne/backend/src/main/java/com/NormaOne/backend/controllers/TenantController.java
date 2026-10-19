@@ -30,10 +30,13 @@ import com.NormaOne.backend.dto.modules.ModuleAccessRequest;
 import com.NormaOne.backend.dto.modules.ModuleAccessResponse;
 import com.NormaOne.backend.dto.modules.ModulePermissionsRequest;
 import com.NormaOne.backend.dto.tenant.TenantPackageResponse;
+import com.NormaOne.backend.dto.user.EmailPreferenceRequest;
+import com.NormaOne.backend.dto.user.EmailPreferenceResponse;
 import com.NormaOne.backend.model.audit.AuditAction;
 import com.NormaOne.backend.model.core.enums.UserRole;
 import com.NormaOne.backend.model.core.enums.UserStatus;
 import com.NormaOne.backend.model.plans.enums.ModuleApps;
+import com.NormaOne.backend.services.EmailPreferenceService;
 import com.NormaOne.backend.services.TenantAdminService;
 
 import jakarta.validation.Valid;
@@ -51,9 +54,11 @@ import jakarta.validation.constraints.Size;
 public class TenantController {
 
     private final TenantAdminService tenantAdminService;
+    private final EmailPreferenceService emailPreferences;
 
-    public TenantController(TenantAdminService tenantAdminService) {
+    public TenantController(TenantAdminService tenantAdminService, EmailPreferenceService emailPreferences) {
         this.tenantAdminService = tenantAdminService;
+        this.emailPreferences = emailPreferences;
     }
 
     @GetMapping
@@ -79,6 +84,23 @@ public class TenantController {
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
         return ResponseEntity.ok(tenantAdminService.auditEvents(jwt, targetId, targetType, actorUserId, action, from, to, page, size));
+    }
+
+    /** A USER of the caller's own organization: their email-notification preference. */
+    @GetMapping("/users/{userId}/email-preference")
+    public ResponseEntity<EmailPreferenceResponse> getUserEmailPreference(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable @Size(min = 1, max = 64) String userId) {
+        return ResponseEntity.ok(emailPreferences.forTeamUser(jwt, userId));
+    }
+
+    /** Turns a USER's email notifications on or off — own organization, USER accounts only. */
+    @PutMapping("/users/{userId}/email-preference")
+    public ResponseEntity<EmailPreferenceResponse> setUserEmailPreference(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable @Size(min = 1, max = 64) String userId,
+            @Valid @RequestBody EmailPreferenceRequest request) {
+        return ResponseEntity.ok(emailPreferences.setForTeamUser(jwt, userId, request.enabled()));
     }
 
     @GetMapping("/users")

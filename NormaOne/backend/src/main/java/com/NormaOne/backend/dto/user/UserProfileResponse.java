@@ -40,5 +40,7 @@ public record UserProfileResponse(
          */
         List<ModuleApps> modules,
         /** Every module permission the account can use now, across modules (the backend enforces these). */
-        List<ModulePermission> modulePermissions
+        List<ModulePermission> modulePermissions,
+        /** The account's email-notification preference (unset = enabled); null before onboarding. Change it with PUT /api/users/me/email-preference. */
+        Boolean emailNotificationsEnabled
 ) {}

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, RefreshCw } from 'lucide-react'
 import { useRead } from '../../api/useRead.js'
+import { EmailDeliveryNote, EmailPreferenceToggle } from '../../components/EmailPreference.jsx'
 import EndpointTag from '../../components/EndpointTag.jsx'
 import { ModuleSummary } from '../../components/ModuleParts.jsx'
 import { Facts, NoToken, Problem, Raw, StatusBadge } from '../../components/Screen.jsx'
@@ -99,6 +100,8 @@ export default function Me() {
         </Card>
       ) : null}
 
+      {profile?.effectiveRole ? <MyEmailPreference /> : null}
+
       <Card title="Onboarding status" action={<EndpointTag id="onboarding-status" name="Onboarding status" />}>
         {status.result && !status.result.ok ? <Problem result={status.result} onRetry={status.reload} /> : state ? (
           <div className="stack">
@@ -118,5 +121,34 @@ export default function Me() {
         ) : <Empty title="Reading the onboarding status…" />}
       </Card>
     </div>
+  )
+}
+
+/**
+ * The signed-in account's own email-notification preference — the same for a Super Admin, an
+ * administrator and a user. The switch shows the stored value and moves only once a change is saved.
+ */
+function MyEmailPreference() {
+  const read = useRead('me-email-preference', { label: 'My email preference' })
+  const pref = read.data
+  return (
+    <Card
+      title="Email notifications"
+      description="Whether you receive notifications by email as well. Your in-app notifications are not affected."
+      action={<EndpointTag id="me-email-preference" name="Read" />}
+    >
+      {read.result && !read.result.ok ? <Problem result={read.result} onRetry={read.reload} /> : pref ? (
+        <div className="stack" style={{ gap: 10 }}>
+          <EmailPreferenceToggle
+            key={String(pref.emailNotificationsEnabled)}
+            enabled={pref.emailNotificationsEnabled}
+            endpointId="me-set-email-preference"
+            who="your account"
+          />
+          {!pref.explicit ? <p className="muted" style={{ margin: 0 }}>Never changed: email notifications are on by default.</p> : null}
+          <EmailDeliveryNote />
+        </div>
+      ) : <Empty title="Reading your preference…" />}
+    </Card>
   )
 }

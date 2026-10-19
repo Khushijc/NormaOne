@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Archive, ChevronRight, Download, Paperclip, Plus, RefreshCw, Save, Trash2, Upload } from 'lucide-react'
+import { Archive, ArchiveRestore, ChevronRight, Download, Paperclip, Plus, RefreshCw, Save, Trash2, Upload } from 'lucide-react'
 import { useApi, useApiState } from '../api/apiContext.js'
 import { buildCall } from '../api/buildCall.js'
 import { useRead } from '../api/useRead.js'
 import { formatBytes, refusalOf, when } from '../lib/forms.js'
+import ComingSoon from './ComingSoon.jsx'
+import ConfirmDialog from './ConfirmDialog.jsx'
 import EndpointTag from './EndpointTag.jsx'
 import { Facts, Pager, Problem, Raw, StatusBadge } from './Screen.jsx'
 import { Badge, Button, Card, Empty, Field, Input, Modal, TextArea } from './ui/Kit.jsx'
@@ -208,6 +210,13 @@ export function ComposeNotification({ scope, open, onClose, onCreated }) {
           <input className="input" type="file" accept={ATTACHMENT_ACCEPT} aria-label="Attachment"
                  onChange={(event) => setFile(event.target.files?.[0] ?? null)} />
         </Field>
+        <Field label="Delivery">
+          <div className="chip-row">
+            <Badge tone="good">In-app</Badge>
+            <span className="muted" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>Email <ComingSoon /></span>
+          </div>
+        </Field>
+        <p className="muted" style={{ margin: 0 }}>Email notifications are coming soon. Recipients will continue to receive in-app notifications.</p>
       </div>
     </Modal>
   )
@@ -305,7 +314,7 @@ export function NotificationManager({ scope, notificationId }) {
             {fromPlatform ? (
               <p className="banner" data-tone="warn">Sent by the platform (Super Admin). You can read it here; the backend refuses any change you try (403).</p>
             ) : null}
-            {n.status === 'ARCHIVED' ? <p className="banner" data-tone="warn">Archived: no member sees it any more, and it cannot be changed.</p> : null}
+            {n.status === 'ARCHIVED' ? <p className="banner" data-tone="warn">Archived: no member sees it, and it cannot be edited while archived. Restore it below to make it visible again, unchanged.</p> : null}
             <NotificationBody subject={n.subject} body={n.body} />
             <Facts rows={[
               ['Status', <StatusBadge key="s" status={n.status} />],
@@ -341,9 +350,15 @@ export function NotificationManager({ scope, notificationId }) {
           <Card title="Attachment">
             <AttachmentManager scope={scope} notification={n} pathParams={pathParams} onDone={read.reload} />
           </Card>
-          <Card title="Archive" description="Removes it from every inbox and unread count. It stays here, and is never deleted or reactivated.">
-            <ArchiveNotification scope={scope} notification={n} pathParams={pathParams} onDone={read.reload} />
-          </Card>
+          {n.status === 'ARCHIVED' ? (
+            <Card title="Restore" description="Makes it ACTIVE again: back in its recipients' inboxes and unread counts, and editable. Its content, audience, recipients and read states are kept exactly as they were.">
+              <RestoreNotification scope={scope} notification={n} pathParams={pathParams} onDone={read.reload} />
+            </Card>
+          ) : (
+            <Card title="Archive" description="Removes it from every inbox and unread count. It stays here, is never deleted, and can be restored.">
+              <ArchiveNotification scope={scope} pathParams={pathParams} onDone={read.reload} />
+            </Card>
+          )}
         </>
       ) : null}
     </div>
@@ -483,7 +498,7 @@ function AttachmentManager({ scope, notification, pathParams, onDone }) {
   )
 }
 
-function ArchiveNotification({ scope, notification, pathParams, onDone }) {
+function ArchiveNotification({ scope, pathParams, onDone }) {
   const { call } = useApi()
   const [reason, setReason] = useState('')
   const [busy, setBusy] = useState(false)
@@ -504,10 +519,67 @@ function ArchiveNotification({ scope, notification, pathParams, onDone }) {
       <div className="toolbar">
         <span className="toolbar-spacer" />
         <EndpointTag id={id(scope, 'status')} name="Archive" pathParams={pathParams} />
-        <Button icon={Archive} busy={busy} onClick={archive}>
-          {notification.status === 'ARCHIVED' ? 'Archive again (no change)' : 'Archive'}
+        <Button icon={Archive} busy={busy} onClick={archive}>Archive</Button>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Restores an archived notification (PATCH …/status, ACTIVE), after a confirmation. The backend decides
+ * who may: the same people who may archive it — a Tenant Admin restores what an administrator sent, a
+ * Super Admin anything in the tenant — and the organization must be ACTIVE.
+ */
+function RestoreNotification({ scope, notification, pathParams, onDone }) {
+  const { call } = useApi()
+  const [reason, setReason] = useState('')
+  const [confirming, setConfirming] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [refusal, setRefusal] = useState({ fields: {}, message: null })
+  const sentByPlatform = !scope.platform && notification.createdByRole === 'SUPER_ADMIN'
+  const body = { status: 'ACTIVE', ...(reason.trim() ? { reason: reason.trim() } : {}) }
+  const who = notification.audience === 'TENANT' ? 'Every member it reached' : `Its ${notification.recipientCount ?? ''} recipient(s)`
+
+  const restore = async () => {
+    setBusy(true)
+    const result = await call(id(scope, 'status'), { pathParams, body, label: 'Restore a notification' })
+    setBusy(false)
+    setRefusal(refusalOf(result))
+    if (result.ok) {
+      setConfirming(false)
+      onDone()
+    }
+  }
+
+  return (
+    <div className="stack">
+      {sentByPlatform ? <p className="banner">Sent by the platform: only a Super Admin can restore it.</p> : null}
+      {refusal.message && !confirming ? <p className="banner" data-tone="bad">{refusal.message}</p> : null}
+      <Field label="Reason" hint="Optional; goes to the audit trail.">
+        <Input value={reason} maxLength={500} onChange={(event) => setReason(event.target.value)} />
+      </Field>
+      <div className="toolbar">
+        <span className="toolbar-spacer" />
+        <EndpointTag id={id(scope, 'status')} name="Restore" pathParams={pathParams} />
+        <Button look="primary" icon={ArchiveRestore} disabled={sentByPlatform}
+                onClick={() => { setRefusal({ fields: {}, message: null }); setConfirming(true) }}>
+          Restore
         </Button>
       </div>
+      <ConfirmDialog
+        open={confirming}
+        title="Restore this notification?"
+        message={`${who} will see it again in their inbox, with the read states they had. It becomes editable again.`}
+        confirmLabel="Restore"
+        look="primary"
+        busy={busy}
+        error={refusal.message}
+        onCancel={() => setConfirming(false)}
+        onConfirm={restore}
+        endpoint={<EndpointTag id={id(scope, 'status')} name="Restore" look="primary" pathParams={pathParams} />}
+      >
+        <p className="muted mono">{JSON.stringify(body)}</p>
+      </ConfirmDialog>
     </div>
   )
 }

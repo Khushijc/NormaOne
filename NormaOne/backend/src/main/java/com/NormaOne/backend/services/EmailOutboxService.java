@@ -36,7 +36,7 @@ public class EmailOutboxService {
 
     private static final Logger log = LoggerFactory.getLogger(EmailOutboxService.class);
     private static final Duration CLAIM = Duration.ofMinutes(2);
-    static final String NOT_CONFIGURED = "Email delivery is not configured (spring.mail.host and normaone.email.from).";
+    static final String NOT_CONFIGURED = "Email delivery is not configured (normaone.email.from; for SMTP also spring.mail.host).";
 
     private final OutboundEmailRepository repository;
     private final MongoTemplate mongoTemplate;

@@ -67,6 +67,7 @@ public class SuperAdminService {
     private final AuditService auditService;
     private final MongoTemplate mongoTemplate;
     private final CognitoInvitationService cognitoInvitations;
+    private final SeatService seatService;
 
     public SuperAdminService(
             CurrentUserService currentUserService,
@@ -77,7 +78,9 @@ public class SuperAdminService {
             TenantProvisioningService provisioningService,
             AuditService auditService,
             MongoTemplate mongoTemplate,
-            CognitoInvitationService cognitoInvitations) {
+            CognitoInvitationService cognitoInvitations,
+            SeatService seatService) {
+        this.seatService = seatService;
         this.currentUserService = currentUserService;
         this.tenantRepository = tenantRepository;
         this.userRepository = userRepository;
@@ -244,7 +247,7 @@ public class SuperAdminService {
     public TenantPackageResponse getTenantPackage(Jwt jwt, String tenantId) {
         currentUserService.requireSuperAdmin(jwt);
         Tenant tenant = findTenant(tenantId);
-        return packageService.describe(tenant.getId());
+        return packageService.describe(tenant.getId()).withSeats(seatService.seatsOf(tenant.getId()));
     }
 
     // ==================== DASHBOARD ====================

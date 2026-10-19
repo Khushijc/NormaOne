@@ -229,7 +229,7 @@ for (const endpoint of lib.ALL_ENDPOINTS) {
 
 const badgeTotal = lib.MODULE_LINKS.reduce((sum, link) => sum + (link.endpoints ?? 0), 0)
 check('sidebar badges add up to the catalogue', badgeTotal === lib.LIVE_COUNT, `badges ${badgeTotal}, catalogue ${lib.LIVE_COUNT}`)
-check('the catalogue has its 92 endpoints', lib.LIVE_COUNT === 92, `found ${lib.LIVE_COUNT}`)
+check('the catalogue has its 96 endpoints', lib.LIVE_COUNT === 96, `found ${lib.LIVE_COUNT}`)
 check('set-password has an address', lib.SET_PASSWORD_PATH === '/account-auth/set-password')
 {
   // Hidden: reached only from a login that answered NEW_PASSWORD_REQUIRED, so no tab leads to it.
@@ -547,7 +547,20 @@ const env = { baseUrl: '' }
   const forTenant = renderToString(React.createElement(lib.RequestFacts, { request: { ...request, notification: { status: 'PENDING' } } }))
   const forPlatform = renderToString(React.createElement(lib.RequestFacts, { request, platform: true }))
   check('a request shows both plans and who asked', forTenant.includes('BASIC v1') && forTenant.includes('PRO v1') && forTenant.includes('ana@a.test'))
-  check('only a Super Admin sees the email attempts and error', forPlatform.includes('SMTP down') && !forTenant.includes('SMTP down'))
+  // Email delivery is not configured (config/features.js): no delivery status, a Coming Soon badge instead.
+  check('email delivery is marked Coming Soon until it is configured', lib.EMAIL_DELIVERY_AVAILABLE === false)
+  check('a request shows Email Notifications — Coming Soon, for both roles',
+    forTenant.includes('Email Notifications') && forTenant.includes('Coming Soon') && forPlatform.includes('Coming Soon'))
+  check('no email delivery status or error is shown while email is not available',
+    !forPlatform.includes('SMTP down') && !forPlatform.includes('Email attempts') && !forTenant.includes('>PENDING<</span> ') && !forPlatform.includes('SENT'))
+  const notificationSource = readFileSync('src/components/NotificationParts.jsx', 'utf8')
+  check('the notification form says email is coming soon and in-app continues',
+    notificationSource.includes('Email notifications are coming soon. Recipients will continue to receive in-app notifications.')
+    && notificationSource.includes('<ComingSoon />'))
+  const tenantPlansSource = readFileSync('src/pages/tenant/Plans.jsx', 'utf8')
+  const requestsSource = readFileSync('src/pages/platform/PlanRequests.jsx', 'utf8')
+  check('the plan screens show Coming Soon instead of an email status', tenantPlansSource.includes('<EmailComingSoon />') && requestsSource.includes('<ComingSoon />'))
+  check('a plan request is never blocked on email', !/disabled=\{[^}]*EMAIL_DELIVERY_AVAILABLE/.test(tenantPlansSource))
 
   const history = renderToString(React.createElement(lib.HistoryTable, { read: { data: { content: [{
     id: 'h1', eventType: 'PLAN_UPDATED', occurredAt: '2026-10-19T10:00:00Z', planCode: 'PRO', planVersion: 1, actorRole: 'SUPER_ADMIN',
@@ -560,6 +573,39 @@ const env = { baseUrl: '' }
   }))
   check('a destructive action asks first, with a cancel', confirm.includes('Remove access?') && confirm.includes('Cancel') && confirm.includes('Remove access'))
   check('a closed confirmation renders nothing', renderToString(React.createElement(lib.ConfirmDialog, { open: false, onConfirm: () => {}, onCancel: () => {} })) === '')
+
+  const full = renderToString(React.createElement(lib.PackageFacts, { pack: { status: 'ACTIVE', plan: { maxUsers: 3 }, seats: { limit: 3, used: 3 } } }))
+  check('a full seat limit says so with the package', full.includes('3 of 3') && full.includes('full'))
+  const open = renderToString(React.createElement(lib.PackageFacts, { pack: { status: 'ACTIVE', plan: {}, seats: { limit: null, used: 7 } } }))
+  check('a plan without a seat limit says so', open.includes('7 (no limit)'))
+
+  // Email-notification preferences: a switch that shows the stored value; own vs team routes.
+  const withApi = (element) => renderToString(React.createElement(lib.ApiActionsContext.Provider, { value: { call: async () => ({ ok: false }) } }, element))
+  const off = withApi(React.createElement(lib.EmailPreferenceToggle, { enabled: false, endpointId: 'me-set-email-preference', who: 'your account', compact: true }))
+  const on = withApi(React.createElement(lib.EmailPreferenceToggle, { enabled: true, endpointId: 'tenant-set-user-email-preference', pathParams: { userId: 'u1' }, who: 'Uma', compact: true }))
+  check('the email switch shows the stored value', off.includes('aria-checked="false"') && off.includes('Disabled') && on.includes('aria-checked="true"') && on.includes('Enabled'))
+  check('the email switch says whose preference it is', on.includes('Email notifications for Uma') && off.includes('Email notifications for your account'))
+  check('while email is Coming Soon the preference says it is saved for later', renderToString(React.createElement(lib.EmailDeliveryNote)).includes('Coming Soon'))
+  const ownPut = lib.ALL_ENDPOINTS.find((one) => one.id === 'me-set-email-preference')
+  const teamPut = lib.ALL_ENDPOINTS.find((one) => one.id === 'tenant-set-user-email-preference')
+  check('the own preference route takes no user id', ownPut && !ownPut.path.includes('{') && ownPut.method === 'PUT')
+  check('the team preference route is the Tenant Admin\'s, for one user of the own organization', teamPut && teamPut.access === 'ADMIN' && teamPut.path === '/api/tenant/users/{userId}/email-preference')
+  const toggleSource = readFileSync('src/components/EmailPreference.jsx', 'utf8')
+  check('the switch moves only after a successful save', toggleSource.includes('if (result.ok && typeof result.bodyJson?.emailNotificationsEnabled === \'boolean\')'))
+  const usersSource = readFileSync('src/pages/tenant/Users.jsx', 'utf8')
+  check('the team list offers the switch for USER accounts only', usersSource.includes("user.effectiveRole === 'USER'") && usersSource.includes('Own setting'))
+
+  // Archived notifications can be restored (confirmed), and module screens explain what a Super Admin must do.
+  const notificationParts = readFileSync('src/components/NotificationParts.jsx', 'utf8')
+  check('an archived notification offers Restore behind a confirmation', notificationParts.includes('function RestoreNotification')
+    && notificationParts.includes("status: 'ACTIVE'") && notificationParts.includes('title="Restore this notification?"'))
+  check('a Tenant Admin is told a platform notification is restored by a Super Admin only', notificationParts.includes('only a Super Admin can restore it'))
+  check('the archive endpoint documents restore', lib.ALL_ENDPOINTS.filter((one) => one.id.endsWith('notif-status') && one.id !== 'notif-read-status')
+    .every((one) => one.fields.includes('ACTIVE (restore)')))
+  const moduleParts = readFileSync('src/components/ModuleParts.jsx', 'utf8')
+  check('a never-assigned account is explained, not shown as "0 of 0"', moduleParts.includes('No module is assigned to this account yet')
+    && moduleParts.includes('created before modules were assigned by default'))
+  check('an administrator holding nothing is told a Super Admin assigns theirs', moduleParts.includes('Super admin › Administrators ›'))
 
   // Nothing on the plan screens is hard-coded sample data.
   const planScreens = ['src/pages/tenant/Plans.jsx', 'src/pages/platform/Plans.jsx', 'src/pages/platform/PlanDetail.jsx',

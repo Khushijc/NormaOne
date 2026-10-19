@@ -19,6 +19,10 @@ export { money, planBody, planForm, planLabel, PUBLISHED_EDITABLE } from './src/
 export { isoOf } from './src/lib/forms.js'
 export { HistoryTable, PlanTerms, RequestFacts } from './src/components/PlanParts.jsx'
 export { default as ConfirmDialog } from './src/components/ConfirmDialog.jsx'
+export { default as PackageFacts } from './src/components/PackageFacts.jsx'
+export { EMAIL_DELIVERY_AVAILABLE } from './src/config/features.js'
+export { EmailDeliveryNote, EmailPreferenceToggle } from './src/components/EmailPreference.jsx'
+export { ApiActionsContext } from './src/api/apiContext.js'
 export { STATUS_TONE, TENANT_AUDIT_ACTIONS } from './src/config/enums.js'
 export {
   draftFromEndpoint, exportSaved, matchEndpoint, parseImport, resolveAuth, splitUrl, validateDraft,

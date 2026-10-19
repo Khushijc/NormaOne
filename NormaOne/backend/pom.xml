@@ -72,6 +72,12 @@
 			<artifactId>cognitoidentityprovider</artifactId>
 		</dependency>
 
+		<!-- Outbound email through Amazon SES with the same AWS credentials as Cognito (normaone.email.provider=SES). -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>sesv2</artifactId>
+		</dependency>
+
 		<!-- Notification attachments in a private S3 bucket (normaone.attachments.storage=S3). Version from the AWS SDK BOM. -->
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>

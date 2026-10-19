@@ -1,5 +1,5 @@
 /**
- * The NormaOne endpoints this tester covers: 92, in twelve controllers. (The cross-tenant account
+ * The NormaOne endpoints this tester covers: 96, in twelve controllers. (The cross-tenant account
  * directory and the notification-recipient endpoints are documented in docs/AUTH_RBAC_GUIDE.md and
  * the Postman collection and are not in this catalogue yet.)
  *
@@ -52,13 +52,20 @@ const TENANT_RESPONSE = ['id', 'tenantName', 'accountHolderName', 'subdomain', '
   'userCount', 'packageInfo']
 const PACKAGE_RESPONSE = ['tenantId', 'subscriptionId', 'status', 'assignmentSource', 'startDate',
   'currentPeriodStart', 'currentPeriodEnd', 'agreedPrice', 'currencyCode', 'billingCycle', 'assignedAt',
-  'plan { planId, planCode, planVersion, name, description, status, defaultPlan, listPrice, currencyCode, billingCycle, trialDays, maxEmployees, moduleApps }']
+  'plan { planId, planCode, planVersion, name, description, status, defaultPlan, listPrice, currencyCode, billingCycle, trialDays, maxEmployees, maxUsers, durationMonths, moduleApps }',
+  'seats { limit (null = no limit), used } — package reads only']
+// The plan's maxUsers: ACTIVE, INVITED and SUSPENDED accounts take a seat; DEACTIVATED ones do not (SeatService).
+const SEATS_FULL = { status: 409, when: 'Every user seat of the organization\'s plan (maxUsers) is taken by active, suspended or invited accounts. Deactivate one or move to a plan with more seats.' }
 const ADMIN_RESPONSE = ['id', 'name', 'email', 'phoneNumber', 'role', 'status',
   'linked', 'organization { id, name, subdomain, status }', 'invitedAt', 'activatedAt', 'deactivatedAt', 'statusReason', 'createdAt', 'updatedAt',
   'moduleAccess', 'modulePermissions']
 const PLATFORM_USER_RESPONSE = ['id', 'name', 'email', 'role', 'status', 'linked', 'organization { id, name, subdomain, status }',
   'invitedAt', 'activatedAt', 'deactivatedAt', 'statusReason', 'createdAt', 'updatedAt']
 const PAGE_OF = (fields) => [`content: [ { ${fields.slice(0, 6).join(', ')}, … } ]`, 'page', 'size', 'totalElements', 'totalPages']
+// An account's email-notification preference (EmailPreferenceResponse). Never set = enabled.
+const EMAIL_PREFERENCE_RESPONSE = ['userId', 'name', 'email', 'role', 'emailNotificationsEnabled', 'explicit (false = the default, enabled)',
+  'emailDeliveryAvailable (false while email is Coming Soon: saved, nothing is emailed)']
+const TEAM_PREFERENCE_403 = { status: 403, when: 'The account is an administrator, a platform account, or your own — administrators set their own preference under My email preference.' }
 const AUDIT_PAGE = PAGE_OF(['id', 'action', 'occurredAt', 'actorUserId', 'actorRole', 'tenantId', 'targetType', 'targetId', 'details'])
 const AUDIT_EXTRA_FILTERS = [
   { key: 'targetType', value: 'USER', enabled: false, description: 'USER, TENANT, PLAN, SUBSCRIPTION, PLAN_CHANGE_REQUEST, NOTIFICATION.' },
@@ -244,6 +251,33 @@ const GROUP_ACCOUNT = {
   controller: 'UserController, OnboardingController',
   endpoints: [
     {
+      id: 'me-email-preference',
+      name: 'My email preference',
+      method: 'GET',
+      path: '/api/users/me/email-preference',
+      access: 'active',
+      summary: 'Whether the caller receives email notifications. Never set = enabled (the default). Any active account: SUPER_ADMIN, ADMIN or USER.',
+      successStatus: 200,
+      responseFields: EMAIL_PREFERENCE_RESPONSE,
+      errors: [UNAUTHORIZED, { status: 403, when: 'The account is not active, or its organization is not ACTIVE.' }],
+    },
+    {
+      id: 'me-set-email-preference',
+      name: 'Set my email preference',
+      method: 'PUT',
+      path: '/api/users/me/email-preference',
+      access: 'active',
+      summary: 'Turns the caller\'s own email notifications on or off. There is no user id: it is always the caller\'s own account. In-app notifications are not affected.',
+      requiredFields: ['enabled'],
+      fields: 'enabled true · false',
+      body: `{
+  "enabled": false
+}`,
+      successStatus: 200,
+      responseFields: EMAIL_PREFERENCE_RESPONSE,
+      errors: [VALIDATION, UNAUTHORIZED, { status: 403, when: 'The account is not active, or its organization is not ACTIVE.' }],
+    },
+    {
       id: 'me',
       name: 'Who am I',
       method: 'GET',
@@ -422,6 +456,7 @@ const GROUP_TENANT = {
         { status: 400, when: 'role is anything but USER or ADMIN.' },
         { status: 403, when: 'role is SUPER_ADMIN, or a module permission the caller does not hold.' },
         { status: 409, when: 'A user with this email already exists in the organization.' },
+        SEATS_FULL,
       ],
     },
     {
@@ -479,9 +514,39 @@ const GROUP_TENANT = {
         { status: 403, when: 'Changing your own status, or a platform account.' },
         { status: 404, when: 'No such user in this tenant.' },
         { status: 409, when: 'Already in that status; activating an invitation; suspending an invitation; or removing the last active ADMIN.' },
+        { ...SEATS_FULL, when: 'Reactivating a DEACTIVATED account while every user seat of the plan is taken.' },
         { status: 502, when: 'Reactivating: Cognito could not re-enable the account. Nothing was changed.' },
       ],
       notes: 'An administrator is removed only by another administrator, and the organization always keeps one active ADMIN. The audit event records what Cognito did (details.identityProvider: DONE, FAILED, NO_ACCOUNT or SKIPPED).',
+    },
+    {
+      id: 'tenant-user-email-preference',
+      name: 'A user\'s email preference',
+      method: 'GET',
+      path: '/api/tenant/users/{userId}/email-preference',
+      access: 'ADMIN',
+      summary: 'Whether a USER of the caller\'s own organization receives email notifications.',
+      pathParams: [{ name: 'userId', description: 'A USER account of your organization.' }],
+      successStatus: 200,
+      responseFields: EMAIL_PREFERENCE_RESPONSE,
+      errors: [UNAUTHORIZED, NEEDS_ADMIN, TEAM_PREFERENCE_403, { status: 404, when: 'No such user in your organization (another organization\'s user is 404 too).' }],
+    },
+    {
+      id: 'tenant-set-user-email-preference',
+      name: 'Set a user\'s email preference',
+      method: 'PUT',
+      path: '/api/tenant/users/{userId}/email-preference',
+      access: 'ADMIN',
+      summary: 'Turns a USER\'s email notifications on or off — USER accounts of the caller\'s own organization only. In-app notifications are not affected.',
+      pathParams: [{ name: 'userId', description: 'A USER account of your organization.' }],
+      requiredFields: ['enabled'],
+      fields: 'enabled true · false. An organization id in the body is ignored.',
+      body: `{
+  "enabled": false
+}`,
+      successStatus: 200,
+      responseFields: EMAIL_PREFERENCE_RESPONSE,
+      errors: [VALIDATION, UNAUTHORIZED, NEEDS_ADMIN, TEAM_PREFERENCE_403, { status: 404, when: 'No such user in your organization.' }],
     },
     {
       id: 'tenant-resend-invitation',
@@ -750,6 +815,7 @@ const GROUP_PLATFORM = {
         { status: 404, when: 'No organization has that tenantId.' },
         { status: 409, when: 'The organization is not ACTIVE (an invitation into it could never be linked).' },
         { status: 409, when: 'The email already has a record in that organization, or is a live account in another one or on the platform.' },
+        SEATS_FULL,
       ],
     },
     {
@@ -803,6 +869,7 @@ const GROUP_PLATFORM = {
         { status: 400, when: 'No reason when suspending or deactivating, or status INVITED.' },
         { status: 404, when: 'Not an administrator — a regular user or a Super Admin cannot be changed here.' },
         { status: 409, when: 'Already in that status; activating an invitation; suspending an invitation; or the organization\'s only active administrator without confirmNoActiveAdmin: true.' },
+        { ...SEATS_FULL, when: 'Reactivating a DEACTIVATED administrator while every user seat of the organization\'s plan is taken.' },
         { status: 502, when: 'Reactivating: Cognito could not re-enable the account. Nothing was changed.' },
       ],
       notes: 'After removing an organization\'s only active administrator, invite a replacement (Invite an administrator): that is its way back.',
@@ -1127,13 +1194,13 @@ function adminNotificationEndpoints({ prefix, base, access, scopeParams, needs, 
     {
       id: `${prefix}-status`,
       ...own,
-      name: 'Archive a notification',
+      name: 'Archive or restore a notification',
       method: 'PATCH',
       path: `${one}/status`,
-      summary: 'ARCHIVED only: it leaves every inbox and unread count, stays in the admin lists, and is never deleted or reactivated. Archiving twice changes nothing.',
+      summary: 'ARCHIVED: it leaves every inbox and unread count and cannot be edited, but stays in the admin lists and is never deleted. ACTIVE: restores an archived one exactly as it was (content, audience, recipients, read states), back in the inboxes — the organization must be ACTIVE. Repeating either changes nothing. Audited as NOTIFICATION_ARCHIVED / NOTIFICATION_RESTORED.',
       pathParams: params,
       requiredFields: ['status'],
-      fields: 'status ARCHIVED · reason ≤500 (to the audit trail)',
+      fields: 'status ARCHIVED (archive) · ACTIVE (restore) · reason ≤500 (to the audit trail)',
       body: `{
   "status": "ARCHIVED",
   "reason": "Superseded"
@@ -1142,9 +1209,10 @@ function adminNotificationEndpoints({ prefix, base, access, scopeParams, needs, 
       responseFields: NOTIFICATION_RESPONSE,
       errors: [
         VALIDATION, BAD_ENUM, UNAUTHORIZED, needs,
-        { status: 400, when: 'Any status but ARCHIVED.' },
-        ...(prefix.startsWith('tenant') ? [{ status: 403, when: 'A Super Admin sent it.' }] : []),
+        { status: 400, when: 'A status other than ARCHIVED or ACTIVE.' },
+        ...(prefix.startsWith('tenant') ? [{ status: 403, when: 'A Super Admin sent it (archive and restore alike).' }] : []),
         { status: 404, when: 'No such notification in this tenant.' },
+        { status: 409, when: 'Restoring while the organization is not ACTIVE.' },
       ],
     },
     {
@@ -1259,7 +1327,7 @@ const GROUP_TENANT_PLANS = {
       method: 'GET',
       path: '/api/tenant/plans',
       access: 'ADMIN',
-      summary: 'The plans this organization can see: every ACTIVE plan offered to customers (publiclyAvailable, or the default plan), and its own current plan whatever its status. Cheapest first.',
+      summary: 'Every plan in the database, ACTIVE ones first, then cheapest first. Only an ACTIVE plan other than the current one can be requested (selectable); the others are listed with their status.',
       successStatus: 200,
       responseFields: [`[ { ${TENANT_PLAN_RESPONSE.join(', ')} } ]`],
       notes: 'No platform data: no subscription counts, creators or sale windows. selectable is true for an ACTIVE plan that is not the current one. The organization\'s own subscription and its dates are My package.',
@@ -1271,11 +1339,11 @@ const GROUP_TENANT_PLANS = {
       method: 'GET',
       path: '/api/tenant/plans/{planId}',
       access: 'ADMIN',
-      summary: 'One plan of the catalogue.',
+      summary: 'One plan, as a Tenant Admin sees it.',
       pathParams: [PLAN_ID],
       successStatus: 200,
       responseFields: TENANT_PLAN_RESPONSE,
-      errors: [UNAUTHORIZED, NEEDS_ADMIN, { status: 404, when: 'Not in this organization\'s catalogue (not ACTIVE, not offered, or no such id).' }],
+      errors: [UNAUTHORIZED, NEEDS_ADMIN, { status: 404, when: 'No such plan.' }],
     },
     {
       id: 'tenant-plan-request',
@@ -1283,20 +1351,20 @@ const GROUP_TENANT_PLANS = {
       method: 'POST',
       path: '/api/tenant/plan-change-requests',
       access: 'ADMIN',
-      summary: 'Asks for this organization to move to another plan. Nothing changes until a Super Admin approves it — there is no billing or payment integration, so no change is applied on request. The Super Admins are emailed once the request is saved.',
+      summary: 'Asks for this organization to move to another plan. Nothing changes until a Super Admin approves it — there is no billing or payment integration, so no change is applied on request. The Super Admins see it under Change requests. Email Notifications — Coming Soon: the backend queues a Super Admin email in its outbox, but no sender is configured, so nothing is sent yet.',
       requiredFields: ['planId'],
-      fields: 'planId (from the catalogue, selectable) · reason ≤500. There is no tenant field: a tenantId sent is ignored.',
+      fields: 'planId (an ACTIVE plan from the catalogue) · reason ≤500. There is no tenant field: a tenantId sent is ignored.',
       body: `{
   "planId": "{{planId}}",
   "reason": "We are growing past the seat limit"
 }`,
       successStatus: 201,
       responseFields: REQUEST_RESPONSE,
-      notes: 'notification.status is the Super Admin email: SENT, PENDING (not sent yet — waiting for a retry, or for email to be configured) or FAILED. An email problem never affects the saved request.',
+      notes: 'notification.status is the queued Super Admin email\'s honest state: PENDING while email delivery is not configured (Coming Soon); once it is, SENT, PENDING (waiting for a retry) or FAILED. Email never affects the saved request.',
       errors: [
         VALIDATION, UNAUTHORIZED, NEEDS_ADMIN,
-        { status: 404, when: 'The plan is not in this organization\'s catalogue.' },
-        { status: 409, when: 'Already on that plan, or the organization already has an open request.' },
+        { status: 404, when: 'No such plan.' },
+        { status: 409, when: 'The plan is not ACTIVE, the organization is already on it, or it already has an open request.' },
       ],
     },
     {

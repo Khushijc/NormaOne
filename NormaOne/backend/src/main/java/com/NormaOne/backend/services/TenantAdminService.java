@@ -56,6 +56,7 @@ public class TenantAdminService {
     private final CognitoInvitationService cognitoInvitations;
     private final ModuleAssignmentService moduleAssignments;
     private final CognitoAccountAccessService cognitoAccess;
+    private final SeatService seatService;
 
     public TenantAdminService(
             CurrentUserService currentUserService,
@@ -65,8 +66,10 @@ public class TenantAdminService {
             AuditService auditService,
             CognitoInvitationService cognitoInvitations,
             ModuleAssignmentService moduleAssignments,
-            CognitoAccountAccessService cognitoAccess) {
+            CognitoAccountAccessService cognitoAccess,
+            SeatService seatService) {
         this.cognitoAccess = cognitoAccess;
+        this.seatService = seatService;
         this.moduleAssignments = moduleAssignments;
         this.currentUserService = currentUserService;
         this.userRepository = userRepository;
@@ -85,7 +88,7 @@ public class TenantAdminService {
 
     public TenantPackageResponse ownPackage(Jwt jwt) {
         CurrentUser admin = currentUserService.requireTenantAdmin(jwt);
-        return packageService.describe(admin.tenantId());
+        return packageService.describe(admin.tenantId()).withSeats(seatService.seatsOf(admin.tenantId()));
     }
 
     /**
@@ -143,19 +146,26 @@ public class TenantAdminService {
         } else {
             ModuleAssignmentService.applyDefaults(invitation, role, moduleScope(admin));
         }
-        user saved;
-        try {
-            saved = userRepository.insert(invitation);
-        } catch (DuplicateKeyException ex) {
-            throw new ConflictException("A user with this email already exists in your organization.");
-        }
-        InvitationInfo delivered = deliver(saved);
+        // The invitation takes a user seat: written (and delivered) only if one is free, under the seat lock.
+        Invited invited = seatService.withFreeSeat(admin.tenantId(), () -> {
+            user inserted;
+            try {
+                inserted = userRepository.insert(invitation);
+            } catch (DuplicateKeyException ex) {
+                throw new ConflictException("A user with this email already exists in your organization.");
+            }
+            return new Invited(inserted, deliver(inserted));
+        });
+        user saved = invited.saved();
+        InvitationInfo delivered = invited.delivered();
         auditService.record(admin, AuditAction.USER_INVITED, admin.tenantId(), "USER", saved.getId(),
                 AuditService.details("role", role.name(), "delivery", delivered.delivery(),
                         "modules", String.join(",", saved.getModuleAccess()),
                         "modulePermissions", String.join(",", saved.getModulePermissions())));
         return UserResponse.of(saved).withInvitation(delivered);
     }
+
+    private record Invited(user saved, InvitationInfo delivered) {}
 
     // ==================== MODULE ACCESS ====================
 
@@ -292,8 +302,13 @@ public class TenantAdminService {
             ensureAnotherActiveAdmin(admin.tenantId());
         }
         UserAdministration.applyStatus(target, request.status(), request.reason());
-        cognitoAccess.beforeSave(target, previous);
-        user saved = userRepository.save(target);
+        // Reactivating a DEACTIVATED account gives it a seat again: only if one is free.
+        java.util.function.Supplier<user> write = () -> {
+            cognitoAccess.beforeSave(target, previous);
+            return userRepository.save(target);
+        };
+        user saved = SeatService.takesASeat(previous, target.getStatus())
+                ? seatService.withFreeSeat(admin.tenantId(), write) : write.get();
         String identityProvider = cognitoAccess.afterSave(saved, previous);
         auditService.record(admin, AuditAction.USER_STATUS_CHANGED, admin.tenantId(), "USER", saved.getId(),
                 AuditService.details("from", String.valueOf(previous), "to", String.valueOf(saved.getStatus()),

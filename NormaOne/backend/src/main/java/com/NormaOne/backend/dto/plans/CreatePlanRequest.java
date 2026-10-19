@@ -65,7 +65,7 @@ public record CreatePlanRequest(
         @Positive(message = "Maximum employees must be positive")
         Long maxEmployees,
 
-        /** User-seat limit; omitted = no limit. Shown to Tenant Admins, not enforced at invitation yet. */
+        /** User-seat limit; omitted = no limit. Enforced at invitation and reactivation (SeatService). */
         @Positive(message = "User-seat limit must be positive")
         @Max(value = 1000000, message = "User-seat limit must not exceed 1000000")
         Integer maxUsers,

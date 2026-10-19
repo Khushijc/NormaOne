@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Plus, RefreshCw } from 'lucide-react'
 import { useApi, useApiState } from '../../api/apiContext.js'
 import { useRead } from '../../api/useRead.js'
+import { EmailDeliveryNote, EmailPreferenceToggle } from '../../components/EmailPreference.jsx'
 import EndpointTag from '../../components/EndpointTag.jsx'
 import { ModuleEditor } from '../../components/ModuleParts.jsx'
 import { defaultsFor, scopeOf } from '../../lib/modules.js'
@@ -54,7 +55,26 @@ export default function Users() {
           <span className="toolbar-spacer" />
           <EndpointTag id="tenant-list-users" name="The list, as filtered" query={query} />
         </div>
-        <UserTable read={read} detailPath={path} onPage={(page) => setFilters({ ...filters, page })} />
+        <UserTable
+          read={read}
+          detailPath={path}
+          onPage={(page) => setFilters({ ...filters, page })}
+          extraColumn={{
+            header: 'Email notifications',
+            // USER accounts only: an administrator sets their own preference in their own profile.
+            cell: (user) => (user.effectiveRole === 'USER' ? (
+              <EmailPreferenceToggle
+                key={`${user.id}-${user.emailNotificationsEnabled}`}
+                enabled={user.emailNotificationsEnabled}
+                endpointId="tenant-set-user-email-preference"
+                pathParams={{ userId: user.id }}
+                who={user.name || user.email}
+                compact
+              />
+            ) : <span className="muted" title="Administrators set their own preference">Own setting</span>),
+          }}
+        />
+        <EmailDeliveryNote />
       </Card>
 
       <Invite

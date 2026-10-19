@@ -15,8 +15,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * data (who created it, subscription counts, the default flag, the sale window).
  *
  * {@code current}: the organization is on this plan. {@code selectable}: it may be requested now
- * (ACTIVE and not the current one). The current plan is listed even when it is no longer ACTIVE, to
- * explain the existing subscription; {@code status} says so.
+ * (ACTIVE and not the current one). Every plan in the database is listed; {@code status} says which
+ * cannot be requested (DRAFT, INACTIVE, ARCHIVED).
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record TenantPlanResponse(

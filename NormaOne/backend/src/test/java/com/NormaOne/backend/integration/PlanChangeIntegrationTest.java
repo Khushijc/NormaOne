@@ -59,7 +59,8 @@ import com.NormaOne.backend.model.plans.enums.PlanHistoryEventType;
  *   sub-root     SUPER_ADMIN (sub-root@platform.example)
  *   alpha        sub-admin-a ADMIN (owner) · sub-uma USER
  *   bravo        sub-admin-b ADMIN (owner)
- * PRO is ACTIVE and offered to customers; HIDDEN is ACTIVE but not public; both tenants start on BASIC.
+ * PRO is ACTIVE and offered to customers; HIDDEN is ACTIVE but not marked public (Tenant Admins see and
+ * may request every ACTIVE plan all the same); both tenants start on BASIC.
  */
 class PlanChangeIntegrationTest extends IntegrationTestBase {
 
@@ -225,14 +226,18 @@ class PlanChangeIntegrationTest extends IntegrationTestBase {
     // ==================== 3. the Tenant Admin's catalogue ====================
 
     @Test
-    void aTenantAdminSeesTheOfferedPlansAndTheirOwnButNoPlatformData() throws Exception {
+    void aTenantAdminSeesEveryPlanButCanRequestOnlyActiveOnesAndNoPlatformData() throws Exception {
         String draft = createPlan(planBody("DRAFTY", "\"publiclyAvailable\":true"));
         mvc.perform(get("/api/tenant/plans").with(as("sub-admin-a")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[*].planCode", hasItem("BASIC")))
-                .andExpect(jsonPath("$[*].planCode", hasItem("PRO")))
-                .andExpect(jsonPath("$[*].planCode", not(hasItem("HIDDEN"))))
-                .andExpect(jsonPath("$[*].planCode", not(hasItem("DRAFTY"))))
+                // Every plan in the database, whatever its status or public flag…
+                .andExpect(jsonPath("$", hasSize(4)))
+                .andExpect(jsonPath("$[*].planCode", org.hamcrest.Matchers.containsInAnyOrder("BASIC", "PRO", "HIDDEN", "DRAFTY")))
+                // …ACTIVE ones first; only an ACTIVE plan other than the current one can be requested.
+                .andExpect(jsonPath("$[3].planCode").value("DRAFTY"))
+                .andExpect(jsonPath("$[?(@.planCode=='HIDDEN')].selectable", hasItem(true)))
+                .andExpect(jsonPath("$[?(@.planCode=='DRAFTY')].status", hasItem("DRAFT")))
+                .andExpect(jsonPath("$[?(@.planCode=='DRAFTY')].selectable", hasItem(false)))
                 .andExpect(jsonPath("$[?(@.planCode=='BASIC')].current", hasItem(true)))
                 .andExpect(jsonPath("$[?(@.planCode=='BASIC')].selectable", hasItem(false)))
                 .andExpect(jsonPath("$[?(@.planCode=='PRO')].selectable", hasItem(true)))
@@ -245,8 +250,14 @@ class PlanChangeIntegrationTest extends IntegrationTestBase {
                 .andExpect(jsonPath("$[0].defaultPlan").doesNotExist())
                 .andExpect(jsonPath("$[0].publiclyAvailable").doesNotExist());
         mvc.perform(get("/api/tenant/plans/" + proId).with(as("sub-admin-a"))).andExpect(jsonPath("$.planCode").value("PRO"));
-        mvc.perform(get("/api/tenant/plans/" + hiddenId).with(as("sub-admin-a"))).andExpect(status().isNotFound());
-        mvc.perform(get("/api/tenant/plans/" + draft).with(as("sub-admin-a"))).andExpect(status().isNotFound());
+        mvc.perform(get("/api/tenant/plans/" + hiddenId).with(as("sub-admin-a"))).andExpect(jsonPath("$.selectable").value(true));
+        mvc.perform(get("/api/tenant/plans/" + draft).with(as("sub-admin-a")))
+                .andExpect(jsonPath("$.status").value("DRAFT")).andExpect(jsonPath("$.selectable").value(false));
+        mvc.perform(get("/api/tenant/plans/000000000000000000000000").with(as("sub-admin-a"))).andExpect(status().isNotFound());
+        // A plan that is not ACTIVE cannot be requested.
+        mvc.perform(jsonBody(post("/api/tenant/plan-change-requests").with(as("sub-admin-a")), "{\"planId\":\"" + draft + "\"}"))
+                .andExpect(status().isConflict()).andExpect(jsonPath("$.message", containsString("ACTIVE")));
+        assertEquals(0, mongo.count(new Query(), PlanChangeRequest.class));
         // The organization's own subscription, with its dates — and only its own.
         mvc.perform(get("/api/tenant/package").with(as("sub-admin-a")))
                 .andExpect(jsonPath("$.tenantId").value(tenantA))
@@ -298,7 +309,7 @@ class PlanChangeIntegrationTest extends IntegrationTestBase {
         mvc.perform(post("/api/tenant/plan-change-requests/" + id + "/cancel").with(as("sub-admin-b"))).andExpect(status().isNotFound());
         mvc.perform(get("/api/tenant/plan-change-requests").with(as("sub-admin-a"))).andExpect(jsonPath("$.totalElements").value(1));
 
-        // One open request at a time; not the current plan; not a plan tenants cannot see.
+        // One open request at a time; not the current plan; only an ACTIVE plan; a plan id that exists.
         mvc.perform(jsonBody(post("/api/tenant/plan-change-requests").with(as("sub-admin-a")), "{\"planId\":\"" + proId + "\"}"))
                 .andExpect(status().isConflict());
         mvc.perform(post("/api/tenant/plan-change-requests/" + id + "/cancel").with(as("sub-admin-a")))
@@ -308,7 +319,10 @@ class PlanChangeIntegrationTest extends IntegrationTestBase {
                 "$.plan.planId");
         mvc.perform(jsonBody(post("/api/tenant/plan-change-requests").with(as("sub-admin-a")), "{\"planId\":\"" + basicId + "\"}"))
                 .andExpect(status().isConflict());
+        setStatus(hiddenId, "INACTIVE");
         mvc.perform(jsonBody(post("/api/tenant/plan-change-requests").with(as("sub-admin-a")), "{\"planId\":\"" + hiddenId + "\"}"))
+                .andExpect(status().isConflict());
+        mvc.perform(jsonBody(post("/api/tenant/plan-change-requests").with(as("sub-admin-a")), "{\"planId\":\"000000000000000000000000\"}"))
                 .andExpect(status().isNotFound());
         mvc.perform(jsonBody(post("/api/tenant/plan-change-requests").with(as("sub-admin-a")), "{}")).andExpect(status().isBadRequest());
         assertEquals(1, history(PlanHistoryEventType.PLAN_CHANGE_CANCELLED, tenantA));
@@ -334,17 +348,23 @@ class PlanChangeIntegrationTest extends IntegrationTestBase {
                 .andExpect(jsonPath("$.notification.status").value("SENT"))
                 .andReturn().getResponse().getContentAsString();
         String id = json(body, "$.id");
+        // Every detail of the request: organization, requester, both plans with their terms, time, status, reason.
         verify(emailSender, times(1)).send(argThat(to -> to.contains(ROOT + "@platform.example")),
                 contains("Org alpha"), argThat(text -> text.contains("admin@a.test") && text.contains("Plan PRO") && text.contains("PENDING")
-                        && text.contains(tenantA) && text.contains(id)));
+                        && text.contains(tenantA) && text.contains(id) && text.contains("Subdomain: alpha")
+                        && text.contains("Price: 49.90 EUR / MONTHLY") && text.contains("Price: 0.00 EUR / MONTHLY")
+                        && text.contains("Duration: 12 months") && text.contains("User seats: 25")
+                        && text.contains("Modules: FACTURAFLOW, JORNADAPULSE") && text.contains("Requested at:")
+                        && text.contains("Role: ADMIN")));
         OutboundEmail email = mongo.findOne(new Query(Criteria.where("referenceId").is(id)), OutboundEmail.class);
         assertEquals(OutboundEmailStatus.SENT, email.getStatus());
 
         // A request that is refused (another one is open) is not saved and not announced.
         mvc.perform(jsonBody(post("/api/tenant/plan-change-requests").with(as("sub-admin-a")), "{\"planId\":\"" + proId + "\"}"))
                 .andExpect(status().isConflict());
-        mvc.perform(jsonBody(post("/api/tenant/plan-change-requests").with(as("sub-admin-b")), "{\"planId\":\"" + hiddenId + "\"}"))
-                .andExpect(status().isNotFound());
+        String draft = createPlan(planBody("DRAFTY", ""));
+        mvc.perform(jsonBody(post("/api/tenant/plan-change-requests").with(as("sub-admin-b")), "{\"planId\":\"" + draft + "\"}"))
+                .andExpect(status().isConflict());
         verify(emailSender, times(1)).send(anyList(), anyString(), anyString());
         assertEquals(1, mongo.count(new Query(), OutboundEmail.class));
     }
@@ -496,8 +516,10 @@ class PlanChangeIntegrationTest extends IntegrationTestBase {
                 .andExpect(jsonPath("$[?(@.planCode=='PRO')].status", hasItem("INACTIVE")))
                 .andExpect(jsonPath("$[?(@.planCode=='PRO')].current", hasItem(true)))
                 .andExpect(jsonPath("$[?(@.planCode=='PRO')].selectable", hasItem(false)));
+        // Another organization sees it too, as INACTIVE: listed, not requestable.
         mvc.perform(get("/api/tenant/plans").with(as("sub-admin-b")))
-                .andExpect(jsonPath("$[*].planCode", not(hasItem("PRO"))));
+                .andExpect(jsonPath("$[?(@.planCode=='PRO')].current", hasItem(false)))
+                .andExpect(jsonPath("$[?(@.planCode=='PRO')].selectable", hasItem(false)));
         assertEquals(subscriptionHistory, mongo.count(new Query(Criteria.where("tenantId").is(tenantA)), SubscriptionHistory.class));
         assertEquals(planHistory + 1, mongo.count(new Query(), PlanHistoryEntry.class));
         assertTrue(mongo.exists(new Query(Criteria.where("id").is(proId)), com.NormaOne.backend.model.plans.PlanDefinition.class));

@@ -119,8 +119,9 @@ function ScopeNotice({ catalogue, scope }) {
   if (held === 0) {
     return (
       <p className="banner" data-tone="warn">
-        You hold no module permission yourself, so you cannot give any: an administrator gives only the module permissions
-        they hold. A Super Admin can assign yours (Super Admin › Administrators › your account › Modules).
+        You hold no module permission yourself, so you cannot give or remove any here: an administrator grants only the
+        module permissions they hold. Your own modules must be assigned first — by a Super Admin (Super admin › Administrators ›
+        your account › Modules), or by another administrator of your organization who holds them.
       </p>
     )
   }
@@ -217,10 +218,18 @@ function EditAssignment({ access, catalogue, endpoints, pathParams, scope, locke
     <div className="stack" style={{ gap: 12 }}>
       <p className="muted">
         {access.assignedAt ? `Last assigned ${new Date(access.assignedAt).toLocaleString()}.` : 'Never assigned.'}{' '}
-        {access.active
-          ? `The account is active: ${access.effectiveModules.length} of ${access.assignedModules.length} assigned modules are available, with ${access.effectivePermissions.length} module permissions.`
-          : 'The account cannot use modules now: it is not active, or its organization is not ACTIVE.'}
+        {!access.active
+          ? 'The account cannot use modules now: it is not active, or its organization is not ACTIVE.'
+          : access.assignedModules.length === 0
+            ? 'No module is assigned to this account yet, so it has no module permission.'
+            : `The account is active: ${access.effectiveModules.length} of ${access.assignedModules.length} assigned modules are available, with ${access.effectivePermissions.length} module permissions.`}
       </p>
+      {!access.assignedAt && access.assignedModules.length === 0 ? (
+        <p className="banner">
+          This account was created before modules were assigned by default, and nobody has assigned any since.
+          Tick the modules and permissions below and save to assign them.
+        </p>
+      ) : null}
       {locked ? <p className="banner" data-tone="warn">{lockedReason}</p> : null}
       {refusal.message ? <p className="banner" data-tone="bad">{refusal.message}</p> : null}
       <ModuleEditor

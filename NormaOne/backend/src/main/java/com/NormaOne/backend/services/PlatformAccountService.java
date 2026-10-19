@@ -69,6 +69,7 @@ public class PlatformAccountService {
     private final CognitoInvitationService cognitoInvitations;
     private final CognitoAccountAccessService cognitoAccess;
     private final MongoTemplate mongoTemplate;
+    private final ResourceLockService locks;
 
     public PlatformAccountService(
             CurrentUserService currentUserService,
@@ -78,7 +79,9 @@ public class PlatformAccountService {
             AuditService auditService,
             CognitoInvitationService cognitoInvitations,
             CognitoAccountAccessService cognitoAccess,
-            MongoTemplate mongoTemplate) {
+            MongoTemplate mongoTemplate,
+            ResourceLockService locks) {
+        this.locks = locks;
         this.cognitoAccess = cognitoAccess;
         this.mongoTemplate = mongoTemplate;
         this.currentUserService = currentUserService;
@@ -176,15 +179,29 @@ public class PlatformAccountService {
      * (CognitoAccountAccessService), and reactivating re-enables it.
      *
      * The platform always keeps an active Super Admin: nobody changes their own status, the last
-     * active one cannot be suspended or deactivated (409), and if two Super Admins remove each other
-     * at the same moment the second change is undone when it finds none left.
+     * active one cannot be suspended or deactivated (409), and these changes run one at a time under a
+     * platform-wide lock (ResourceLockService), re-checking that the actor is still an active Super
+     * Admin — so two Super Admins removing each other at once can never leave none.
      */
     public SuperAdminResponse changeSuperAdminStatus(Jwt jwt, String id, UserStatusRequest request) {
         CurrentUser actor = currentUserService.requireSuperAdmin(jwt);
-        user target = findSuperAdmin(id);
-        if (target.getId().equals(actor.userId())) {
+        if (id.equals(actor.userId())) {
             throw new ForbiddenOperationException("You cannot change your own status.");
         }
+        // Super Admin status changes run one at a time, platform-wide, so "is another Super Admin
+        // still active?" cannot be answered by two removals at once.
+        return locks.withLock("super-admins", () -> changeSuperAdminStatusLocked(actor, id, request));
+    }
+
+    private SuperAdminResponse changeSuperAdminStatusLocked(CurrentUser actor, String id, UserStatusRequest request) {
+        // Re-read under the lock: an actor removed a moment ago (by a request that held the lock
+        // first) no longer acts, even though their request was authenticated before that.
+        boolean actorStillActive = userRepository.findById(actor.userId())
+                .filter(u -> u.getStatus() == UserStatus.ACTIVE && UserAdministration.isPlatformSuperAdmin(u)).isPresent();
+        if (!actorStillActive) {
+            throw new ForbiddenOperationException("Your Super Admin access was removed while this request was in progress.");
+        }
+        user target = findSuperAdmin(id);
         UserStatus previous = target.getStatus();
         boolean removing = previous == UserStatus.ACTIVE && request.status() != UserStatus.ACTIVE;
         if (removing && activeSuperAdmins() <= 1) {
@@ -195,7 +212,7 @@ public class PlatformAccountService {
         cognitoAccess.beforeSave(target, previous);
         user saved = userRepository.save(target);
         if (removing && activeSuperAdmins() == 0) {
-            // Another Super Admin was removed concurrently: put this one back.
+            // Defence in depth (the lock already serializes these changes): never leave none.
             saved.setStatus(before.getStatus());
             saved.setDeactivatedAt(before.getDeactivatedAt());
             saved.setStatusReason(before.getStatusReason());

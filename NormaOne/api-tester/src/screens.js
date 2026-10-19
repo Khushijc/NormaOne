@@ -83,7 +83,8 @@ export const SURFACES = [
         icon: UserRound,
         submodules: [
           // Who am I, onboarding status, and the module catalogue the profile's modules are read against.
-          { id: 'profile', label: 'Profile & status', endpoints: 3, group: 'Account', screen: Me },
+          // Who am I, onboarding status, the module catalogue, and the own email preference (read, set).
+          { id: 'profile', label: 'Profile & status', endpoints: 5, group: 'Account', screen: Me },
           { id: 'onboarding', label: 'Onboarding', endpoints: 1, group: 'Account', screen: Onboarding },
         ],
       },
@@ -140,9 +141,9 @@ export const SURFACES = [
           {
             id: 'users',
             label: 'Users',
-            // Two here (list, invite) and eight on a user's own page (open, update, status, resend, and
-            // read, set, set one, revoke one module).
-            endpoints: 10,
+            // Two here (list, invite) and ten on a user's own page (open, update, status, resend, read,
+            // set, set one, revoke one module, and read and set the email preference).
+            endpoints: 12,
             group: 'Tenant admin',
             screen: TenantUsers,
             detail: { param: 'userId', screen: TenantUserDetail },

@@ -2,7 +2,9 @@ import { Fragment } from 'react'
 import { Facts, Pager, Problem, StatusBadge } from './Screen.jsx'
 import { Badge, Empty, Field, Input, TextArea } from './ui/Kit.jsx'
 import Select from './ui/Select.jsx'
+import { EmailComingSoon } from './ComingSoon.jsx'
 import { BILLING_CYCLES, PLAN_MODULES } from '../config/enums.js'
+import { EMAIL_DELIVERY_AVAILABLE } from '../config/features.js'
 import { when } from '../lib/forms.js'
 import { money, planLabel } from '../lib/plans.js'
 
@@ -73,7 +75,7 @@ export function PlanFields({ form, onChange, refusal, codeLocked, termsLocked })
         <Field label="Duration (months)" hint="Committed term, 1–120. Empty = rolling." error={errors.durationMonths}>
           <Input type="number" min="1" max="120" value={form.durationMonths} disabled={termsLocked} error={errors.durationMonths} onChange={set('durationMonths')} />
         </Field>
-        <Field label="User seats" hint="Seat limit. Empty = no limit. Shown to Tenant Admins; not enforced at invitation yet." error={errors.maxUsers}>
+        <Field label="User seats" hint="Seat limit. Empty = no limit. Active, suspended and invited accounts take a seat; a full plan refuses new invitations and reactivations." error={errors.maxUsers}>
           <Input type="number" min="1" value={form.maxUsers} disabled={termsLocked} error={errors.maxUsers} onChange={set('maxUsers')} />
         </Field>
         <Field label="Max employees" required error={errors.maxEmployees}>
@@ -172,9 +174,11 @@ export function RequestFacts({ request, platform }) {
       ['Decided', request.decidedAt ? `${when(request.decidedAt)} by ${request.decidedByRole ?? ''} ${request.decidedBy ?? ''}` : null],
       ['Decision note', request.decisionNote, true],
       ['Applied subscription', request.appliedSubscriptionId && <span key="a" className="mono">{request.appliedSubscriptionId}</span>],
-      ['Super Admin email', mail ? <span key="m"><StatusBadge status={mail.status} />{mail.sentAt ? ` ${when(mail.sentAt)}` : ''}</span> : 'not recorded'],
-      platform && mail?.attempts != null ? ['Email attempts', mail.attempts] : null,
-      platform && mail?.lastError ? ['Email last error', <span key="e" className="mono">{mail.lastError}</span>, true] : null,
+      // Until email delivery is configured nothing is emailed: say so, rather than show the outbox's PENDING.
+      !EMAIL_DELIVERY_AVAILABLE ? ['Super Admin email', <EmailComingSoon key="m" />]
+        : ['Super Admin email', mail ? <span key="m"><StatusBadge status={mail.status} />{mail.sentAt ? ` ${when(mail.sentAt)}` : ''}</span> : 'not recorded'],
+      EMAIL_DELIVERY_AVAILABLE && platform && mail?.attempts != null ? ['Email attempts', mail.attempts] : null,
+      EMAIL_DELIVERY_AVAILABLE && platform && mail?.lastError ? ['Email last error', <span key="e" className="mono">{mail.lastError}</span>, true] : null,
       ['Request id', <span key="i" className="mono">{request.id}</span>],
     ]} />
   )

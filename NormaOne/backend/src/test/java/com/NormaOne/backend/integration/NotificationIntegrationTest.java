@@ -448,8 +448,9 @@ class NotificationIntegrationTest extends NotificationTestBase {
         mvc.perform(get("/api/tenant/notifications?status=ACTIVE").with(as(ADMIN_A))).andExpect(jsonPath("$.totalElements").value(0));
         mvc.perform(get("/api/tenant/notifications").with(as(ADMIN_A))).andExpect(jsonPath("$.totalElements").value(2));
 
-        // Not reactivated, not edited; archiving again changes nothing.
-        patchJson("/api/tenant/notifications/" + note + "/status", ADMIN_A, "{\"status\":\"ACTIVE\"}").andExpect(status().isBadRequest());
+        // Never deleted, not edited while archived; archiving again changes nothing. (Restoring is
+        // NotificationRestoreIntegrationTest.)
+        patchJson("/api/tenant/notifications/" + note + "/status", ADMIN_A, "{\"status\":\"DELETED\"}").andExpect(status().isBadRequest());
         patchJson("/api/tenant/notifications/" + note, ADMIN_A, "{\"subject\":\"Edited\"}").andExpect(status().isConflict());
         patchJson("/api/tenant/notifications/" + note + "/status", ADMIN_A, "{\"status\":\"ARCHIVED\"}").andExpect(status().isOk());
         assertEquals(2, mongo.count(new Query(Criteria.where("action").is(AuditAction.NOTIFICATION_ARCHIVED)), AuditEvent.class));

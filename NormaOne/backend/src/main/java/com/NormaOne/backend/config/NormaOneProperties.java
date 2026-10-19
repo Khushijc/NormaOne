@@ -49,13 +49,25 @@ public class NormaOneProperties {
     }
 
     /**
-     * Outbound email (EmailOutboxService). Delivery needs an SMTP server (spring.mail.host, and
-     * spring.mail.username / password when it requires them) and a sender address here; until both
-     * exist, emails wait in the outbox as PENDING and nothing else is affected.
+     * Outbound email (EmailOutboxService, EmailSender). SES (the default) sends through Amazon SES with
+     * the same AWS credentials as Cognito; SMTP sends through spring.mail.*. Either way a sender
+     * address is required here; until there is one, emails wait in the outbox as PENDING and nothing
+     * else is affected.
      */
     @Data
     public static class Email {
-        /** Sender address (From). Blank = email delivery off. */
+        public enum Provider { SES, SMTP }
+
+        /** How email leaves the application. */
+        private Provider provider = Provider.SES;
+
+        /** SES region; blank = aws.region (the Cognito user pool's). */
+        private String sesRegion;
+
+        /**
+         * Sender address (From). With SES it must be a verified identity (the address or its domain)
+         * in that region. Blank = email delivery off.
+         */
         private String from;
 
         /**

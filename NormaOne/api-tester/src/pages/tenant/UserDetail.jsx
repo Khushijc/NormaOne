@@ -3,6 +3,7 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import { ChevronLeft, RefreshCw } from 'lucide-react'
 import { useApi, useApiState } from '../../api/apiContext.js'
 import { useRead } from '../../api/useRead.js'
+import { EmailDeliveryNote, EmailPreferenceToggle } from '../../components/EmailPreference.jsx'
 import EndpointTag from '../../components/EndpointTag.jsx'
 import { ModuleAccessEditor } from '../../components/ModuleParts.jsx'
 import { scopeOf } from '../../lib/modules.js'
@@ -83,9 +84,19 @@ export default function UserDetail() {
               pathParams={{ userId }}
               scope={scopeOf(account.me)}
               locked={yourself}
-              lockedReason="This is your own account: your module access is changed by another administrator, never by yourself."
+              lockedReason="This is your own account, and nobody changes their own module access. A Super Admin assigns it (Super admin › Administrators › your account › Modules), or another administrator of your organization within the permissions they hold."
               endpoints={{ setAll: 'tenant-set-user-modules', setOne: 'tenant-set-user-module', revokeOne: 'tenant-revoke-user-module' }}
             />
+          </Card>
+          <Card
+            title={`Email notifications — ${user.name || user.email}`}
+            description={user.effectiveRole === 'USER'
+              ? `Whether ${user.name || user.email} receives notifications by email as well. Their in-app notifications are not affected.`
+              : 'An administrator sets their own email preference, in their own profile; it is not managed here.'}
+          >
+            {user.effectiveRole === 'USER' ? <TeamEmailPreference user={user} onSaved={read.reload} /> : (
+              <p className="muted" style={{ margin: 0 }}>{yourself ? 'This is your account: change it under Account › Profile.' : 'Not managed by other administrators.'}</p>
+            )}
           </Card>
           <Card title="Status" description="Suspend or deactivate needs a reason. Not your own account.">
             <StatusChange
@@ -138,6 +149,33 @@ function EditUser({ user, onDone }) {
         <EndpointTag id="tenant-update-user" name="Update" look="primary" pathParams={pathParams} />
         <span className="muted mono">{Object.keys(body).length ? JSON.stringify(body) : 'nothing changed'}</span>
       </div>
+    </div>
+  )
+}
+
+/** A USER's email-notification preference, as their administrator manages it (read from the backend). */
+function TeamEmailPreference({ user, onSaved }) {
+  const pathParams = { userId: user.id }
+  const read = useRead('tenant-user-email-preference', { pathParams, label: 'A user\'s email preference' })
+  const pref = read.data
+  if (read.result && !read.result.ok) return <Problem result={read.result} onRetry={read.reload} />
+  if (!pref) return <Empty title="Reading the preference…" />
+  return (
+    <div className="stack" style={{ gap: 10 }}>
+      <div className="toolbar">
+        <EmailPreferenceToggle
+          key={String(pref.emailNotificationsEnabled)}
+          enabled={pref.emailNotificationsEnabled}
+          endpointId="tenant-set-user-email-preference"
+          pathParams={pathParams}
+          who={user.name || user.email}
+          onSaved={() => { read.reload(); onSaved?.() }}
+        />
+        <span className="toolbar-spacer" />
+        <EndpointTag id="tenant-user-email-preference" name="Read" pathParams={pathParams} />
+      </div>
+      {!pref.explicit ? <p className="muted" style={{ margin: 0 }}>Never changed: email notifications are on by default.</p> : null}
+      <EmailDeliveryNote />
     </div>
   )
 }

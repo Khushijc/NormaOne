@@ -78,6 +78,7 @@ public class SuperAdminAccountService {
     private final CognitoInvitationService cognitoInvitations;
     private final ModuleAssignmentService moduleAssignments;
     private final CognitoAccountAccessService cognitoAccess;
+    private final SeatService seatService;
 
     public SuperAdminAccountService(
             CurrentUserService currentUserService,
@@ -88,8 +89,10 @@ public class SuperAdminAccountService {
             MongoTemplate mongoTemplate,
             CognitoInvitationService cognitoInvitations,
             ModuleAssignmentService moduleAssignments,
-            CognitoAccountAccessService cognitoAccess) {
+            CognitoAccountAccessService cognitoAccess,
+            SeatService seatService) {
         this.cognitoAccess = cognitoAccess;
+        this.seatService = seatService;
         this.currentUserService = currentUserService;
         this.userRepository = userRepository;
         this.tenantRepository = tenantRepository;
@@ -166,25 +169,31 @@ public class SuperAdminAccountService {
         } else {
             ModuleAssignmentService.applyDefaults(invitation, UserRole.ADMIN, null);
         }
-        user saved;
-        try {
-            saved = userRepository.insert(invitation);
-        } catch (DuplicateKeyException race) {
-            throw new ConflictException("An account with this email already exists in this organization.");
-        }
-        InvitationInfo delivered;
-        try {
-            delivered = cognitoInvitations.invite(saved.getEmail(), saved.getName());
-        } catch (InvitationDeliveryException ex) {
-            userRepository.deleteById(saved.getId());
-            throw ex;
-        }
+        // An administrator takes one of the organization's user seats too: only if one is free.
+        Invited invited = seatService.withFreeSeat(tenant.getId(), () -> {
+            user inserted;
+            try {
+                inserted = userRepository.insert(invitation);
+            } catch (DuplicateKeyException race) {
+                throw new ConflictException("An account with this email already exists in this organization.");
+            }
+            try {
+                return new Invited(inserted, cognitoInvitations.invite(inserted.getEmail(), inserted.getName()));
+            } catch (InvitationDeliveryException ex) {
+                userRepository.deleteById(inserted.getId());
+                throw ex;
+            }
+        });
+        user saved = invited.saved();
+        InvitationInfo delivered = invited.delivered();
         auditService.record(actor, AuditAction.USER_INVITED, tenant.getId(), "USER", saved.getId(),
                 AuditService.details("role", UserRole.ADMIN.name(), "by", "SUPER_ADMIN", "delivery", delivered.delivery(),
                         "modules", String.join(",", saved.getModuleAccess()),
                         "modulePermissions", String.join(",", saved.getModulePermissions())));
         return AdminResponse.of(saved, tenant).withInvitation(delivered);
     }
+
+    private record Invited(user saved, InvitationInfo delivered) {}
 
     // ==================== MODULE ACCESS ====================
 
@@ -279,8 +288,13 @@ public class SuperAdminAccountService {
                     + ". Invite or reactivate another administrator first, or confirm with confirmNoActiveAdmin: true "
                     + "(then invite a replacement with POST /api/super-admin/admins).");
         }
-        cognitoAccess.beforeSave(admin, previous);
-        user saved = userRepository.save(admin);
+        java.util.function.Supplier<user> write = () -> {
+            cognitoAccess.beforeSave(admin, previous);
+            return userRepository.save(admin);
+        };
+        // Reactivating a DEACTIVATED administrator gives them a seat again: only if one is free.
+        user saved = SeatService.takesASeat(previous, admin.getStatus())
+                ? seatService.withFreeSeat(admin.getTenantId(), write) : write.get();
         String identityProvider = cognitoAccess.afterSave(saved, previous);
         auditService.record(actor, AuditAction.USER_STATUS_CHANGED, saved.getTenantId(), "USER", saved.getId(),
                 AuditService.details("from", String.valueOf(previous), "to", String.valueOf(saved.getStatus()),

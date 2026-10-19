@@ -90,6 +90,7 @@ public class NotificationService {
     private final MongoTemplate mongo;
     private final NormaOneProperties properties;
     private final UserAdministration userAdministration;
+    private final NotificationEmailService notificationEmails;
 
     public NotificationService(
             CurrentUserService currentUserService,
@@ -101,7 +102,9 @@ public class NotificationService {
             AuditService auditService,
             MongoTemplate mongo,
             NormaOneProperties properties,
-            UserAdministration userAdministration) {
+            UserAdministration userAdministration,
+            NotificationEmailService notificationEmails) {
+        this.notificationEmails = notificationEmails;
         this.userAdministration = userAdministration;
         this.currentUserService = currentUserService;
         this.tenantRepository = tenantRepository;
@@ -163,6 +166,8 @@ public class NotificationService {
                 AuditService.details("audience", saved.getAudience().name(),
                         "recipientCount", String.valueOf(recipients.size()),
                         "attachment", attachment != null ? "yes" : "no"));
+        // In-app delivery is done; email copies follow each recipient's preference (none while email is not configured).
+        notificationEmails.queueFor(saved, scope.tenant() != null ? scope.tenant().getTenantName() : null);
         return detail(saved);
     }
 
@@ -329,9 +334,11 @@ public class NotificationService {
      * is not deleted. Archived notifications are not reactivated. Archiving twice changes nothing.
      */
     public NotificationResponse changeStatus(NotificationScope scope, String id, NotificationStatusRequest request) {
+        if (request.status() == RecordState.ACTIVE) {
+            return restore(scope, id, request);
+        }
         if (request.status() != RecordState.ARCHIVED) {
-            throw new IllegalArgumentException(
-                    "A notification can only be archived (status ARCHIVED); an archived notification is not reactivated.");
+            throw new IllegalArgumentException("Status must be ARCHIVED (archive) or ACTIVE (restore an archived notification).");
         }
         Notification n = find(scope, id);
         requireOwner(scope, n);
@@ -348,6 +355,34 @@ public class NotificationService {
             String reason = request.reason() == null || request.reason().isBlank() ? null : request.reason().strip();
             auditService.record(scope.actor(), AuditAction.NOTIFICATION_ARCHIVED, scope.tenantId(), TARGET, n.getId(),
                     AuditService.details("audience", n.getAudience().name(), "reason", reason));
+        }
+        return detail(find(scope, id));
+    }
+
+    /**
+     * Restores an archived notification: it becomes ACTIVE again, back in its recipients' inboxes and
+     * unread counts, and editable. Only its state changes — subject, body, audience, recipients, every
+     * read state and receipt, the attachment and the audit trail are kept as they were. The same people
+     * who may archive it may restore it (a Tenant Admin: notifications an ADMIN sent; a Super Admin: any
+     * in the tenant), and the organization must be ACTIVE. Restoring an ACTIVE notification changes nothing.
+     */
+    private NotificationResponse restore(NotificationScope scope, String id, NotificationStatusRequest request) {
+        requireActiveTenant(scope);
+        Notification n = find(scope, id);
+        requireOwner(scope, n);
+        if (n.getRecordState() == RecordState.ACTIVE) {
+            return detail(n);
+        }
+        Instant now = Instant.now();
+        UpdateResult result = mongo.updateFirst(
+                new Query(Criteria.where("id").is(n.getId()).and("tenantId").is(scope.tenantId()).and("recordState").is(RecordState.ARCHIVED)),
+                new Update().set("recordState", RecordState.ACTIVE).unset("archivedAt").set("updatedAt", now)
+                        .set("updatedByDocsId", scope.actor().userId()),
+                Notification.class);
+        if (result.getModifiedCount() == 1) {
+            String reason = request.reason() == null || request.reason().isBlank() ? null : request.reason().strip();
+            auditService.record(scope.actor(), AuditAction.NOTIFICATION_RESTORED, scope.tenantId(), TARGET, n.getId(),
+                    AuditService.details("audience", n.getAudience().name(), "archivedAt", String.valueOf(n.getArchivedAt()), "reason", reason));
         }
         return detail(find(scope, id));
     }

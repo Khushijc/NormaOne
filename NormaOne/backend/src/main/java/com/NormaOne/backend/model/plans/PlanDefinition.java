@@ -180,7 +180,8 @@ public class PlanDefinition extends AuditedDocument {
 
     /**
      * User-seat limit: the most user accounts an organization on this plan is meant to hold. Null means
-     * no limit. Shown to Super Admins and Tenant Admins; not enforced at invitation yet.
+     * no limit. Enforced by SeatService: ACTIVE, INVITED and SUSPENDED accounts take a seat, and an
+     * invitation or a reactivation needs a free one.
      */
     @Positive
     private Integer maxUsers;

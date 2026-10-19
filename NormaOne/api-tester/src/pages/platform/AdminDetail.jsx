@@ -75,7 +75,7 @@ export default function AdminDetail() {
           </Card>
           <Card
             title="Modules"
-            description="The application modules assigned to this administrator and the permissions inside each — the only permissions there are. Administering their organization follows from the ADMIN role."
+            description="The application modules assigned to this administrator and the permissions inside each — the only permissions there are. The administrator can grant their organization's users only the module permissions assigned here; they cannot change their own. Administering their organization follows from the ADMIN role."
             action={<EndpointTag id="sa-admin-modules" name="Read" pathParams={{ adminId }} />}
           >
             <ModuleAccessEditor

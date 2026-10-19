@@ -2,12 +2,14 @@ import { useState } from 'react'
 import { RefreshCw } from 'lucide-react'
 import { useApi } from '../../api/apiContext.js'
 import { useRead } from '../../api/useRead.js'
+import { EmailComingSoon } from '../../components/ComingSoon.jsx'
 import ConfirmDialog from '../../components/ConfirmDialog.jsx'
 import EndpointTag from '../../components/EndpointTag.jsx'
 import PackageFacts from '../../components/PackageFacts.jsx'
 import { PlanTerms, RequestFacts } from '../../components/PlanParts.jsx'
 import { NoToken, Pager, Problem, Raw, StatusBadge } from '../../components/Screen.jsx'
 import { Badge, Button, Card, Empty, Field, Modal, TextArea } from '../../components/ui/Kit.jsx'
+import { EMAIL_DELIVERY_AVAILABLE } from '../../config/features.js'
 import { refusalOf, when } from '../../lib/forms.js'
 import { money, planLabel } from '../../lib/plans.js'
 
@@ -48,10 +50,13 @@ export default function TenantPlans() {
       </div>
 
       {justSent ? (
-        <p className="banner" data-tone="good">
-          Request sent for {justSent.requestedPlan?.name}: it is PENDING until a Super Admin approves it. No payment has been taken.
-          {justSent.notification ? ` Super Admin email: ${justSent.notification.status}.` : ''}
-        </p>
+        <div className="banner" data-tone="good">
+          <span>
+            Request sent for {justSent.requestedPlan?.name}: it is PENDING until a Super Admin approves it here in the application. No payment has been taken.
+            {EMAIL_DELIVERY_AVAILABLE && justSent.notification ? ` Super Admin email: ${justSent.notification.status}.` : ''}
+          </span>
+          {!EMAIL_DELIVERY_AVAILABLE ? <><span className="toolbar-spacer" /><EmailComingSoon /></> : null}
+        </div>
       ) : null}
 
       {openRequest ? (
@@ -64,7 +69,12 @@ export default function TenantPlans() {
         ) : <Empty title="Reading the subscription…" />}
       </Card>
 
-      <Card title="Available plans" description="Only ACTIVE plans can be requested. Your current plan is outlined." action={<EndpointTag id="tenant-plans" name="Catalogue" />}>
+      <Card
+        title="Available plans"
+        description={`Every plan on the platform. Only ACTIVE plans can be requested; your current plan is outlined. ${EMAIL_DELIVERY_AVAILABLE
+          ? 'Requesting one emails the Super Admins.' : 'A Super Admin reviews your request in the application; you follow its status under Requests.'}`}
+        action={<>{!EMAIL_DELIVERY_AVAILABLE ? <EmailComingSoon /> : null}<EndpointTag id="tenant-plans" name="Catalogue" /></>}
+      >
         {plans.result && !plans.result.ok ? <Problem result={plans.result} onRetry={plans.reload} /> : !plans.data ? (
           <Empty title="Reading the plans…" />
         ) : !plans.data.length ? (
@@ -145,6 +155,8 @@ function PlanCard({ plan, blocked, onChoose, onView }) {
           </Button>
         ) : plan.current && plan.status !== 'ACTIVE' ? (
           <span className="muted">No longer offered — kept for your current subscription.</span>
+        ) : !plan.current ? (
+          <span className="muted">Cannot be requested while {plan.status}.</span>
         ) : null}
       </div>
     </div>

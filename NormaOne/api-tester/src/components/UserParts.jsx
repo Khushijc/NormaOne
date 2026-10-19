@@ -50,8 +50,11 @@ export function UserFilters({ filters, onChange, withTenant, withRole = true, la
   )
 }
 
-/** A page of users, each opening at its own address. */
-export function UserTable({ read, detailPath, showTenant, onPage, noun = 'user' }) {
+/**
+ * A page of users, each opening at its own address. `extraColumn` ({ header, cell(user) }) adds one
+ * column before the last — the Tenant Admin's email-preference switches.
+ */
+export function UserTable({ read, detailPath, showTenant, onPage, noun = 'user', extraColumn }) {
   if (read.result && !read.result.ok) return <Problem result={read.result} onRetry={read.reload} />
   const rows = read.data?.content ?? []
   if (!rows.length) {
@@ -70,6 +73,7 @@ export function UserTable({ read, detailPath, showTenant, onPage, noun = 'user' 
               <th>Linked</th>
               <th>Modules</th>
               {showTenant ? <th>Organization</th> : null}
+              {extraColumn ? <th>{extraColumn.header}</th> : null}
               <th>Added</th>
               <th />
             </tr>
@@ -84,6 +88,7 @@ export function UserTable({ read, detailPath, showTenant, onPage, noun = 'user' 
                 <td className="muted">{user.linked ? 'yes' : 'not yet'}</td>
                 <td className="muted" title={user.moduleAccess?.join(', ')}>{user.moduleAccess ? `${user.moduleAccess.length} of 6` : '—'}</td>
                 {showTenant ? <td>{organizationOf(user)}</td> : null}
+                {extraColumn ? <td>{extraColumn.cell(user)}</td> : null}
                 <td className="muted">{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '—'}</td>
                 <td>
                   <Link className="btn" to={detailPath(user.id)}>Open <ChevronRight size={13} /></Link>

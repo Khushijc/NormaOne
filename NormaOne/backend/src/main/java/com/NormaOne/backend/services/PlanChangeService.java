@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -12,6 +13,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
@@ -35,11 +38,13 @@ import com.NormaOne.backend.model.audit.AuditAction;
 import com.NormaOne.backend.model.core.Tenant;
 import com.NormaOne.backend.model.core.enums.UserStatus;
 import com.NormaOne.backend.model.core.user;
+import com.NormaOne.backend.model.modules.ModuleCatalog;
 import com.NormaOne.backend.model.notification.OutboundEmail;
 import com.NormaOne.backend.model.plans.PlanChangeRequest;
 import com.NormaOne.backend.model.plans.PlanDefinition;
 import com.NormaOne.backend.model.plans.PlanHistoryEntry;
 import com.NormaOne.backend.model.plans.TenantSubscription;
+import com.NormaOne.backend.model.plans.enums.ModuleApps;
 import com.NormaOne.backend.model.plans.enums.PlanChangeRequestStatus;
 import com.NormaOne.backend.model.plans.enums.PlanHistoryEventType;
 import com.NormaOne.backend.model.plans.enums.PlanStatus;
@@ -68,6 +73,8 @@ import com.NormaOne.backend.security.CurrentUserService;
  */
 @Service
 public class PlanChangeService {
+
+    private static final Logger log = LoggerFactory.getLogger(PlanChangeService.class);
 
     static final String REFERENCE_TYPE = "PLAN_CHANGE_REQUEST";
     /** An approval still PROCESSING after this long is treated as interrupted and may be decided again. */
@@ -106,32 +113,26 @@ public class PlanChangeService {
     // ==================== TENANT ADMIN: CATALOGUE ====================
 
     /**
-     * The plans a Tenant Admin can see: every ACTIVE plan offered to customers (publiclyAvailable, or
-     * the default plan), plus the organization's current plan whatever its status.
+     * Every plan in the database, as a Tenant Admin sees it (commercial terms only, no platform data):
+     * ACTIVE plans first, then by price. Each says whether it is the organization's current plan and
+     * whether it can be requested now (ACTIVE and not the current one); the others are shown with
+     * their status (DRAFT, INACTIVE, ARCHIVED) for information.
      */
     public List<TenantPlanResponse> catalogue(Jwt jwt) {
         CurrentUser admin = currentUserService.requireTenantAdmin(jwt);
         String currentPlanId = packageService.currentSubscription(admin.tenantId()).map(TenantSubscription::getPlanDocsId).orElse(null);
-        List<Criteria> visible = new ArrayList<>();
-        visible.add(new Criteria().andOperator(Criteria.where("status").is(PlanStatus.ACTIVE),
-                new Criteria().orOperator(Criteria.where("publiclyAvailable").is(true), Criteria.where("defaultPlan").is(true))));
-        if (currentPlanId != null) {
-            visible.add(Criteria.where("id").is(currentPlanId));
-        }
-        Query query = new Query(new Criteria().orOperator(visible))
-                .with(Sort.by(Sort.Order.asc("listPrice"), Sort.Order.asc("planCode"), Sort.Order.desc("planVersion")));
+        Query query = new Query().with(Sort.by(Sort.Order.asc("listPrice"), Sort.Order.asc("planCode"), Sort.Order.desc("planVersion")));
         return mongoTemplate.find(query, PlanDefinition.class).stream()
+                .sorted(Comparator.comparing((PlanDefinition p) -> p.getStatus() != PlanStatus.ACTIVE))
                 .map(p -> TenantPlanResponse.of(p, p.getId().equals(currentPlanId)))
                 .toList();
     }
 
-    /** One plan of the catalogue; 404 for a plan the Tenant Admin cannot see. */
+    /** One plan, as a Tenant Admin sees it. */
     public TenantPlanResponse plan(Jwt jwt, String planId) {
         CurrentUser admin = currentUserService.requireTenantAdmin(jwt);
         String currentPlanId = packageService.currentSubscription(admin.tenantId()).map(TenantSubscription::getPlanDocsId).orElse(null);
-        PlanDefinition plan = planRepository.findById(planId)
-                .filter(p -> p.getId().equals(currentPlanId) || visibleToTenants(p))
-                .orElseThrow(() -> new ResourceNotFoundException("Plan not found."));
+        PlanDefinition plan = planRepository.findById(planId).orElseThrow(() -> new ResourceNotFoundException("Plan not found."));
         return TenantPlanResponse.of(plan, plan.getId().equals(currentPlanId));
     }
 
@@ -142,8 +143,10 @@ public class PlanChangeService {
         CurrentUser admin = currentUserService.requireTenantAdmin(jwt);
         String tenantId = admin.tenantId();
         PlanDefinition plan = planRepository.findById(body.planId().trim())
-                .filter(PlanChangeService::visibleToTenants)
                 .orElseThrow(() -> new ResourceNotFoundException("Plan not found."));
+        if (plan.getStatus() != PlanStatus.ACTIVE) {
+            throw new ConflictException("Only an ACTIVE plan can be requested; " + plan.getName() + " is " + plan.getStatus() + ".");
+        }
         TenantSubscription current = packageService.currentSubscription(tenantId).orElse(null);
         PlanDefinition currentPlan = current == null ? null : planRepository.findById(current.getPlanDocsId()).orElse(null);
         if (current != null && plan.getId().equals(current.getPlanDocsId())) {
@@ -184,7 +187,7 @@ public class PlanChangeService {
                 AuditService.details("from", planLabel(saved.getCurrentPlanCode(), saved.getCurrentPlanVersion()),
                         "to", planLabel(saved.getRequestedPlanCode(), saved.getRequestedPlanVersion()), "reason", saved.getReason()));
         // Only now, with the request saved, are the Super Admins told about it.
-        OutboundEmail email = notifySuperAdmins(saved, admin.tenant()).orElse(null);
+        OutboundEmail email = notifySuperAdmins(saved, admin.tenant(), currentPlan, plan).orElse(null);
         return PlanChangeRequestResponse.of(saved, OrganizationSummary.of(tenantId, admin.tenant()), email, false);
     }
 
@@ -366,10 +369,6 @@ public class PlanChangeService {
         return closed;
     }
 
-    private static boolean visibleToTenants(PlanDefinition p) {
-        return p.getStatus() == PlanStatus.ACTIVE && (Boolean.TRUE.equals(p.getPubliclyAvailable()) || Boolean.TRUE.equals(p.getDefaultPlan()));
-    }
-
     private static PlanHistoryEntry entry(PlanHistoryEventType type, CurrentUser actor, PlanChangeRequest r, String reason,
             PlanChangeRequestStatus status) {
         return PlanHistoryEntry.builder()
@@ -390,36 +389,76 @@ public class PlanChangeService {
 
     // ==================== EMAIL ====================
 
-    /** Queues (and tries to send) the email telling the Super Admins about a saved request. */
-    private Optional<OutboundEmail> notifySuperAdmins(PlanChangeRequest r, Tenant tenant) {
+    /** Queues (and tries to send) the email telling the Super Admins about a saved request, with every detail of it. */
+    private Optional<OutboundEmail> notifySuperAdmins(PlanChangeRequest r, Tenant tenant, PlanDefinition currentPlan, PlanDefinition requestedPlan) {
         List<String> configured = properties.getEmail().getPlanChangeRecipients().stream()
-                .filter(address -> address != null && !address.isBlank()).toList();
-        List<String> recipients = configured.isEmpty()
-                ? mongoTemplate.find(new Query(new Criteria().andOperator(UserAdministration.superAdminScope(),
-                        Criteria.where("status").is(UserStatus.ACTIVE))), user.class).stream()
-                        .map(user::getEmail).filter(Objects::nonNull).toList()
-                : configured;
+                .filter(address -> address != null && !address.isBlank()).map(String::trim).toList();
+        List<String> recipients;
+        if (configured.isEmpty()) {
+            // Every ACTIVE Super Admin who has not turned email notifications off.
+            recipients = EmailPreferenceService.recipients(mongoTemplate.find(new Query(new Criteria().andOperator(
+                    UserAdministration.superAdminScope(), Criteria.where("status").is(UserStatus.ACTIVE))), user.class))
+                    .stream().map(user::getEmail).toList();
+        } else {
+            // Configured addresses, except those of an account that turned email notifications off.
+            List<String> optedOut = mongoTemplate.find(new Query(Criteria.where("email").in(configured.stream()
+                    .map(address -> address.toLowerCase(java.util.Locale.ROOT)).toList()).and("emailNotificationsEnabled").is(false)), user.class)
+                    .stream().map(user::getEmail).filter(Objects::nonNull).map(address -> address.toLowerCase(java.util.Locale.ROOT)).toList();
+            recipients = configured.stream().filter(address -> !optedOut.contains(address.toLowerCase(java.util.Locale.ROOT))).toList();
+        }
+        if (recipients.isEmpty()) {
+            // Nobody to tell (everyone turned email off, or there is no active Super Admin): no email is queued.
+            log.info("Plan-change request {}: no email queued — no recipient has email notifications on.", r.getId());
+            return Optional.empty();
+        }
         String organization = tenant != null ? tenant.getTenantName() : r.getTenantId();
         String subject = "[NormaOne] Plan change requested: " + organization + " → " + r.getRequestedPlanName();
         StringBuilder body = new StringBuilder()
                 .append("A Tenant Admin has requested a plan change. It is waiting for a Super Admin's decision.\n\n")
-                .append("Organization: ").append(organization).append(" (").append(r.getTenantId()).append(")\n")
-                .append("Requested by: ").append(r.getRequestedByName()).append(" <").append(r.getRequestedByEmail()).append(">\n")
-                .append("Current plan: ").append(r.getCurrentPlanName() != null
-                        ? r.getCurrentPlanName() + " (" + planLabel(r.getCurrentPlanCode(), r.getCurrentPlanVersion()) + ")" : "none").append('\n')
-                .append("Requested plan: ").append(r.getRequestedPlanName()).append(" (")
-                .append(planLabel(r.getRequestedPlanCode(), r.getRequestedPlanVersion())).append(")\n")
-                .append("Requested at: ").append(WHEN.format(r.getRequestedAt())).append('\n')
-                .append("Status: ").append(r.getStatus()).append(" — no payment has been taken; approving applies the plan.\n");
-        if (r.getReason() != null) {
-            body.append("Reason: ").append(r.getReason()).append('\n');
+                .append("REQUEST\n")
+                .append("  Status: ").append(r.getStatus()).append(" — no payment has been taken; approving applies the plan.\n")
+                .append("  Requested at: ").append(WHEN.format(r.getRequestedAt())).append('\n')
+                .append("  Reason: ").append(r.getReason() != null ? r.getReason() : "none given").append('\n')
+                .append("  Request id: ").append(r.getId()).append("\n\n")
+                .append("ORGANIZATION\n")
+                .append("  Name: ").append(organization).append('\n')
+                .append("  Id: ").append(r.getTenantId()).append('\n');
+        if (tenant != null) {
+            body.append("  Subdomain: ").append(tenant.getSubdomain()).append('\n')
+                    .append("  Status: ").append(tenant.getStatus()).append('\n');
+            if (tenant.getEmailAddress() != null) {
+                body.append("  Contact email: ").append(tenant.getEmailAddress()).append('\n');
+            }
         }
+        body.append("\nREQUESTED BY\n")
+                .append("  Name: ").append(r.getRequestedByName()).append('\n')
+                .append("  Email: ").append(r.getRequestedByEmail()).append('\n')
+                .append("  Role: ADMIN (Tenant Admin)\n")
+                .append("  User id: ").append(r.getRequestedByUserId()).append("\n\n")
+                .append("CURRENT PLAN\n").append(planDetails(currentPlan, r.getCurrentPlanName(), r.getCurrentPlanCode(), r.getCurrentPlanVersion()))
+                .append("\nREQUESTED PLAN\n")
+                .append(planDetails(requestedPlan, r.getRequestedPlanName(), r.getRequestedPlanCode(), r.getRequestedPlanVersion()));
         String link = properties.getEmail().getPlanChangeReviewUrl();
         if (link != null && !link.isBlank()) {
             body.append("\nReview it: ").append(link.trim().replace("{requestId}", r.getId())).append('\n');
         }
-        body.append("\nRequest id: ").append(r.getId()).append('\n');
         return outbox.enqueue(recipients, subject, body.toString(), REFERENCE_TYPE, r.getId(), r.getTenantId());
+    }
+
+    /** A plan's terms as lines of the email; just its name and code when the plan record is gone. */
+    private static String planDetails(PlanDefinition p, String name, String code, Integer version) {
+        if (p == null) {
+            return "  " + (name != null ? name + " (" + planLabel(code, version) + ")" : "none") + '\n';
+        }
+        List<ModuleApps> modules = ModuleCatalog.applicationModules(p.getModuleApps());
+        return "  Name: " + p.getName() + " (" + planLabel(p.getPlanCode(), p.getPlanVersion()) + ")\n"
+                + "  Price: " + (p.getListPrice() != null ? p.getListPrice().setScale(2, java.math.RoundingMode.HALF_UP).toPlainString() : "—")
+                + " " + p.getCurrencyCode() + " / " + p.getBillingCycle() + "\n"
+                + "  Duration: " + (p.getDurationMonths() != null ? p.getDurationMonths() + " months" : "rolling") + '\n'
+                + "  User seats: " + (p.getMaxUsers() != null ? p.getMaxUsers() : "no limit") + '\n'
+                + "  Max employees: " + p.getMaxEmployees() + '\n'
+                + "  Modules: " + (modules.isEmpty() ? "the portal only" : modules.stream().map(Enum::name).collect(Collectors.joining(", "))) + '\n'
+                + "  Plan status: " + p.getStatus() + '\n';
     }
 
     private static String planLabel(String code, Integer version) {

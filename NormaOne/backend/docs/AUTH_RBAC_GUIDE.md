@@ -78,6 +78,8 @@ All three are `HttpOnly` (no script can read them) and `SameSite=Strict`. They a
 | GET | `/api/organization` | ADMIN or USER | **Read only.** The caller's own organization, taken from their stored record. It takes no id, so no other organization can be asked for |
 | GET | `/api/tenant` | ADMIN | Own tenant details, user count and package |
 | GET | `/api/tenant/package` | ADMIN | Own tenant's package and subscription |
+| GET, PUT | `/api/users/me/email-preference` | SUPER_ADMIN, ADMIN or USER (active) | The caller's own email-notification preference; `PUT {"enabled": true\|false}` (section 15) |
+| GET, PUT | `/api/tenant/users/{userId}/email-preference` | ADMIN (own tenant, USER accounts only) | A USER's email-notification preference (section 15) |
 | GET | `/api/tenant/audit-events` | ADMIN (own tenant) | Own organization's audit log: `action`, `actorUserId`, `targetId`, `targetType`, `from`, `to`, `page`, `size` — no tenant parameter (section 14) |
 | GET | `/api/tenant/plans`, `/api/tenant/plans/{planId}` | ADMIN (own tenant) | The plan catalogue offered to the organization, and one plan (section 13) |
 | POST, GET | `/api/tenant/plan-change-requests` | ADMIN (own tenant) | Request a plan change (PENDING until a Super Admin decides); list own requests (`status`, `page`, `size`) |
@@ -584,7 +586,6 @@ Use three Cognito accounts: **A** (future Tenant Admin), **U** (invited user) an
 6. **Not implemented:**
    - billing and payment collection (plan changes take no payment; a Tenant Admin's change is a request a Super Admin approves; section 13);
    - subscription renewals, cancellations and expiries (no workflow performs them, so the plan history has no such events);
-   - enforcing a plan's user-seat limit (`maxUsers`) at invitation: it is shown, not enforced;
    - email delivery is off until an SMTP server and sender are configured (section 13, "Email notifications"); it has not been tested against a real mail server;
    - tenant deletion and changing a subdomain;
    - promoting an existing account to Super Admin, or demoting one (by design: Super Admins are new platform invitations, section 12);
@@ -705,7 +706,8 @@ Other calls:
 
 - **Recipients.** `GET /api/tenant/notifications/recipients?search=ana` (or `/api/super-admin/tenants/{tenantId}/notifications/recipients`) returns `{content:[{id, name, email, role, status}], …}`: exactly the members a `SELECTED` notification accepts (`INVITED` or `ACTIVE`, in that tenant). It needs the same access as sending: an ACTIVE ADMIN of that tenant (or a Super Admin).
 - **Edit.** `PATCH /api/tenant/notifications/{id}` with `{"subject":"…","body":"…","addUserIds":[…],"removeUserIds":[…]}`. Only the fields sent change. Added recipients start unread. Removing the last recipient answers 400 (archive instead), and `TENANT` notifications have no list to change.
-- **Archive.** `PATCH /api/tenant/notifications/{id}/status` with `{"status":"ARCHIVED","reason":"Superseded"}`. The notification leaves every inbox and unread count and stays in the admin lists (`?status=ARCHIVED`). It is never deleted. `ACTIVE` answers 400, because archived notifications are not reactivated. Archiving twice changes nothing.
+- **Archive.** `PATCH /api/tenant/notifications/{id}/status` with `{"status":"ARCHIVED","reason":"Superseded"}`. The notification leaves every inbox and unread count and stays in the admin lists (`?status=ARCHIVED`); it cannot be edited while archived.
+- **Restore.** The same route with `{"status":"ACTIVE","reason":"…"}` makes an archived notification ACTIVE again — back in its recipients' inboxes and unread counts, and editable — with its subject, body, audience, recipients, read states, receipts and attachment unchanged. Who may: whoever may archive it (a Tenant Admin: notifications an ADMIN sent; a Super Admin: any in the tenant named in the path); another tenant's notification is 404, and restoring needs an ACTIVE organization (409 otherwise). Audited as `NOTIFICATION_RESTORED`; restoring an ACTIVE notification changes nothing. Any status other than `ARCHIVED` or `ACTIVE` is 400. It is never deleted. `ACTIVE` answers 400, because archived notifications are not reactivated. Archiving twice changes nothing.
 - **Inbox.** `GET /api/notifications?filter=UNREAD&page=0&size=20` returns `{content:[{id, subject, body, audience, readStatus, readAt, attachment, createdByRole, createdAt, updatedAt}], …}`. It shows the caller's own state only, never the recipient list.
 - **Unread count.** `GET /api/notifications/unread-count` returns `{"unreadCount": 3}`.
 - **Mark read.** `PATCH /api/notifications/{id}/read-status` with `{"read": true}` returns the inbox item with the caller's new state.
@@ -931,7 +933,7 @@ Content-Type: application/json
 
 **Partial failures and recovery.** The MongoDB record is written first, then Cognito is called; if Cognito fails the record is deleted (compensation) and the API answers 502. If the process stops between the two writes, an `INVITED` platform record without an email may remain: deactivate it (`PATCH /api/super-admin/super-admins/{id}/status`) or resend (`POST …/resend-invitation`). If a record is removed by hand, the Cognito account stays; delete it in the Cognito console.
 
-**Lifecycle.** `PATCH /api/super-admin/super-admins/{id}/status` with `{"status":"SUSPENDED","reason":"…"}` (or `DEACTIVATED`, or `ACTIVE`). A reason is required to suspend or deactivate; a pending invitation can only be deactivated (revoked); re-enabling a revoked invitation restores `INVITED`. **Removing a Super Admin's platform access is `DEACTIVATED`**: the record and its history stay, and Cognito signs the account out and disables it (section 14). A Super Admin can never change their own status, the last active Super Admin cannot be suspended or deactivated (409), and if two Super Admins remove each other at the same moment the second change is undone when it finds no active one left. Audited as `USER_INVITED`, `USER_INVITATION_RESENT`, `USER_STATUS_CHANGED` and `USER_LINKED`, with `role: SUPER_ADMIN`.
+**Lifecycle.** `PATCH /api/super-admin/super-admins/{id}/status` with `{"status":"SUSPENDED","reason":"…"}` (or `DEACTIVATED`, or `ACTIVE`). A reason is required to suspend or deactivate; a pending invitation can only be deactivated (revoked); re-enabling a revoked invitation restores `INVITED`. **Removing a Super Admin's platform access is `DEACTIVATED`**: the record and its history stay, and Cognito signs the account out and disables it (section 14). A Super Admin can never change their own status, the last active Super Admin cannot be suspended or deactivated (409), and Super Admin status changes run one at a time under a platform-wide lock (`ResourceLockService`, key `super-admins`) that re-checks the acting Super Admin is still active — so two Super Admins removing each other at the same moment can never leave none (a removed actor's waiting request is refused with 403). If the lock is held for more than 10 seconds the request answers 409 "try again"; a lock left by a crashed instance expires after 30 seconds. Audited as `USER_INVITED`, `USER_INVITATION_RESENT`, `USER_STATUS_CHANGED` and `USER_LINKED`, with `role: SUPER_ADMIN`.
 
 **Account directory.** `GET /api/super-admin/accounts?role=ADMIN&tenantId=…&status=ACTIVE&module=FACTURAFLOW&search=ana&page=0&size=20` lists every account across tenants and the platform, read only: `{id, name, email, role, status, linked, organization, moduleAccess, modulePermissions, invitedAt, activatedAt, deactivatedAt, statusReason, createdAt, updatedAt}`. `role` accepts legacy names (`TENANT_ADMIN` lists administrators). Never included: Cognito sub, phone number, tokens. The Tenant Admin's own `GET /api/tenant/users` is unchanged and tenant-scoped.
 
@@ -944,7 +946,7 @@ Content-Type: application/json
 **Plans are versioned and immutable once published** (as `PlanDefinition` already required):
 - `POST /api/super-admin/plans` creates a **DRAFT**, never the default plan. Without `planVersion` the next version of `planCode` is used (codes are stored upper-case). `moduleApps` is de-duplicated and ordered: `NORMAONE` first, then the modules in catalog order.
 - `PATCH /api/super-admin/plans/{id}`: a DRAFT can change anything. Any other plan changes only `name`, `description`, `publiclyAvailable`, `effectiveFrom`, `effectiveUntil`. Changing `billingCycle`, `trialDays`, `listPrice`, `currencyCode`, `maxEmployees`, `maxUsers`, `durationMonths` or `moduleApps` on a published plan is 409: create a new version. ARCHIVED plans cannot change.
-- **Fields** beyond the original model: `maxUsers` — the user-seat limit (1–1,000,000; omitted = no limit; shown to Super Admins and Tenant Admins, **not enforced at invitation yet**); `durationMonths` — the committed term (1–120; omitted = rolling), which sets a new subscription's `currentPeriodEnd`. `currencyCode` must be a real ISO 4217 code (`ABC` is 400). Module ids outside `ModuleApps` are 400.
+- **Fields** beyond the original model: `maxUsers` — the user-seat limit (1–1,000,000; omitted = no limit; **enforced**, see "User seats" below); `durationMonths` — the committed term (1–120; omitted = rolling), which sets a new subscription's `currentPeriodEnd`. `currencyCode` must be a real ISO 4217 code (`ABC` is 400). Module ids outside `ModuleApps` are 400.
 - `latestVersion: false` in a plan response marks a historical version (a newer version of the same code exists). Nothing deletes a plan; deactivating or archiving never touches the subscriptions on it or any history.
 - `PATCH /api/super-admin/plans/{id}/status`: DRAFT → ACTIVE or ARCHIVED; ACTIVE ⇄ INACTIVE; ACTIVE or INACTIVE → ARCHIVED (final). The status decides only whether the plan can be assigned from now on; existing subscriptions keep their version.
 - **The default plan stays available.** New organizations get the latest ACTIVE version of `normaone.packages.default-plan-code` (BASIC). Deactivating or archiving the last ACTIVE version of it is 409; activate a newer version first.
@@ -966,6 +968,15 @@ The answer is the new package (as `GET /api/super-admin/tenants/{id}/package`). 
 
 **Reading.** `GET /api/super-admin/plans?status=ACTIVE&planCode=PRO`; `GET /api/super-admin/plans/{id}` (with `currentSubscriptions`); `GET /api/super-admin/subscriptions?planId=…` (which organizations are on one plan version; also `planCode`, `status`); `GET /api/super-admin/tenants/{id}/package/history`.
 
+### User seats (`maxUsers`, `SeatService`)
+
+- **The limit** is the `maxUsers` of the plan version the organization's current subscription references (published versions are immutable). No `maxUsers`, or no current subscription, means no limit.
+- **What takes a seat:** every account of the organization — administrators and users — that is `ACTIVE`, `INVITED` (a pending invitation reserves its seat) or `SUSPENDED` (temporarily blocked, still the organization's). `DEACTIVATED` accounts (removed users, revoked invitations) free their seat. Super Admins belong to no organization.
+- **What needs a free seat:** `POST /api/tenant/users`, `POST /api/super-admin/admins`, and reactivating a `DEACTIVATED` account (`PATCH …/status` to `ACTIVE`, from either API). A full organization gets **409** *"The organization's plan allows N user seats and N are in use (active, suspended and invited accounts). Deactivate an account or move to a plan with more seats first."* — nothing is written and no Cognito invitation is sent. `SUSPENDED → ACTIVE` needs no new seat. The first administrator of a new organization always fits (`maxUsers` ≥ 1).
+- **Concurrency:** the check and the write run under the organization's seat lock (`ResourceLockService`, key `seats:{tenantId}`, in the `resource_locks` collection; 10 s wait, 30 s lease), so simultaneous invitations cannot exceed the limit.
+- **Downgrades** to a plan with fewer seats than are in use are allowed (nobody loses access); no seat is given out until enough accounts are deactivated.
+- `GET /api/tenant/package` and `GET /api/super-admin/tenants/{id}/package` include `seats: {limit, used}`.
+
 ### Plan history (`plan_history`)
 
 An append-only, platform-wide timeline of plan operations, written **together with each operation** (`PlanHistoryService.withEntry`): in one MongoDB transaction where the deployment supports it; on a standalone server the entry is written first and removed again if the operation fails, so there is never an operation without its entry or an entry for something that did not happen. Entries are never updated.
@@ -984,7 +995,7 @@ Every entry has `occurredAt`, `actorUserId`, `actorRole`, `tenantId` (tenant eve
 
 **Why requests.** There is no billing or payment integration (the billing models exist, but nothing creates invoices or takes payments), so a Tenant Admin never changes the plan directly: choosing a plan records a `PENDING` request, and a Super Admin approves it — which applies the plan through the same path as `PUT /api/super-admin/tenants/{id}/package` — or rejects it.
 
-**Catalogue.** `GET /api/tenant/plans` lists every ACTIVE plan offered to customers (`publiclyAvailable`, or the default plan) plus the organization's current plan whatever its status, as `{id, planCode, planVersion, name, description, status, listPrice, currencyCode, billingCycle, durationMonths, trialDays, maxEmployees, maxUsers, modules, current, selectable}` — no subscription counts, creators, default flag or sale window. `selectable` = ACTIVE and not the current plan. The current subscription with its start and term-end dates stays `GET /api/tenant/package`.
+**Catalogue.** `GET /api/tenant/plans` lists every plan in the database (ACTIVE first, then by price), whatever its status or `publiclyAvailable` flag, as `{id, planCode, planVersion, name, description, status, listPrice, currencyCode, billingCycle, durationMonths, trialDays, maxEmployees, maxUsers, modules, current, selectable}` — no subscription counts, creators, default flag or sale window. `selectable` = ACTIVE and not the current plan. The current subscription with its start and term-end dates stays `GET /api/tenant/package`.
 
 ```http
 POST /api/tenant/plan-change-requests
@@ -994,7 +1005,7 @@ Content-Type: application/json
 ```
 
 - The organization is the caller's own (from their record); there is no tenant field and one sent is ignored. Another organization's request answers 404.
-- One open request (`PENDING`/`PROCESSING`) per organization (unique partial index): a second is 409; so is the current plan. A plan outside the catalogue is 404.
+- One open request (`PENDING`/`PROCESSING`) per organization (unique partial index): a second is 409; so are the current plan and a plan that is not ACTIVE. An unknown plan id is 404.
 - Saved with the requester (id, name, email), the current and requested plans (id, code, version, name), the time and the reason; recorded in the plan history and audited (`PLAN_CHANGE_REQUESTED`, visible in the organization's audit log).
 - `POST …/{id}/cancel` withdraws a PENDING request.
 - **Approve** (`POST /api/super-admin/plan-change-requests/{id}/approve`, optional `note`): the request is claimed (`PROCESSING`) so two Super Admins cannot decide it at once, then the plan is applied. If that fails — the plan is no longer ACTIVE, the organization is not ACTIVE or SUSPENDED, it is already on the plan — the request returns to `PENDING`, nothing is recorded, and the answer is 409. Otherwise it becomes `APPROVED` with `appliedSubscriptionId`. An approval interrupted mid-way (still `PROCESSING` after 5 minutes) can be decided again.
@@ -1002,11 +1013,15 @@ Content-Type: application/json
 
 ### Email notifications (outbox)
 
-Once a request is saved — never before — the Super Admins are emailed: organization name and id, requester's name and email, current and requested plan, time (UTC), status, reason, and a link when `normaone.email.plan-change-review-url` is set. Recipients: `normaone.email.plan-change-recipients`, or every ACTIVE Super Admin's address when empty.
+Once a request is saved — never before — the Super Admins are emailed every detail: the request (status, time in UTC, reason, id), the organization (name, id, subdomain, status, contact email), the requester (name, email, role, user id), and the current and requested plans with their terms (name, code and version, price and billing cycle, duration, seats, employees, modules, status), plus a link when `normaone.email.plan-change-review-url` is set. Recipients: `normaone.email.plan-change-recipients`, or every ACTIVE Super Admin's address when empty.
 
-The email goes through an outbox (`email_outbox`, `EmailOutboxService`): written after the request, sent at once, and on failure retried with backoff (1, 2, 4… minutes, at most hourly) up to `normaone.email.max-attempts` (5), then `FAILED`. Each attempt claims the email first, so several instances never send it twice. An email failure never touches the saved request or its history. The request's `notification` shows `SENT`, `PENDING` or `FAILED` (attempts and the last error for Super Admins only).
+The email goes through an outbox (`email_outbox`, `EmailOutboxService`): written after the request, sent at once, and on failure retried with backoff (1, 2, 4… minutes, at most hourly) up to `normaone.email.max-attempts` (5), then `FAILED`. Each attempt claims the email first, so several instances never send it twice. **A retry only resends the email**: it never re-creates the request or re-applies a plan — a resubmitted request is refused by the one-open-request index (409), and a repeated approval by the request's claim (409), so a plan is applied at most once. An email failure never touches the saved request or its history. The request's `notification` shows `SENT`, `PENDING` or `FAILED` (attempts and the last error for Super Admins only).
 
-**Configuration still required.** There was no email service in this application, so delivery uses SMTP (`spring-boot-starter-mail`) and is **off until configured**: `SPRING_MAIL_HOST` (and `SPRING_MAIL_PORT`, `SPRING_MAIL_USERNAME`, `SPRING_MAIL_PASSWORD` as the server needs; Amazon SES's SMTP interface works) plus `NORMAONE_EMAIL_FROM`. Until then emails wait as `PENDING` with `lastError` saying delivery is not configured, and are sent by the retry once it is. Delivery to a real mail server has not been tested here.
+**Configuration still required.** There was no email service in this application. Two providers are built in (`normaone.email.provider`):
+- **`SES` (default)** — Amazon SES v2 `SendEmail` with the AWS default credentials, the same ones Cognito uses, in `aws.region` (or `NORMAONE_EMAIL_SES_REGION`). Set `NORMAONE_EMAIL_FROM` to an address (or domain) **verified in SES** in that region, and allow `ses:SendEmail` for the credentials. While the SES account is in the **sandbox**, every recipient (the Super Admins' addresses) must be verified as well, or SES refuses the email (it is then retried and shown as PENDING with SES's error).
+- **`SMTP`** — `SPRING_MAIL_HOST` (and `SPRING_MAIL_PORT`, `SPRING_MAIL_USERNAME`, `SPRING_MAIL_PASSWORD` as the server needs) plus `NORMAONE_EMAIL_FROM`.
+
+Until a sender is set, emails wait as `PENDING` with `lastError` saying delivery is not configured, and are sent by the retry once it is. Delivery to a real SES account or mail server has not been tested here.
 
 ### Plans and modules
 
@@ -1040,3 +1055,21 @@ A Cognito failure while removing access leaves access removed and is recorded as
 
 `GET /api/tenant/audit-events` returns the caller's own organization's events, newest first: invitations, linking, status and role changes, module access changes, plan-change requests and plan changes, notifications. Filters: `action`, `actorUserId`, `targetId`, `targetType`, `from`, `to`, `page`, `size`. **There is no tenant parameter**: the tenant comes from the caller's record and is part of the MongoDB query (`AuditService.search`), so another organization's events and platform-only events (plan definitions, Super Admin accounts) are never read; a `tenantId` sent anyway is ignored. Audit details hold identifiers and non-sensitive values only — never passwords, tokens or Cognito secrets. The Super Admin's `GET /api/super-admin/audit-events` takes the same date and target-type filters.
 
+
+---
+
+## 15. Email-notification preferences
+
+Each account has `emailNotificationsEnabled` on its user record. **Not set means enabled** — every existing account, and every new one until it is changed: email is opt-out. The preference never affects in-app notifications.
+
+| Who | Route | May change |
+|---|---|---|
+| Any active account (SUPER_ADMIN, ADMIN, USER) | `GET`/`PUT /api/users/me/email-preference` | their **own** preference only — the route has no user id, and an id in the body is ignored |
+| An ACTIVE ADMIN of an ACTIVE organization | `GET`/`PUT /api/tenant/users/{userId}/email-preference` | the **USER** accounts of their own organization. Another organization's user: **404** (the lookup is filtered by the admin's tenant). Another administrator, a platform account, or their own account through this route: **403** — administrators set their own preference |
+| A Super Admin | — | no tenant account's preference |
+
+`PUT` takes `{"enabled": true|false}` (400 without it) and answers `{userId, name, email, role, emailNotificationsEnabled, explicit, emailDeliveryAvailable}` — `explicit: false` means the default applies; `emailDeliveryAvailable: false` means no email provider is configured yet. `GET /api/users/me` and the tenant user list also carry `emailNotificationsEnabled`. Every change is a single-field update, audited as `USER_EMAIL_PREFERENCE_CHANGED` (`by: SELF` or `ADMIN`).
+
+**Delivery follows each recipient's preference:**
+- *Plan-change emails* go to the active Super Admins (or `normaone.email.plan-change-recipients`) **except** accounts that turned email off; if nobody is left, no email is queued and the request is saved as usual.
+- *Notification emails*: once email delivery is configured, each recipient with email on gets their own copy through the outbox (SELECTED: the listed recipients; TENANT: the INVITED and ACTIVE members); recipients who turned it off get none. **While email is not configured nothing is queued** — so enabling delivery later does not send every past notification — and the screens say "Coming Soon". The in-app notification is saved and delivered first and is never changed by email.

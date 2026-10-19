@@ -10,6 +10,7 @@ import com.NormaOne.backend.model.core.user;
 import com.NormaOne.backend.model.modules.ModuleCatalog;
 import com.NormaOne.backend.model.modules.ModulePermission;
 import com.NormaOne.backend.model.plans.enums.ModuleApps;
+import com.NormaOne.backend.services.EmailPreferenceService;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
@@ -38,7 +39,9 @@ public record UserResponse(
         /** Only on the answer to an invitation or a resend: how it reached the person. */
         InvitationInfo invitation,
         List<ModuleApps> moduleAccess,
-        List<ModulePermission> modulePermissions
+        List<ModulePermission> modulePermissions,
+        /** The effective email-notification preference (unset = enabled, the default). */
+        boolean emailNotificationsEnabled
 ) {
     /** {@code effectiveRole} is the canonical role stored on the record (status and tenant status not applied). */
     public static UserResponse of(user u) {
@@ -51,11 +54,13 @@ public record UserResponse(
                 u.getInvitedAt(), u.getActivatedAt(), u.getDeactivatedAt(), u.getStatusReason(),
                 u.getCreatedAt(), u.getUpdatedAt(), null,
                 ModuleCatalog.storedModules(u.getModuleAccess()),
-                ModuleCatalog.assignedPermissions(u.getModulePermissions(), u.getModuleAccess()));
+                ModuleCatalog.assignedPermissions(u.getModulePermissions(), u.getModuleAccess()),
+                EmailPreferenceService.enabled(u));
     }
 
     public UserResponse withInvitation(InvitationInfo info) {
         return new UserResponse(id, tenantId, name, email, phoneNumber, status, roles, effectiveRole, linked, invitedAt,
-                activatedAt, deactivatedAt, statusReason, createdAt, updatedAt, info, moduleAccess, modulePermissions);
+                activatedAt, deactivatedAt, statusReason, createdAt, updatedAt, info, moduleAccess, modulePermissions,
+                emailNotificationsEnabled);
     }
 }

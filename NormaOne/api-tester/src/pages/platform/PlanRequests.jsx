@@ -2,11 +2,13 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronRight, RefreshCw } from 'lucide-react'
 import { useRead } from '../../api/useRead.js'
+import ComingSoon from '../../components/ComingSoon.jsx'
 import EndpointTag from '../../components/EndpointTag.jsx'
 import { NoToken, Pager, Problem, StatusBadge } from '../../components/Screen.jsx'
 import { Button, Card, Empty } from '../../components/ui/Kit.jsx'
 import Select from '../../components/ui/Select.jsx'
 import { PLAN_REQUEST_STATUSES } from '../../config/enums.js'
+import { EMAIL_DELIVERY_AVAILABLE } from '../../config/features.js'
 import { when } from '../../lib/forms.js'
 import { planLabel } from '../../lib/plans.js'
 import { detailPath } from '../../paths.js'
@@ -51,7 +53,7 @@ export default function PlanRequests() {
             <div className="table-scroll">
               <table className="data-table">
                 <thead>
-                  <tr><th>Requested</th><th>Organization</th><th>From → to</th><th>By</th><th>Status</th><th>Email</th><th /></tr>
+                  <tr><th>Requested</th><th>Organization</th><th>From → to</th><th>By</th><th>Status</th><th>Email notifications</th><th /></tr>
                 </thead>
                 <tbody>
                   {rows.map((request) => (
@@ -63,7 +65,7 @@ export default function PlanRequests() {
                       </td>
                       <td className="mono">{request.requestedBy?.email}</td>
                       <td><StatusBadge status={request.status} /></td>
-                      <td>{request.notification ? <StatusBadge status={request.notification.status} /> : '—'}</td>
+                      <td>{!EMAIL_DELIVERY_AVAILABLE ? <ComingSoon /> : request.notification ? <StatusBadge status={request.notification.status} /> : '—'}</td>
                       <td><Link className="btn" to={detailPath('platform', 'plans', 'requests', request.id)}>Open <ChevronRight size={13} /></Link></td>
                     </tr>
                   ))}

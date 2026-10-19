@@ -128,4 +128,13 @@ public class user extends TenantBase {
     @Size(max = 500)
     private String statusReason;
 
+    // ==================== PREFERENCES ====================
+
+    /**
+     * Whether this person receives email notifications (EmailPreferenceService). Null — every account
+     * created before the preference existed, and every new one until it is changed — means enabled:
+     * email is opt-out. In-app notifications are never affected.
+     */
+    private Boolean emailNotificationsEnabled;
+
 }

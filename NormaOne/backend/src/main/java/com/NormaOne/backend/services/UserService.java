@@ -76,7 +76,8 @@ public class UserService {
                     effectiveRole,
                     tenant != null ? tenant.getStatus() : null,
                     modules.effectiveModules(),
-                    modules.effectivePermissions().stream().sorted().toList()
+                    modules.effectivePermissions().stream().sorted().toList(),
+                    EmailPreferenceService.enabled(userDoc)
             );
         }
 
@@ -100,7 +101,8 @@ public class UserService {
                 null,
                 null,
                 List.of(),
-                List.of()
+                List.of(),
+                null
         );
     }
 }
