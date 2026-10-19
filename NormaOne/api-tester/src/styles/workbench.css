@@ -1,0 +1,248 @@
+/* ─────────────────────────────────────────────────────────────
+   What NormaOne's tester adds to the reference's stylesheet:
+   the request console, the response view, the token control and
+   the endpoint reference. Every colour, radius and shadow is a
+   token from tokens.css, so both themes work without a second
+   set of rules.
+   ───────────────────────────────────────────────────────────── */
+
+/* ── Layout helpers ───────────────────────────────────────── */
+.grid-2 { display: grid; gap: 22px; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+.section-title { font-size: 15px; display: flex; align-items: baseline; gap: 6px; }
+.inline-link { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; text-decoration: underline; }
+.good-text { color: var(--good) !important; }
+
+/* The module navbar on the page's own gutter. The reference draws it flush against the side panel,
+   which leaves the breadcrumb and the page title on two different left edges. */
+.module-nav { margin: 6px 28px 0; }
+
+/* The reference's .dl is built from spans; here it is a real <dl>, so the browser's dd indent goes. */
+.dl dd { margin: 0; }
+
+/* A status badge in the first column needs only its own width. */
+.kv-table th:has(> .badge) { width: 1%; white-space: nowrap; }
+
+/* ── Top bar: the backend address ─────────────────────────── */
+.env-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 10px; border-radius: 999px;
+  border: 1px dashed var(--line-strong); color: var(--ink-muted);
+  max-width: 300px; overflow: hidden; white-space: nowrap;
+}
+.env-chip .mono { color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; }
+
+/* ── Token control ────────────────────────────────────────── */
+.token-pop { width: 420px; }
+.token-edit { padding: 10px 12px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
+.token-edit .textarea { font-size: 11px; resize: vertical; }
+.picker-foot .badge { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ── Small ghost button, for copy actions in a status line ── */
+.ghost-btn-sm { padding: 3px 9px; font-size: 11px; }
+
+/* ── Response view ────────────────────────────────────────── */
+.resp-view { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.resp-view > .resp-head { border-radius: var(--radius-sm); }
+.resp-json { max-height: 60vh; overflow: auto; }
+.banner-pre {
+  margin: 4px 0; white-space: pre-wrap; word-break: break-word;
+  font: 12px/1.5 ui-monospace, SFMono-Regular, monospace;
+}
+.banner > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+
+/* Two columns of name and value — headers, field errors, refusals, counts. */
+.kv-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.kv-table th, .kv-table td {
+  text-align: left; vertical-align: top; padding: 6px 10px;
+  border-bottom: 1px solid var(--line); word-break: break-word;
+}
+.kv-table th { width: 32%; font-weight: 600; color: var(--ink-2); }
+.kv-table td { color: var(--ink-2); }
+.kv-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.kv-table tr:last-child th, .kv-table tr:last-child td { border-bottom: 0; }
+
+/* ── Key / value editor ───────────────────────────────────── */
+.kv { display: flex; flex-direction: column; gap: 6px; }
+.kv-row {
+  display: grid; grid-template-columns: 22px minmax(0, 0.8fr) minmax(0, 1.2fr) 26px;
+  gap: 8px; align-items: start;
+}
+.kv-row > .kv-check, .kv-row > .pager-btn { margin-top: 7px; }
+.kv-head { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-muted); }
+.kv-row[data-off] .input { opacity: 0.5; text-decoration: line-through; }
+.kv-check { width: 15px; height: 15px; accent-color: var(--brand); }
+.kv-value { display: flex; flex-direction: column; min-width: 0; }
+
+/* ── JSON editor ──────────────────────────────────────────── */
+.json-editor { display: flex; flex-direction: column; gap: 8px; }
+.json-editor-box {
+  display: grid; grid-template-columns: auto minmax(0, 1fr);
+  border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  background: var(--surface-sunken); overflow: hidden;
+}
+.json-editor-box:focus-within { border-color: var(--brand); }
+.json-gutter {
+  display: flex; flex-direction: column; padding: 10px 8px 10px 10px;
+  height: 340px; overflow: hidden; text-align: right;
+  font: 12px/1.6 ui-monospace, SFMono-Regular, monospace; color: var(--ink-muted);
+  background: var(--surface-2); border-right: 1px solid var(--line); user-select: none;
+}
+.json-gutter span[data-bad] { color: var(--bad); font-weight: 700; }
+.json-area {
+  height: 340px; resize: vertical; border: 0; outline: none; padding: 10px 12px;
+  background: transparent; color: var(--ink); white-space: pre; overflow: auto;
+  font: 12px/1.6 ui-monospace, SFMono-Regular, monospace; tab-size: 2;
+}
+
+/* ── Console ──────────────────────────────────────────────── */
+.url-bar {
+  display: flex; align-items: stretch; gap: 8px;
+}
+.url-bar[data-invalid] .url-input { border-color: var(--bad); }
+.url-method .select-input { height: 100%; min-width: 104px; font-family: ui-monospace, SFMono-Regular, monospace; }
+.url-method .select-input[data-method='GET'] { color: var(--good); }
+.url-method .select-input[data-method='POST'] { color: var(--warn); }
+.url-method .select-input[data-method='PUT'],
+.url-method .select-input[data-method='PATCH'] { color: var(--brand); }
+.url-method .select-input[data-method='DELETE'] { color: var(--bad); }
+.url-input { flex: 1 1 auto; min-width: 0; font-size: 13px; padding: 9px 12px; }
+.will-send {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  margin: 8px 0 0; color: var(--ink-2); word-break: break-all;
+}
+.problem-list {
+  margin: 10px 0 0; padding: 10px 12px 10px 28px; list-style: disc;
+  border-radius: var(--radius-sm); background: var(--warn-bg); color: var(--warn);
+  font-size: 12.5px;
+}
+.console-tabs { margin: 16px 0 12px; }
+.console-tabs .segmented-item[data-problem] { box-shadow: inset 0 0 0 1.5px var(--warn); }
+.console-match { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.console-pane { min-height: 120px; }
+
+/* ── Forms beside their JSON ──────────────────────────────── */
+.form-split { display: grid; gap: 24px; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: start; }
+.form-split-preview { position: sticky; top: 80px; }
+.form-split-preview .modal-json { max-height: 70vh; overflow: auto; }
+
+/* ── Sign-up steps ────────────────────────────────────────── */
+/* One row saying where you are: done steps in the good colour, the current one in the brand's. */
+.steps { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
+.steps-item { display: flex; align-items: center; gap: 6px; }
+.steps-button {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 12px 6px 6px; border-radius: 999px;
+  border: 1px solid var(--line-strong); background: var(--surface);
+  font-size: 12.5px; font-weight: 600; color: var(--ink-2);
+}
+.steps-button:hover:not(:disabled) { border-color: var(--brand); color: var(--brand); }
+.steps-button:disabled { opacity: 0.5; cursor: not-allowed; }
+.steps-number {
+  display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--surface-sunken); color: var(--ink-muted); font-size: 11px; font-weight: 700;
+}
+.steps-item[data-done] .steps-number { background: var(--good-bg); color: var(--good); }
+.steps-item[data-current] .steps-button { border-color: var(--brand); color: var(--brand); background: var(--brand-soft); }
+.steps-item[data-current] .steps-number { background: var(--brand); color: #fff; }
+.steps-arrow { color: var(--ink-muted); }
+.auth-form { max-width: 520px; gap: 14px; }
+
+/* ── Session control ──────────────────────────────────────── */
+.session-facts { padding: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; }
+.session-dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; }
+.session-dl dt { color: var(--ink-muted); font-size: 11.5px; }
+.session-dl dd { margin: 0; color: var(--ink); font-size: 12px; }
+.session-tags { display: flex; flex-direction: column; gap: 4px; padding: 8px 12px; border-top: 1px solid var(--line); }
+
+/* ── A failed read ────────────────────────────────────────── */
+.problem-origin { display: flex; align-items: flex-start; gap: 8px; }
+.problem-hint { display: block; margin-top: 6px; color: var(--ink-muted); font-size: 12px; }
+
+/* ── Endpoint reference ───────────────────────────────────── */
+.endpoint-doc { display: flex; flex-direction: column; gap: 16px; }
+.endpoint-doc .endpoint-tag { font-size: 12px; }
+.endpoint-doc-split { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.param-line { display: block; }
+.param-line + .param-line { margin-top: 2px; }
+
+/* ── Summary tiles ────────────────────────────────────────── */
+.stat-row { display: grid; gap: 22px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.stat { padding: 18px 20px; }
+.stat-value { font-size: 28px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.stat-row-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.tenant-filter { width: 220px; }
+
+/* Audit details are key=value pairs of varying length; they wrap rather than widen the table. */
+.data-table td.audit-details { white-space: normal; min-width: 260px; max-width: 420px; font-size: 11px; }
+
+/* ── Permission checklist ─────────────────────────────────── */
+/* The reference's feature-row rules (removed with its plan screens), brought back for the one list
+   here that has the same shape: a checkbox, a code, and what the code allows. */
+.divide > :not(:first-child) { border-top: 1px solid var(--line); }
+.feature-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; }
+.feature-row input { margin-top: 2px; }
+.feature-main { min-width: 0; flex: 1 1 auto; }
+.feature-name { display: block; font-size: 12.5px; font-weight: 600; color: var(--ink-2); }
+.feature-desc { display: block; margin-top: 1px; font-size: 11.5px; color: var(--ink-muted); }
+
+/* ── Module access ────────────────────────────────────────── */
+/* Six blocks, one per module: the module's own checkbox and badges, its permissions underneath. */
+.module-list { display: grid; gap: 10px; }
+.module-block { padding: 8px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); }
+.module-block:not([data-assigned]) { opacity: 0.7; }
+.module-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.module-head .check { display: inline-flex; align-items: center; gap: 8px; }
+.module-perms { margin-top: 6px; padding-left: 24px; }
+.module-perms .feature-row[data-disabled] { opacity: 0.55; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* ── Set password ─────────────────────────────────────────── */
+/* The show/hide button sits inside the field; the rules turn green one by one as they are met. */
+.password-box { position: relative; display: block; }
+.password-box .input { width: 100%; padding-right: 38px; }
+.password-toggle {
+  position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+  display: inline-flex; padding: 4px; border: 0; border-radius: var(--radius-sm);
+  background: transparent; color: var(--ink-muted); cursor: pointer;
+}
+.password-toggle:hover { color: var(--ink-2); background: var(--surface-sunken); }
+.password-rules ul { list-style: none; margin: 0 0 6px; padding: 0; display: grid; gap: 4px; }
+.password-rules li { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-muted); }
+.password-rules li[data-met] { color: var(--good); }
+
+/* ── Notifications ────────────────────────────────────────── */
+/* The body is plain text from an administrator: shown exactly as written, line breaks kept. */
+.notification-subject { margin: 0; font-size: 16px; font-weight: 700; color: var(--ink); }
+.notification-body {
+  margin: 0; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--surface-sunken);
+  white-space: pre-wrap; word-break: break-word; font-size: 13px; line-height: 1.55; color: var(--ink-2);
+}
+.data-table tbody tr[data-unread] td { font-weight: 600; color: var(--ink); }
+.inbox-subject svg { vertical-align: -1px; color: var(--ink-muted); }
+.recipient-list {
+  max-height: 260px; overflow-y: auto; padding: 0 10px;
+  border: 1px solid var(--line); border-radius: var(--radius-sm);
+}
+.recipient-list .feature-row[data-disabled] { opacity: 0.55; }
+
+/* ── My organization ──────────────────────────────────────── */
+.org-logo { max-height: 64px; max-width: 220px; object-fit: contain; align-self: flex-start; }
+
+@media (max-width: 1100px) {
+  .grid-2, .form-split { grid-template-columns: minmax(0, 1fr); }
+  .stat-row-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .form-split-preview { position: static; }
+}
+@media (max-width: 760px) {
+  .module-nav { margin: 6px 16px 0; }
+  .stat-row { grid-template-columns: minmax(0, 1fr); }
+  .env-chip { display: none; }
+  .token-pop { width: calc(100vw - 32px); }
+  .url-bar { flex-wrap: wrap; }
+  .url-input { flex-basis: 100%; order: 3; }
+  .kv-row { grid-template-columns: 22px minmax(0, 1fr) 26px; }
+  .kv-row > .kv-value { grid-column: 2 / 3; }
+  .kv-head { display: none; }
+}

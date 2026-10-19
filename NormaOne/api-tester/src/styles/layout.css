@@ -1,0 +1,46 @@
+/* ── App shell ─────────────────────────────────────────────── */
+.shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  min-height: 100vh;
+  transition: grid-template-columns 0.22s ease;
+}
+.shell.is-collapsed { grid-template-columns: var(--sidebar-w-collapsed) minmax(0, 1fr); }
+
+.main { min-width: 0; display: flex; flex-direction: column; }
+
+.page {
+  padding: 24px 28px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.page-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.page-title { font-size: 26px; }
+
+/* ── Dashboard grids ──────────────────────────────────────── */
+.grid-promos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+.grid-balance {
+  display: grid;
+  grid-template-columns: minmax(0, 1.72fr) minmax(0, 1fr);
+  gap: 22px;
+  align-items: stretch;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 1180px) {
+  .grid-balance { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 1024px) {
+  .shell, .shell.is-collapsed { grid-template-columns: var(--sidebar-w-collapsed) minmax(0, 1fr); }
+  .grid-promos { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 760px) {
+  .shell, .shell.is-collapsed { grid-template-columns: minmax(0, 1fr); }
+  .page { padding: 18px 16px 32px; }
+  .page-title { font-size: 22px; }
+}

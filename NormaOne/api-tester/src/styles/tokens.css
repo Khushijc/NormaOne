@@ -1,0 +1,96 @@
+/* ─────────────────────────────────────────────────────────────
+   Design tokens
+   Chart palettes below are validated with the dataviz palette
+   validator (lightness band, chroma floor, CVD separation,
+   normal-vision floor, contrast) for BOTH modes. Dark is a
+   selected set of steps, not an automatic flip of light.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  /* brand */
+  --brand: #f4700f;
+  --brand-strong: #e85d04;
+  --brand-soft: #fff3e9;
+  --brand-gradient: linear-gradient(135deg, #ff8a45 0%, #f4620a 100%);
+
+  /* surfaces & ink */
+  --bg-app: #f5f6fa;
+  --surface: #ffffff;
+  --surface-2: #f7f8fc;
+  --surface-sunken: #f4f7fe;
+  --ink: #1b2559;
+  --ink-2: #4a5578;
+  --ink-muted: #8f9bba;
+  --line: #eef0f6;
+  --line-strong: #e3e7f0;
+
+  /* status (reserved — never reused as a data series) */
+  --good: #0c8f5c;
+  --good-bg: #e6f7f0;
+  --warn: #a86400;
+  --warn-bg: #fff4e2;
+  --bad: #d81f4a;
+  --bad-bg: #ffecf1;
+
+  /* categorical chart palette — fixed order, never cycled */
+  --cat-1: #e5175c; /* BTC   */
+  --cat-2: #1f6fe0; /* ETH   */
+  --cat-3: #c9820f; /* BNB   */
+  --cat-4: #a72bc4; /* SHARD */
+  --cat-other: #b3bcd4;
+
+  /* chart chrome */
+  --chart-grid: #eef0f6;
+  --chart-axis-ink: #a3aed0;
+  --chart-line: #f4700f;
+  --chart-fill-top: rgba(244, 112, 15, 0.28);
+  --chart-fill-bottom: rgba(244, 112, 15, 0);
+
+  /* elevation & shape */
+  --radius-card: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --shadow-card: 0 1px 2px rgba(27, 37, 89, 0.04), 0 8px 24px rgba(27, 37, 89, 0.04);
+  --shadow-pop: 0 8px 28px rgba(27, 37, 89, 0.14);
+  --sidebar-w: 244px;
+  --sidebar-w-collapsed: 76px;
+}
+
+:root[data-theme='dark'] {
+  --brand: #ff8a45;
+  --brand-strong: #f4700f;
+  --brand-soft: #33210f;
+  --brand-gradient: linear-gradient(135deg, #ff8a45 0%, #f4620a 100%);
+
+  --bg-app: #111214;
+  --surface: #1a1a19;
+  --surface-2: #202124;
+  --surface-sunken: #24262b;
+  --ink: #eef1f8;
+  --ink-2: #b9c0d4;
+  --ink-muted: #8189a3;
+  --line: #2a2c31;
+  --line-strong: #35383f;
+
+  --good: #3ddc97;
+  --good-bg: #163226;
+  --warn: #f5b955;
+  --warn-bg: #33240f;
+  --bad: #ff6b8b;
+  --bad-bg: #351a22;
+
+  /* dark-mode categorical steps — independently validated */
+  --cat-1: #ef4477;
+  --cat-2: #4180e9;
+  --cat-3: #bc8722;
+  --cat-4: #bb5acf;
+  --cat-other: #5c6478;
+
+  --chart-grid: #2a2c31;
+  --chart-axis-ink: #7f879c;
+  --chart-line: #ff8a45;
+  --chart-fill-top: rgba(255, 138, 69, 0.22);
+  --chart-fill-bottom: rgba(255, 138, 69, 0);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-pop: 0 8px 28px rgba(0, 0, 0, 0.6);
+}

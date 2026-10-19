@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "aws.region",
+      "type": "java.lang.String",
+      "description": "AWS region of the Cognito user pool, and the default region for S3 attachments."
+    },
+    {
+      "name": "aws.cognito.user-pool-id",
+      "type": "java.lang.String",
+      "description": "Cognito user pool id."
+    },
+    {
+      "name": "aws.cognito.client-id",
+      "type": "java.lang.String",
+      "description": "Cognito app client id (an app client without a client secret)."
+    }
+  ]
+}
