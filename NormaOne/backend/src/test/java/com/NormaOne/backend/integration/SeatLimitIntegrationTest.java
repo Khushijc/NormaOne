@@ -90,8 +90,9 @@ class SeatLimitIntegrationTest extends IntegrationTestBase {
         // Full: refused with a clear message, nothing written, no Cognito invitation sent.
         mvc.perform(jsonBody(post("/api/tenant/users").with(as("sub-admin-a")), userBody("Cleo")))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message", containsString("allows 3 user seats")))
-                .andExpect(jsonPath("$.message", containsString("3 are in use")));
+                .andExpect(jsonPath("$.message", containsString("Employee limit reached: the Three seats plan allows 3 employees")))
+                .andExpect(jsonPath("$.message", containsString("3 are already added")))
+                .andExpect(jsonPath("$.message", containsString("Upgrade your plan")));
         assertTrue(userRepository.findByEmail("cleo@a.test").isEmpty());
         verify(cognito, never()).adminCreateUser(argThat((AdminCreateUserRequest r) -> "cleo@a.test".equals(r.username())));
         // An administrator takes a seat too, whoever invites them.
@@ -124,7 +125,7 @@ class SeatLimitIntegrationTest extends IntegrationTestBase {
         // Reactivating Ben now needs a seat that is not there: refused, Ben stays DEACTIVATED.
         mvc.perform(jsonBody(patch("/api/tenant/users/" + ben + "/status").with(as("sub-admin-a")), "{\"status\":\"ACTIVE\"}"))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message", containsString("user seats")));
+                .andExpect(jsonPath("$.message", containsString("Upgrade your plan")));
         assertEquals(UserStatus.DEACTIVATED, userRepository.findById(ben).orElseThrow().getStatus());
         // Freeing a seat makes the reactivation possible (a revoked invitation comes back as INVITED).
         mvc.perform(jsonBody(patch("/api/tenant/users/" + cleo + "/status").with(as("sub-admin-a")), "{\"status\":\"DEACTIVATED\",\"reason\":\"x\"}"))
@@ -155,16 +156,39 @@ class SeatLimitIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    void aPlanWithoutASeatLimitIsUnlimited() throws Exception {
-        for (int i = 0; i < 6; i++) {
+    void theBasicPlanAllowsTenEmployeesAndTheEleventhIsAskedToUpgrade() throws Exception {
+        // BASIC sets no seat limit, so its maxEmployees (10) is the limit; the owner is employee 1.
+        mvc.perform(get("/api/tenant/package").with(as("sub-admin-b")))
+                .andExpect(jsonPath("$.plan.planCode").value("BASIC"))
+                .andExpect(jsonPath("$.seats.limit").value(10)).andExpect(jsonPath("$.seats.used").value(1));
+        for (int i = 2; i <= 10; i++) {
             mvc.perform(jsonBody(post("/api/tenant/users").with(as("sub-admin-b")),
                             "{\"name\":\"U" + i + "\",\"email\":\"u" + i + "@b.test\",\"role\":\"USER\"}"))
                     .andExpect(status().isCreated());
         }
+        mvc.perform(get("/api/tenant/package").with(as("sub-admin-b"))).andExpect(jsonPath("$.seats.used").value(10));
+        // The 11th employee: refused, with the message to upgrade; nothing is written.
+        mvc.perform(jsonBody(post("/api/tenant/users").with(as("sub-admin-b")), "{\"name\":\"U11\",\"email\":\"u11@b.test\",\"role\":\"USER\"}"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message", containsString("the Basic plan allows 10 employees")))
+                .andExpect(jsonPath("$.message", containsString("Upgrade your plan to add more employees")));
+        mvc.perform(jsonBody(post("/api/super-admin/admins").with(as(ROOT)), "{\"tenantId\":\"" + tenantB + "\",\"name\":\"Ann\",\"email\":\"ann@b.test\"}"))
+                .andExpect(status().isConflict());
+        assertTrue(userRepository.findByEmail("u11@b.test").isEmpty());
+        assertEquals(10, seated(tenantB));
+        mvc.perform(get("/api/super-admin/tenants/" + tenantB + "/package").with(as(ROOT))).andExpect(jsonPath("$.seats.used").value(10));
+
+        // After an upgrade to a plan with more employees, the 11th can be added.
+        String bigger = json(mvc.perform(jsonBody(post("/api/super-admin/plans").with(as(ROOT)),
+                        "{\"planCode\":\"TEAM\",\"name\":\"Team\",\"billingCycle\":\"MONTHLY\",\"listPrice\":20,\"maxEmployees\":30}"))
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString(), "$.id");
+        mvc.perform(jsonBody(patch("/api/super-admin/plans/" + bigger + "/status").with(as(ROOT)), "{\"status\":\"ACTIVE\"}")).andExpect(status().isOk());
+        mvc.perform(jsonBody(put("/api/super-admin/tenants/" + tenantB + "/package").with(as(ROOT)), "{\"planId\":\"" + bigger + "\"}"))
+                .andExpect(status().isOk());
+        mvc.perform(jsonBody(post("/api/tenant/users").with(as("sub-admin-b")), "{\"name\":\"U11\",\"email\":\"u11@b.test\",\"role\":\"USER\"}"))
+                .andExpect(status().isCreated());
         mvc.perform(get("/api/tenant/package").with(as("sub-admin-b")))
-                .andExpect(jsonPath("$.seats.limit").doesNotExist())
-                .andExpect(jsonPath("$.seats.used").value(7));
-        mvc.perform(get("/api/super-admin/tenants/" + tenantB + "/package").with(as(ROOT))).andExpect(jsonPath("$.seats.used").value(7));
+                .andExpect(jsonPath("$.seats.limit").value(30)).andExpect(jsonPath("$.seats.used").value(11));
     }
 
     @Test

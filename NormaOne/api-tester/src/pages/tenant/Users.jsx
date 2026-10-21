@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Plus, RefreshCw } from 'lucide-react'
 import { useApi, useApiState } from '../../api/apiContext.js'
 import { useRead } from '../../api/useRead.js'
@@ -13,7 +13,7 @@ import { filled, refusalOf, userQuery } from '../../lib/forms.js'
 import { Button, Card, Field, Input, Modal } from '../../components/ui/Kit.jsx'
 import Select from '../../components/ui/Select.jsx'
 import { ASSIGNABLE_ROLES } from '../../config/enums.js'
-import { detailPath } from '../../paths.js'
+import { detailPath, screenPath } from '../../paths.js'
 
 /**
  * Tenant admin › Users — the list and the invite. The other three of the five endpoints are on a
@@ -101,6 +101,10 @@ function Invite({ open, onClose, onCreated }) {
   const { call } = useApi()
   const { account } = useApiState()
   const modules = useRead('modules-catalog', { label: 'Module catalogue', skip: !open })
+  // The plan's employee limit and how many are used — the backend enforces it; this only says so first.
+  const pack = useRead('tenant-package', { label: 'My package', skip: !open })
+  const seats = pack.data?.seats
+  const full = seats?.limit != null && seats.used >= seats.limit
   const [form, setForm] = useState(NEW_USER)
   // null: the default module assignment for the chosen role, which the backend applies when no
   // module field is sent (capped there, as here, by what the signed-in administrator holds).
@@ -138,11 +142,23 @@ function Invite({ open, onClose, onCreated }) {
       footer={
         <>
           <Button onClick={onClose}>Cancel</Button>
-          <Button look="primary" busy={busy} onClick={submit}>Invite</Button>
+          <Button look="primary" busy={busy} disabled={full} onClick={submit}>Invite</Button>
         </>
       }
     >
       <div className="stack">
+        {full ? (
+          <div className="banner" data-tone="warn">
+            <span>
+              Employee limit reached: your {pack.data.plan?.name ?? ''} plan allows {seats.limit} employees and {seats.used} are already added.
+              {' '}Upgrade your plan to add more employees (or deactivate an account).
+            </span>
+            <span className="toolbar-spacer" />
+            <Link className="btn" to={screenPath('tenant', 'plans', 'plans')}>Upgrade your plan</Link>
+          </div>
+        ) : seats?.limit != null ? (
+          <p className="muted" style={{ margin: 0 }}>Employees: {seats.used} of {seats.limit} on your {pack.data.plan?.name ?? ''} plan.</p>
+        ) : null}
         {refusal.message ? <p className="banner" data-tone="bad">{refusal.message}</p> : null}
         <div className="field-grid">
           <Field label="Name" required error={refusal.fields.name}>

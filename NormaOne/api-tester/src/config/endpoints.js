@@ -55,7 +55,7 @@ const PACKAGE_RESPONSE = ['tenantId', 'subscriptionId', 'status', 'assignmentSou
   'plan { planId, planCode, planVersion, name, description, status, defaultPlan, listPrice, currencyCode, billingCycle, trialDays, maxEmployees, maxUsers, durationMonths, moduleApps }',
   'seats { limit (null = no limit), used } — package reads only']
 // The plan's maxUsers: ACTIVE, INVITED and SUSPENDED accounts take a seat; DEACTIVATED ones do not (SeatService).
-const SEATS_FULL = { status: 409, when: 'Every user seat of the organization\'s plan (maxUsers) is taken by active, suspended or invited accounts. Deactivate one or move to a plan with more seats.' }
+const SEATS_FULL = { status: 409, when: 'Employee limit reached: the plan\'s maxEmployees (or its smaller maxUsers) is taken by active, suspended or invited accounts — "Upgrade your plan to add more employees." BASIC allows 10.' }
 const ADMIN_RESPONSE = ['id', 'name', 'email', 'phoneNumber', 'role', 'status',
   'linked', 'organization { id, name, subdomain, status }', 'invitedAt', 'activatedAt', 'deactivatedAt', 'statusReason', 'createdAt', 'updatedAt',
   'moduleAccess', 'modulePermissions']

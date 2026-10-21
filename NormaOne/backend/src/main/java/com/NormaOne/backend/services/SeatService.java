@@ -16,11 +16,12 @@ import com.NormaOne.backend.model.plans.PlanDefinition;
 import com.NormaOne.backend.repositories.PlanDefinitionRepository;
 
 /**
- * User seats: the plan's {@code maxUsers}, enforced on the backend.
+ * The plan's employee limit, enforced on the backend.
  *
- * THE LIMIT is the {@code maxUsers} of the plan version the organization's current subscription
- * references (published versions are immutable, so it cannot change under a subscription). No current
- * subscription, or a plan without maxUsers, means no limit.
+ * THE LIMIT comes from the plan version the organization's current subscription references (published
+ * versions are immutable, so it cannot change under a subscription): its {@code maxEmployees} — every
+ * plan has one, BASIC 10 — or its {@code maxUsers} seat limit when that is set and smaller. The
+ * organization's accounts are its employees on the platform. No current subscription means no limit.
  *
  * WHAT TAKES A SEAT: every account of the organization, administrators and users alike, that is
  * ACTIVE, INVITED (a pending invitation reserves its seat, or more invitations than seats could be
@@ -55,10 +56,21 @@ public class SeatService {
 
     /** The organization's seat limit, or null for no limit. */
     public Integer limitOf(String tenantId) {
-        return packageService.currentSubscription(tenantId)
-                .flatMap(s -> planRepository.findById(s.getPlanDocsId()))
-                .map(PlanDefinition::getMaxUsers)
-                .orElse(null);
+        return planOf(tenantId).map(SeatService::limitOf).orElse(null);
+    }
+
+    private java.util.Optional<PlanDefinition> planOf(String tenantId) {
+        return packageService.currentSubscription(tenantId).flatMap(s -> planRepository.findById(s.getPlanDocsId()));
+    }
+
+    /** A plan's account limit: the smaller of maxEmployees and maxUsers, whichever are set; null if neither. */
+    public static Integer limitOf(PlanDefinition plan) {
+        Integer employees = plan.getMaxEmployees() == null ? null : (int) Math.min(plan.getMaxEmployees(), Integer.MAX_VALUE);
+        Integer users = plan.getMaxUsers();
+        if (employees == null) {
+            return users;
+        }
+        return users == null ? employees : Math.min(employees, users);
     }
 
     /** Seats in use: the organization's ACTIVE, INVITED and SUSPENDED accounts. */
@@ -77,13 +89,14 @@ public class SeatService {
      */
     public <T> T withFreeSeat(String tenantId, Supplier<T> takeSeat) {
         return locks.withLock("seats:" + tenantId, () -> {
-            Integer limit = limitOf(tenantId);
+            PlanDefinition plan = planOf(tenantId).orElse(null);
+            Integer limit = plan == null ? null : limitOf(plan);
             if (limit != null) {
                 long used = usedBy(tenantId);
                 if (used >= limit) {
-                    throw new ConflictException("The organization's plan allows " + limit + " user seat" + (limit == 1 ? "" : "s")
-                            + " and " + used + " " + (used == 1 ? "is" : "are") + " in use (active, suspended and invited accounts). "
-                            + "Deactivate an account or move to a plan with more seats first.");
+                    throw new ConflictException("Employee limit reached: the " + plan.getName() + " plan allows " + limit + " employee"
+                            + (limit == 1 ? "" : "s") + " and " + used + " " + (used == 1 ? "is" : "are")
+                            + " already added (active, suspended and invited accounts). Upgrade your plan to add more employees.");
                 }
             }
             return takeSeat.get();

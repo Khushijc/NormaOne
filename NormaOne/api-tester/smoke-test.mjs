@@ -575,7 +575,10 @@ const env = { baseUrl: '' }
   check('a closed confirmation renders nothing', renderToString(React.createElement(lib.ConfirmDialog, { open: false, onConfirm: () => {}, onCancel: () => {} })) === '')
 
   const full = renderToString(React.createElement(lib.PackageFacts, { pack: { status: 'ACTIVE', plan: { maxUsers: 3 }, seats: { limit: 3, used: 3 } } }))
-  check('a full seat limit says so with the package', full.includes('3 of 3') && full.includes('full'))
+  check('a reached employee limit says to upgrade, with the package', full.includes('3 of 3') && full.includes('upgrade the plan'))
+  const usersPage = readFileSync('src/pages/tenant/Users.jsx', 'utf8')
+  check('the invite form warns when the employee limit is reached and links to the plans', usersPage.includes('Employee limit reached')
+    && usersPage.includes('Upgrade your plan') && usersPage.includes('disabled={full}'))
   const open = renderToString(React.createElement(lib.PackageFacts, { pack: { status: 'ACTIVE', plan: {}, seats: { limit: null, used: 7 } } }))
   check('a plan without a seat limit says so', open.includes('7 (no limit)'))
 

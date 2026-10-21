@@ -75,10 +75,10 @@ export function PlanFields({ form, onChange, refusal, codeLocked, termsLocked })
         <Field label="Duration (months)" hint="Committed term, 1–120. Empty = rolling." error={errors.durationMonths}>
           <Input type="number" min="1" max="120" value={form.durationMonths} disabled={termsLocked} error={errors.durationMonths} onChange={set('durationMonths')} />
         </Field>
-        <Field label="User seats" hint="Seat limit. Empty = no limit. Active, suspended and invited accounts take a seat; a full plan refuses new invitations and reactivations." error={errors.maxUsers}>
+        <Field label="User seats" hint="Optional, stricter than Max employees. Empty = Max employees is the limit." error={errors.maxUsers}>
           <Input type="number" min="1" value={form.maxUsers} disabled={termsLocked} error={errors.maxUsers} onChange={set('maxUsers')} />
         </Field>
-        <Field label="Max employees" required error={errors.maxEmployees}>
+        <Field label="Max employees" required hint="Enforced: active, suspended and invited accounts count; the next invitation is refused with “Upgrade your plan”." error={errors.maxEmployees}>
           <Input type="number" min="1" value={form.maxEmployees} disabled={termsLocked} error={errors.maxEmployees} onChange={set('maxEmployees')} />
         </Field>
         <Field label="Trial days" error={errors.trialDays}>

@@ -17,8 +17,8 @@ export default function PackageFacts({ pack }) {
         ['Start', when(pack.startDate)],
         ['Current period', [when(pack.currentPeriodStart), when(pack.currentPeriodEnd)].filter(Boolean).join(' → ') || null],
         ['Term ends', pack.currentPeriodEnd ? when(pack.currentPeriodEnd) : 'rolling — runs until the plan is changed'],
-        pack.seats ? ['User seats in use', pack.seats.limit != null
-          ? `${pack.seats.used} of ${pack.seats.limit}${pack.seats.used >= pack.seats.limit ? ' — full: no new invitation or reactivation until an account is deactivated' : ''}`
+        pack.seats ? ['Employees', pack.seats.limit != null
+          ? `${pack.seats.used} of ${pack.seats.limit}${pack.seats.used >= pack.seats.limit ? ' — limit reached: upgrade the plan to add more employees' : ''}`
           : `${pack.seats.used} (no limit)`] : null,
         ['Subscription id', pack.subscriptionId && <span key="i" className="mono">{pack.subscriptionId}</span>],
       ]} />
