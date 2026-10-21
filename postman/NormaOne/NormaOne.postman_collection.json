@@ -1,0 +1,3893 @@
+{
+  "info": {
+    "_postman_id": "3e6a729f-c153-4309-9377-bbc4ca5704b7",
+    "name": "NormaOne",
+    "description": "NormaOne platform API — one folder per controller, matching the backend package layout (auth / user / onboarding / organization / modules / notifications / tenant / tenant plans / super admin / plans). Set the collection variables baseUrl and token.\n\nGetting a token: run Auth Controller > Login. It sends X-Token-Delivery: body, and its test script copies the ID token into {{token}}; every other request sends Authorization: Bearer {{token}}. An invited account's first login answers with challenge NEW_PASSWORD_REQUIRED (the script stores challengeSession): run Set Permanent Password next, which stores the token. Browsers use HttpOnly cookies instead; Session, Refresh and Logout work on those cookies.\n\nPath placeholders such as TENANT_ID_HERE, USER_ID_HERE and PLAN_ID_HERE must be replaced with real ids. Query parameters the backend does not need are included but disabled — tick them to use them. Role, tenant and user always come from the token, never from a body or query.\n\nEvery request here is checked against the backend controllers (src/main/java/com/NormaOne/backend/controllers): 100 routes, 102 requests (the two notification creates also have a multipart \"With Attachment\" variant). Full reference: NormaOne/backend/docs/API_REFERENCE.md.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47725187",
+    "_collection_link": "https://go.postman.co/collection/47725187-3e6a729f-c153-4309-9377-bbc4ca5704b7?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth Controller",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "Postman"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ana Admin\",\n  \"email\": \"ana@example.com\",\n  \"password\": \"ChangeMe123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Starts a Cognito sign-up. Cognito emails a verification code. No user record is written yet.\n\nRequires: Public.\n\nBody: name ≤100 · email ≤254 · password 8–256 (and Cognito's own password policy).\n\nSuccess: 202."
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.idToken) { pm.collectionVariables.set('token', body.idToken); }",
+                  "if (body.challengeSession) { pm.collectionVariables.set('challengeSession', body.challengeSession); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "Postman"
+              },
+              {
+                "key": "X-Token-Delivery",
+                "value": "body"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ana@example.com\",\n  \"code\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/verify-email",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "verify-email"
+              ]
+            },
+            "description": "Confirms the emailed code. With a password it also signs in, setting the session cookies like Login.\n\nRequires: Public.\n\nBody: email ≤254 · code ≤20 · password optional, 8–256.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Resend Code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "Postman"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ana@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/resend-code",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "resend-code"
+              ]
+            },
+            "description": "Sends a new verification code.\n\nRequires: Public.\n\nBody: email ≤254.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.idToken) { pm.collectionVariables.set('token', body.idToken); }",
+                  "if (body.challengeSession) { pm.collectionVariables.set('challengeSession', body.challengeSession); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "Postman"
+              },
+              {
+                "key": "X-Token-Delivery",
+                "value": "body"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ana@example.com\",\n  \"password\": \"ChangeMe123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Cognito USER_PASSWORD_AUTH through the backend. Sets the session as HttpOnly cookies; the body carries no token.\n\nRequires: Public.\n\nBody: email · password ≤256.\n\nThe tokens go into HttpOnly cookies the page cannot read. A non-browser client sends X-Token-Delivery: body to receive accessToken, idToken and refreshToken in the body instead (and no cookies), then uses Authorization: Bearer <idToken>. Every /api/auth request needs X-Requested-With (CSRF); this app adds it.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Set Permanent Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.idToken) { pm.collectionVariables.set('token', body.idToken); }",
+                  "if (body.challengeSession) { pm.collectionVariables.set('challengeSession', body.challengeSession); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "Postman"
+              },
+              {
+                "key": "X-Token-Delivery",
+                "value": "body"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"uma@example.com\",\n  \"newPassword\": \"Permanent#Pass456\",\n  \"session\": \"{{challengeSession}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/new-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "new-password"
+              ]
+            },
+            "description": "Completes an invited account's first login: answers Cognito's NEW_PASSWORD_REQUIRED challenge and only then sets the session cookies.\n\nRequires: Public.\n\nBody: email · newPassword 8–256 and the user pool's policy · session only for a non-browser client (the browser's challenge is the HttpOnly NORMAONE_CHALLENGE cookie).\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Password Policy",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/password-policy",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "password-policy"
+              ]
+            },
+            "description": "The user pool's password rules, for the set-password page. source COGNITO when the backend may describe the pool, DEFAULT otherwise.\n\nRequires: Public.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Session Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/session",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "session"
+              ]
+            },
+            "description": "Whether the browser's session cookie holds a valid token, for whom, until when — never the token itself. Always 200.\n\nRequires: Public.\n\nReads the HttpOnly cookies on the server. This app sends it with the session, unlike the other auth endpoints.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh The Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "Postman"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "A new session cookie from the refresh cookie (Cognito REFRESH_TOKEN_AUTH). On failure both cookies are cleared.\n\nRequires: Public.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Log Out",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "Postman"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Revokes the refresh token at Cognito (best effort) and clears both cookies. Safe when already signed out.\n\nRequires: Public.\n\nSuccess: 200."
+          },
+          "response": []
+        }
+      ],
+      "description": "AuthController — Cognito sign-up, email verification, login, the new-password challenge, the cookie session (status, refresh, logout) and the password policy. Public: no token needed. Every POST here carries X-Requested-With (CSRF). Login, Verify Email (with password) and Set Permanent Password send X-Token-Delivery: body, so the tokens come back in the body; their test script stores the ID token in {{token}}."
+    },
+    {
+      "name": "User Controller",
+      "item": [
+        {
+          "name": "My Email Preference",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me/email-preference",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me",
+                "email-preference"
+              ]
+            },
+            "description": "Whether the caller receives email notifications. Never set = enabled (the default). Any active account: SUPER_ADMIN, ADMIN or USER.\n\nRequires: Any active account (SUPER_ADMIN, ADMIN or USER).\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Set My Email Preference",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"enabled\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me/email-preference",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me",
+                "email-preference"
+              ]
+            },
+            "description": "Turns the caller's own email notifications on or off. There is no user id: it is always the caller's own account. In-app notifications are not affected.\n\nRequires: Any active account (SUPER_ADMIN, ADMIN or USER).\n\nBody: enabled true · false.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Who Am I",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            },
+            "description": "The caller's own profile, onboarding state, effective role and module access. Links a pending invitation on first call.\n\nRequires: Any valid token.\n\nBefore onboarding there is no user record: the answer is onboardingStatus NOT_STARTED with requiresTenantSetup true, not a 404. modules is just the ids of the modules the account can use now (assigned and the account active — the plan does not block a module while plan entitlement is not enforced), e.g. [\"FACTURAFLOW\", \"JORNADAPULSE\"]: navigation shows these. modulePermissions is every module permission the backend allows now. The per-module detail is on the administrators' module routes. There is no separate general permission list. A Super Admin has no modules.\n\nSuccess: 200."
+          },
+          "response": []
+        }
+      ],
+      "description": "UserController — the signed-in account: who am I (role, organization, module IDs, permissions) and my own email-notification preference."
+    },
+    {
+      "name": "Onboarding Controller",
+      "item": [
+        {
+          "name": "Onboarding Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/onboarding/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "onboarding",
+                "status"
+              ]
+            },
+            "description": "Whether the caller still has to create an organization, and what they are once they have.\n\nRequires: Any valid token.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Create My Organization",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"organizationName\": \"Demo Spain SL\",\n  \"subdomain\": \"demo-{{$timestamp}}\",\n  \"countryCode\": \"ES\",\n  \"defaultLocale\": \"ES_ES\",\n  \"defaultTimeZone\": \"EUROPE_MADRID\",\n  \"accountHolderName\": \"Ana Admin\",\n  \"emailAddress\": \"ana@example.com\",\n  \"phoneNumber\": \"+34 600 000 000\",\n  \"addressLine\": \"Calle Mayor 10\",\n  \"city\": \"Madrid\",\n  \"postalCode\": \"28013\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/onboarding/tenant",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "onboarding",
+                "tenant"
+              ]
+            },
+            "description": "Creates the tenant, makes the caller its ADMIN and assigns the BASIC package. Idempotent for the same subdomain.\n\nRequires: Any valid token.\n\nBody: organizationName ≤100 · subdomain 2–50, lowercase letters, digits, inner hyphens · countryCode enum · defaultLocale / defaultTimeZone enums, defaulted from the country when absent · the rest optional.\n\nThe administrator is always the caller, from the token. There is no initialAdmin field here — that is the Super Admin's create.\n\nSuccess: 201."
+          },
+          "response": []
+        }
+      ],
+      "description": "OnboardingController — a self-registered owner creates their organization and becomes its first ADMIN (BASIC package, every module permission). Any valid token."
+    },
+    {
+      "name": "Organization Controller",
+      "item": [
+        {
+          "name": "My Organization",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/organization",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "organization"
+              ]
+            },
+            "description": "The caller's own organization, read only. Takes no id: the organization comes from the caller's stored user record, so no URL, query or body can name another one.\n\nRequires: A member of an organization (ADMIN or USER).\n\nLess than the administrators' GET /api/tenant: no user count, package or status history.\n\nSuccess: 200."
+          },
+          "response": []
+        }
+      ],
+      "description": "OrganizationController — the caller's own organization, read only. ADMIN or USER of an ACTIVE organization."
+    },
+    {
+      "name": "Module Controller",
+      "item": [
+        {
+          "name": "Module Catalog",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/modules",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "modules"
+              ]
+            },
+            "description": "The six application modules and the permissions defined for each, with the roles that get each permission by default.\n\nRequires: Any active account (SUPER_ADMIN, ADMIN or USER).\n\nStatic and the same for everybody: what one account may use is in GET /api/users/me.\n\nSuccess: 200."
+          },
+          "response": []
+        }
+      ],
+      "description": "ModuleController — the six product modules and their permissions. Any active account."
+    },
+    {
+      "name": "Notification Controller",
+      "item": [
+        {
+          "name": "My Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications"
+              ],
+              "query": [
+                {
+                  "key": "filter",
+                  "value": "UNREAD",
+                  "description": "ALL (default) · UNREAD · READ — by the caller's own read state.",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "0-based page index."
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "1 to 100."
+                }
+              ]
+            },
+            "description": "The caller's inbox, newest first: SELECTED ones naming them, and their tenant's broadcasts created on or after they joined. Only the caller's own read state; never the recipient list.\n\nRequires: A member of an organization (ADMIN or USER).\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/unread-count",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications",
+                "unread-count"
+              ]
+            },
+            "description": "How many of the caller's ACTIVE notifications they have not read. Same visibility rules as the inbox.\n\nRequires: A member of an organization (ADMIN or USER).\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Open A Notification",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/NOTIFICATION_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications",
+                "NOTIFICATION_ID_HERE"
+              ]
+            },
+            "description": "One visible notification. Opening it does NOT mark it read.\n\nRequires: A member of an organization (ADMIN or USER).\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Read / Unread",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"read\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/NOTIFICATION_ID_HERE/read-status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications",
+                "NOTIFICATION_ID_HERE",
+                "read-status"
+              ]
+            },
+            "description": "The caller's own copy only: their element of users (SELECTED) or their receipt (TENANT). The server sets readAt; a repeat changes nothing.\n\nRequires: A member of an organization (ADMIN or USER).\n\nBody: read true or false. A userId or readAt in the body is ignored..\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Download The Attachment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/NOTIFICATION_ID_HERE/attachment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications",
+                "NOTIFICATION_ID_HERE",
+                "attachment"
+              ]
+            },
+            "description": "The file, as a download (Content-Disposition: attachment). With S3 storage: 302 to a 60-second presigned URL. Same visibility check as opening the notification.\n\nRequires: A member of an organization (ADMIN or USER).\n\nSuccess: 200."
+          },
+          "response": []
+        }
+      ],
+      "description": "NotificationController — the member inbox: list, unread count, open, mark read/unread, download the attachment. ADMIN or USER; only notifications addressed to the caller."
+    },
+    {
+      "name": "Tenant Controller",
+      "item": [
+        {
+          "name": "My Organization",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant"
+              ]
+            },
+            "description": "The caller's own tenant, with its user count and package.\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "My Package",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/package",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "package"
+              ]
+            },
+            "description": "The caller's tenant's current subscription and plan.\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "My Organization's Audit Log",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/audit-events?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "audit-events"
+              ],
+              "query": [
+                {
+                  "key": "action",
+                  "value": "USER_STATUS_CHANGED",
+                  "description": "An AuditAction, e.g. USER_INVITED, USER_MODULE_ACCESS_CHANGED, PLAN_CHANGE_REQUESTED.",
+                  "disabled": true
+                },
+                {
+                  "key": "actorUserId",
+                  "value": "",
+                  "description": "Who did it.",
+                  "disabled": true
+                },
+                {
+                  "key": "targetId",
+                  "value": "",
+                  "description": "One user, subscription or request id.",
+                  "disabled": true
+                },
+                {
+                  "key": "targetType",
+                  "value": "USER",
+                  "description": "USER, TENANT, PLAN, SUBSCRIPTION, PLAN_CHANGE_REQUEST, NOTIFICATION.",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2026-10-01T00:00:00Z",
+                  "description": "ISO-8601 instant, inclusive.",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2026-12-31T23:59:59Z",
+                  "description": "ISO-8601 instant, inclusive.",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "0-based page index."
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "1 to 100."
+                }
+              ]
+            },
+            "description": "Read only. The audit trail of the caller's own organization, newest first. The tenant filter comes from the caller's record and is part of the database query: there is no tenantId parameter, and one sent is ignored.\n\nRequires: ADMIN of an active tenant.\n\nPlatform-only events (plan definitions, Super Admin accounts) carry no tenant and never appear here.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "List My Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/users?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Name or email, ≤100.",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "ACTIVE",
+                  "description": "INVITED · ACTIVE · SUSPENDED · DEACTIVATED",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "ADMIN",
+                  "description": "SUPER_ADMIN · ADMIN · USER (legacy values fold in)",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "0-based page index."
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "1 to 100."
+                }
+              ]
+            },
+            "description": "Users of the caller's tenant only. Search matches name or email.\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Invite A User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Uma User\",\n  \"email\": \"uma+{{$timestamp}}@example.com\",\n  \"role\": \"USER\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "users"
+              ]
+            },
+            "description": "An INVITED user in the caller's tenant. Cognito emails them a temporary password; their first sign-in must set a permanent one, and the record turns ACTIVE at their first signed-in request.\n\nRequires: ADMIN of an active tenant.\n\nBody: name ≤100 · email ≤254 · phoneNumber ≤30 · role USER (default) or ADMIN · moduleAccess, modulePermissions optional — when both are absent all six modules are assigned with the role's defaults (USER: VIEW; ADMIN: all but DELETE), never more than the caller holds.\n\nSuccess: 201."
+          },
+          "response": []
+        },
+        {
+          "name": "Open A User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/users/USER_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "users",
+                "USER_ID_HERE"
+              ]
+            },
+            "description": "One user of the caller's tenant. Another tenant's user answers 404, not 403.\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Update A User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"ADMIN\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/users/USER_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "users",
+                "USER_ID_HERE"
+              ]
+            },
+            "description": "Partial: name, phoneNumber, role. Only the fields sent change.\n\nRequires: ADMIN of an active tenant.\n\nBody: name 1–100 · phoneNumber ≤30 · role USER or ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Change A User's Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"SUSPENDED\",\n  \"reason\": \"On leave\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/users/USER_ID_HERE/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "users",
+                "USER_ID_HERE",
+                "status"
+              ]
+            },
+            "description": "ACTIVE, SUSPENDED or DEACTIVATED (removal is DEACTIVATED: the record and its history are kept). A reason is required to suspend or deactivate. Cognito follows: signed out on SUSPENDED, signed out and disabled on DEACTIVATED, re-enabled first on reactivation.\n\nRequires: ADMIN of an active tenant.\n\nBody: status ACTIVE · SUSPENDED · DEACTIVATED · reason ≤500.\n\nAn administrator is removed only by another administrator, and the organization always keeps one active ADMIN. The audit event records what Cognito did (details.identityProvider: DONE, FAILED, NO_ACCOUNT or SKIPPED).\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "A User's Email Preference",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/users/USER_ID_HERE/email-preference",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "users",
+                "USER_ID_HERE",
+                "email-preference"
+              ]
+            },
+            "description": "Whether a USER of the caller's own organization receives email notifications.\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Set A User's Email Preference",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"enabled\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/users/USER_ID_HERE/email-preference",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "users",
+                "USER_ID_HERE",
+                "email-preference"
+              ]
+            },
+            "description": "Turns a USER's email notifications on or off — USER accounts of the caller's own organization only. In-app notifications are not affected.\n\nRequires: ADMIN of an active tenant.\n\nBody: enabled true · false. An organization id in the body is ignored..\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Resend An Invitation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/users/USER_ID_HERE/resend-invitation",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "users",
+                "USER_ID_HERE",
+                "resend-invitation"
+              ]
+            },
+            "description": "Cognito emails the pending user a new temporary password — also the fix for an expired one.\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "A User's Modules",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/users/USER_ID_HERE/modules",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "users",
+                "USER_ID_HERE",
+                "modules"
+              ]
+            },
+            "description": "All six modules for one user of the caller's tenant: assigned or not, and the permissions in each.\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Set A User's Modules",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"modules\": [\"FACTURAFLOW\", \"JORNADAPULSE\"],\n  \"permissions\": [\"FACTURAFLOW_VIEW\", \"JORNADAPULSE_VIEW\", \"JORNADAPULSE_CREATE\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/users/USER_ID_HERE/modules",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "users",
+                "USER_ID_HERE",
+                "modules"
+              ]
+            },
+            "description": "Replaces the whole assignment. Every permission added or removed must be one the caller holds.\n\nRequires: ADMIN of an active tenant.\n\nBody: modules: list of the six module ids ([] = none) · permissions: module permissions, each inside an assigned module.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Set One Module",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"permissions\": [\"JORNADAPULSE_VIEW\", \"JORNADAPULSE_CREATE\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/users/USER_ID_HERE/modules/MODULE_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "users",
+                "USER_ID_HERE",
+                "modules",
+                "MODULE_ID_HERE"
+              ]
+            },
+            "description": "Assigns one module with exactly these permissions; the user's other modules are not touched.\n\nRequires: ADMIN of an active tenant.\n\nBody: permissions: that module's permissions only ([] keeps the module with none).\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Revoke One Module",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/users/USER_ID_HERE/modules/MODULE_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "users",
+                "USER_ID_HERE",
+                "modules",
+                "MODULE_ID_HERE"
+              ]
+            },
+            "description": "Removes the module and every permission in it. Applies to the user's next request.\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        }
+      ],
+      "description": "TenantController — tenant administration of the caller's own organization: profile, package and seats, audit log, invitations, user status (suspend / deactivate = remove / reactivate), module assignment and team email preferences. Requires an ACTIVE ADMIN; the tenant always comes from the token, never from the request."
+    },
+    {
+      "name": "Tenant Plan Controller",
+      "item": [
+        {
+          "name": "Plan Catalogue",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/plans",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "plans"
+              ]
+            },
+            "description": "Every plan in the database, ACTIVE ones first, then cheapest first. Only an ACTIVE plan other than the current one can be requested (selectable); the others are listed with their status.\n\nRequires: ADMIN of an active tenant.\n\nNo platform data: no subscription counts, creators or sale windows. selectable is true for an ACTIVE plan that is not the current one. The organization's own subscription and its dates are My package.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "One Plan",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/plans/PLAN_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "plans",
+                "PLAN_ID_HERE"
+              ]
+            },
+            "description": "One plan, as a Tenant Admin sees it.\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Request A Plan Change",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planId\": \"PLAN_ID_HERE\",\n  \"reason\": \"We are growing past the seat limit\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/plan-change-requests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "plan-change-requests"
+              ]
+            },
+            "description": "Asks for this organization to move to another plan. Nothing changes until a Super Admin approves it — there is no billing or payment integration, so no change is applied on request. The Super Admins see it under Change requests. Email Notifications — Coming Soon: the backend queues a Super Admin email in its outbox, but no sender is configured, so nothing is sent yet.\n\nRequires: ADMIN of an active tenant.\n\nBody: planId (an ACTIVE plan from the catalogue) · reason ≤500. There is no tenant field: a tenantId sent is ignored..\n\nnotification.status is the queued Super Admin email's honest state: PENDING while email delivery is not configured (Coming Soon); once it is, SENT, PENDING (waiting for a retry) or FAILED. Email never affects the saved request.\n\nSuccess: 201."
+          },
+          "response": []
+        },
+        {
+          "name": "My Plan-Change Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/plan-change-requests?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "plan-change-requests"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PENDING",
+                  "description": "PENDING, PROCESSING, APPROVED, REJECTED or CANCELLED.",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "0-based page index."
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "1 to 100."
+                }
+              ]
+            },
+            "description": "This organization's requests, newest first.\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "One Plan-Change Request",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/plan-change-requests/REQUEST_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "plan-change-requests",
+                "REQUEST_ID_HERE"
+              ]
+            },
+            "description": "One of this organization's requests, with the decision once there is one.\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel A Plan-Change Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/plan-change-requests/REQUEST_ID_HERE/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "plan-change-requests",
+                "REQUEST_ID_HERE",
+                "cancel"
+              ]
+            },
+            "description": "Withdraws a PENDING request of this organization. No body.\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        }
+      ],
+      "description": "TenantPlanController — the plan catalogue (every ACTIVE public plan) and plan-change requests to the Super Admin. Requires an ACTIVE ADMIN. No payment is taken."
+    },
+    {
+      "name": "Tenant Notification Controller",
+      "item": [
+        {
+          "name": "Send A Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"Important Compliance Update\",\n  \"body\": \"Please review the updated compliance requirements.\",\n  \"audience\": \"SELECTED\",\n  \"userIds\": [\"USER_ID_HERE\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "notifications"
+              ]
+            },
+            "description": "To the caller's own tenant (from their record; a tenantId in the body is ignored). SELECTED: userIds must all be INVITED or ACTIVE members of the tenant (one that is not refuses the whole request, without saying whether it exists elsewhere). TENANT: no userIds; every member who joined on or before it. Never platform-wide.\n\nRequires: ADMIN of an active tenant.\n\nBody: subject ≤200 · body ≤10000 (plain text) · audience SELECTED or TENANT · userIds (SELECTED only, ≤1000, duplicates removed).\n\nWith an attachment the same endpoint takes multipart/form-data: a \"notification\" part (this JSON, Content-Type application/json) and an \"attachment\" file part. The notification screens send it that way; the console sends JSON only. A users array, tenantId or createdByRole in the body is ignored.\n\nSuccess: 201."
+          },
+          "response": []
+        },
+        {
+          "name": "Send A Notification (With Attachment)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "notification",
+                  "value": "{\n  \"subject\": \"Important Compliance Update\",\n  \"body\": \"Please review the updated compliance requirements.\",\n  \"audience\": \"SELECTED\",\n  \"userIds\": [\"USER_ID_HERE\"]\n}",
+                  "type": "text",
+                  "contentType": "application/json",
+                  "description": "The notification JSON (subject, body, audience TENANT or SELECTED, userIds for SELECTED)."
+                },
+                {
+                  "key": "attachment",
+                  "type": "file",
+                  "description": "Choose a PDF, PNG, JPEG, DOCX or XLSX file (max 10 MB).",
+                  "value": null
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "notifications"
+              ]
+            },
+            "description": "To the caller's own tenant (from their record; a tenantId in the body is ignored). SELECTED: userIds must all be INVITED or ACTIVE members of the tenant (one that is not refuses the whole request, without saying whether it exists elsewhere). TENANT: no userIds; every member who joined on or before it. Never platform-wide.\n\nRequires: ADMIN of an active tenant.\n\nBody: subject ≤200 · body ≤10000 (plain text) · audience SELECTED or TENANT · userIds (SELECTED only, ≤1000, duplicates removed).\n\nWith an attachment the same endpoint takes multipart/form-data: a \"notification\" part (this JSON, Content-Type application/json) and an \"attachment\" file part. The notification screens send it that way; the console sends JSON only. A users array, tenantId or createdByRole in the body is ignored.\n\nSuccess: 201."
+          },
+          "response": []
+        },
+        {
+          "name": "List Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/notifications?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "notifications"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "ACTIVE",
+                  "description": "ACTIVE · ARCHIVED",
+                  "disabled": true
+                },
+                {
+                  "key": "audience",
+                  "value": "TENANT",
+                  "description": "SELECTED · TENANT",
+                  "disabled": true
+                },
+                {
+                  "key": "createdBy",
+                  "value": "",
+                  "description": "A creator's user id.",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "0-based page index."
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "1 to 100."
+                }
+              ]
+            },
+            "description": "The tenant's notifications, ACTIVE and ARCHIVED, newest first, with recipient and read counts (no recipient lists).\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Open A Notification",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/notifications/NOTIFICATION_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "notifications",
+                "NOTIFICATION_ID_HERE"
+              ]
+            },
+            "description": "One notification with every recipient's read state (SELECTED) or the read and eligible counts (TENANT).\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Edit A Notification",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"Important Compliance Update (revised)\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/notifications/NOTIFICATION_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "notifications",
+                "NOTIFICATION_ID_HERE"
+              ]
+            },
+            "description": "Only the fields sent change. Recipients (SELECTED only) are added unread and removed on the server, so everyone else keeps their read state. The audience never changes.\n\nRequires: ADMIN of an active tenant.\n\nBody: subject ≤200 · body ≤10000 · addUserIds · removeUserIds.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Archive Or Restore A Notification",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ARCHIVED\",\n  \"reason\": \"Superseded\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/notifications/NOTIFICATION_ID_HERE/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "notifications",
+                "NOTIFICATION_ID_HERE",
+                "status"
+              ]
+            },
+            "description": "ARCHIVED: it leaves every inbox and unread count and cannot be edited, but stays in the admin lists and is never deleted. ACTIVE: restores an archived one exactly as it was (content, audience, recipients, read states), back in the inboxes — the organization must be ACTIVE. Repeating either changes nothing. Audited as NOTIFICATION_ARCHIVED / NOTIFICATION_RESTORED.\n\nRequires: ADMIN of an active tenant.\n\nBody: status ARCHIVED (archive) · ACTIVE (restore) · reason ≤500 (to the audit trail).\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Replace The Attachment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "attachment",
+                  "type": "file",
+                  "description": "Choose a PDF, PNG, JPEG, DOCX or XLSX file (max 10 MB).",
+                  "value": null
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/notifications/NOTIFICATION_ID_HERE/attachment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "notifications",
+                "NOTIFICATION_ID_HERE",
+                "attachment"
+              ]
+            },
+            "description": "multipart/form-data with an \"attachment\" file part. Adds or replaces it; the old file is deleted once nothing refers to it.\n\nRequires: ADMIN of an active tenant.\n\nMultipart only — send it from the notification's page, which builds the form. The console cannot attach a file.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Remove The Attachment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/notifications/NOTIFICATION_ID_HERE/attachment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "notifications",
+                "NOTIFICATION_ID_HERE",
+                "attachment"
+              ]
+            },
+            "description": "Removes the attachment and deletes its file. Without one, nothing changes.\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Download The Attachment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/notifications/NOTIFICATION_ID_HERE/attachment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "notifications",
+                "NOTIFICATION_ID_HERE",
+                "attachment"
+              ]
+            },
+            "description": "The file as a download, ACTIVE or ARCHIVED. With S3 storage: 302 to a 60-second presigned URL.\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Recipient Options",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/notifications/recipients",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "notifications",
+                "recipients"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Name or email, ≤100 characters.",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "",
+                  "description": "0-based page index (default 0).",
+                  "disabled": true
+                },
+                {
+                  "key": "size",
+                  "value": "",
+                  "description": "1 to 100 (default 20).",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Members of the caller's own organization who can be chosen as notification recipients (INVITED or ACTIVE). The organization comes from the caller's stored record, never from the request.\n\nRequires: ADMIN of an active tenant.\n\nSuccess: 200."
+          },
+          "response": []
+        }
+      ],
+      "description": "TenantNotificationController — an ADMIN sends notifications to the whole organization or selected members, with one optional attachment (PDF, PNG, JPEG, DOCX or XLSX, max 10 MB); edit, archive / restore, replace or remove the attachment."
+    },
+    {
+      "name": "Super Admin Controller",
+      "item": [
+        {
+          "name": "Platform Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "dashboard"
+              ]
+            },
+            "description": "Organizations, administrators and regular users by status, Super Admins, and subscriptions by plan — each a database aggregation.\n\nRequires: SUPER_ADMIN.\n\nActive is ACTIVE; inactive is SUSPENDED plus DEACTIVATED; INVITED is neither. /api/super-admin/summary is an alias of the same read.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Platform Dashboard (Alias)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "summary"
+              ]
+            },
+            "description": "The earlier name of GET /api/super-admin/dashboard, kept so existing clients work. Same handler, same response.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "List Tenants",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Name or subdomain, ≤100.",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "ACTIVE",
+                  "description": "PROVISIONING · ACTIVE · SUSPENDED · DELETED",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "0-based page index."
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "1 to 100."
+                }
+              ]
+            },
+            "description": "Every tenant. Search matches name or subdomain.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Create A Tenant",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"organizationName\": \"Beta Iberia SL\",\n  \"subdomain\": \"beta-{{$timestamp}}\",\n  \"countryCode\": \"ES\",\n  \"defaultLocale\": \"ES_ES\",\n  \"defaultTimeZone\": \"EUROPE_MADRID\",\n  \"initialAdmin\": {\n    \"name\": \"Bea Admin\",\n    \"email\": \"bea+{{$timestamp}}@example.com\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants"
+              ]
+            },
+            "description": "A tenant on BASIC with an INVITED administrator, whom Cognito emails a temporary password. If that email cannot be sent, the tenant is discarded (502).\n\nRequires: SUPER_ADMIN.\n\nBody: as onboarding, plus initialAdmin { name ≤100, email ≤254, phoneNumber ≤30 }.\n\nSuccess: 201."
+          },
+          "response": []
+        },
+        {
+          "name": "Open A Tenant",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants/TENANT_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants",
+                "TENANT_ID_HERE"
+              ]
+            },
+            "description": "One tenant, with user count and package.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Update A Tenant",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenantName\": \"Acme Global\",\n  \"city\": \"Valencia\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants/TENANT_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants",
+                "TENANT_ID_HERE"
+              ]
+            },
+            "description": "Partial: only the fields sent change. Subdomain, status and package are not editable here.\n\nRequires: SUPER_ADMIN.\n\nBody: tenantName 1–100 · accountHolderName 1–100 · emailAddress · phoneNumber ≤30 · addressLine ≤255 · city ≤100 · postalCode ≤20 · logoUrl ≤500 · defaultLocale · defaultTimeZone.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Change A Tenant's Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"SUSPENDED\",\n  \"reason\": \"Review\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants/TENANT_ID_HERE/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants",
+                "TENANT_ID_HERE",
+                "status"
+              ]
+            },
+            "description": "ACTIVE or SUSPENDED. Suspending needs a reason; its users lose their roles until it is ACTIVE again.\n\nRequires: SUPER_ADMIN.\n\nBody: status ACTIVE · SUSPENDED · reason ≤500 (required to suspend).\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "A Tenant's Package",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants/TENANT_ID_HERE/package",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants",
+                "TENANT_ID_HERE",
+                "package"
+              ]
+            },
+            "description": "The tenant's current subscription and plan.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "List Administrators",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/admins?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "admins"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Name or email, ≤100.",
+                  "disabled": true
+                },
+                {
+                  "key": "tenantId",
+                  "value": "",
+                  "description": "One organization only.",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "ACTIVE",
+                  "description": "INVITED · ACTIVE · SUSPENDED · DEACTIVATED",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "0-based page index."
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "1 to 100."
+                }
+              ]
+            },
+            "description": "Tenant administrators (role ADMIN) across every organization, with their permissions and organization.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Invite An Administrator",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenantId\": \"TENANT_ID_HERE\",\n  \"name\": \"Nora Admin\",\n  \"email\": \"nora+{{$timestamp}}@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/admins",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "admins"
+              ]
+            },
+            "description": "An INVITED ADMIN in an existing, ACTIVE organization. Cognito creates the account and emails a temporary password; the first sign-in sets a permanent one.\n\nRequires: SUPER_ADMIN.\n\nBody: tenantId ≤64 · name ≤100 · email ≤254 · phoneNumber ≤30. No role field: always ADMIN. moduleAccess, modulePermissions optional — when both are absent all six modules are assigned with the ADMIN defaults (every permission but DELETE)..\n\nA role or roles field — SUPER_ADMIN included — is ignored like any unknown field; the account is created as ADMIN.\n\nSuccess: 201."
+          },
+          "response": []
+        },
+        {
+          "name": "Open An Administrator",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/admins/ADMIN_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "admins",
+                "ADMIN_ID_HERE"
+              ]
+            },
+            "description": "One administrator. A regular user's or a Super Admin's id answers 404 here.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Update An Administrator",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nora Admin-Ruiz\",\n  \"phoneNumber\": \"+34 600 000 001\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/admins/ADMIN_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "admins",
+                "ADMIN_ID_HERE"
+              ]
+            },
+            "description": "Replaces the editable profile: name and phone number. Email, organization, role and permissions are not reachable from here.\n\nRequires: SUPER_ADMIN.\n\nBody: name ≤100 · phoneNumber ≤30 (absent or blank clears it).\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Change An Administrator's Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"SUSPENDED\",\n  \"reason\": \"Security review\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/admins/ADMIN_ID_HERE/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "admins",
+                "ADMIN_ID_HERE",
+                "status"
+              ]
+            },
+            "description": "ACTIVE, SUSPENDED or DEACTIVATED, through the same lifecycle as every account. Nothing is deleted and the organization is untouched; Cognito signs the account out (and disables it on DEACTIVATED).\n\nRequires: SUPER_ADMIN.\n\nBody: status ACTIVE · SUSPENDED · DEACTIVATED · reason ≤500 (required to suspend or deactivate) · confirmNoActiveAdmin: true to remove the organization's only active ADMIN.\n\nAfter removing an organization's only active administrator, invite a replacement (Invite an administrator): that is its way back.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Resend An Administrator's Invitation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/admins/ADMIN_ID_HERE/resend-invitation",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "admins",
+                "ADMIN_ID_HERE",
+                "resend-invitation"
+              ]
+            },
+            "description": "Cognito emails the pending administrator a new temporary password.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "An Administrator's Modules",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/admins/ADMIN_ID_HERE/modules",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "admins",
+                "ADMIN_ID_HERE",
+                "modules"
+              ]
+            },
+            "description": "All six modules for one administrator: assigned or not, and the permissions in each.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Set An Administrator's Modules",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"modules\": [\"FACTURAFLOW\", \"PREVENWORK\"],\n  \"permissions\": [\"FACTURAFLOW_VIEW\", \"PREVENWORK_VIEW\", \"PREVENWORK_DELETE\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/admins/ADMIN_ID_HERE/modules",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "admins",
+                "ADMIN_ID_HERE",
+                "modules"
+              ]
+            },
+            "description": "Replaces the whole assignment. The Super Admin is not limited to permissions of their own.\n\nRequires: SUPER_ADMIN.\n\nBody: modules: list of the six module ids ([] = none) · permissions: module permissions, each inside an assigned module.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Set One Administrator Module",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"permissions\": [\"PREVENWORK_VIEW\", \"PREVENWORK_DELETE\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/admins/ADMIN_ID_HERE/modules/MODULE_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "admins",
+                "ADMIN_ID_HERE",
+                "modules",
+                "MODULE_ID_HERE"
+              ]
+            },
+            "description": "Assigns one module with exactly these permissions; the administrator's other modules are kept.\n\nRequires: SUPER_ADMIN.\n\nBody: permissions: that module's permissions only.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Revoke One Administrator Module",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/admins/ADMIN_ID_HERE/modules/MODULE_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "admins",
+                "ADMIN_ID_HERE",
+                "modules",
+                "MODULE_ID_HERE"
+              ]
+            },
+            "description": "Removes the module and every permission in it from the administrator.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/users?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Name or email, ≤100.",
+                  "disabled": true
+                },
+                {
+                  "key": "tenantId",
+                  "value": "",
+                  "description": "One organization only.",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "ACTIVE",
+                  "description": "INVITED · ACTIVE · SUSPENDED · DEACTIVATED",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "0-based page index."
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "1 to 100."
+                }
+              ]
+            },
+            "description": "Read only. Regular users (role USER) across every organization — administrators and Super Admins are not in it.\n\nRequires: SUPER_ADMIN.\n\nThere is no Super Admin route that creates, edits, deletes or changes the status of a regular user: other methods on /users answer 405, and /users/{id}/status answers 404.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Open A User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/users/USER_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "users",
+                "USER_ID_HERE"
+              ]
+            },
+            "description": "Read only. One regular user with their organization; no phone number and no Cognito sub.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Audit Trail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/audit-events?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "audit-events"
+              ],
+              "query": [
+                {
+                  "key": "tenantId",
+                  "value": "",
+                  "description": "One organization.",
+                  "disabled": true
+                },
+                {
+                  "key": "targetId",
+                  "value": "",
+                  "description": "One user, tenant or subscription id.",
+                  "disabled": true
+                },
+                {
+                  "key": "actorUserId",
+                  "value": "",
+                  "description": "Who did it.",
+                  "disabled": true
+                },
+                {
+                  "key": "action",
+                  "value": "USER_STATUS_CHANGED",
+                  "description": "An AuditAction, e.g. USER_INVITED, PLAN_CHANGE_REQUESTED.",
+                  "disabled": true
+                },
+                {
+                  "key": "targetType",
+                  "value": "USER",
+                  "description": "USER, TENANT, PLAN, SUBSCRIPTION, PLAN_CHANGE_REQUEST, NOTIFICATION.",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2026-10-01T00:00:00Z",
+                  "description": "ISO-8601 instant, inclusive.",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2026-12-31T23:59:59Z",
+                  "description": "ISO-8601 instant, inclusive.",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "0-based page index."
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "1 to 100."
+                }
+              ]
+            },
+            "description": "Read only. Administrative actions, newest first.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "List Super Admins",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/super-admins?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "super-admins"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Name or email.",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "ACTIVE",
+                  "description": "A UserStatus.",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "0-based page index."
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "1 to 100."
+                }
+              ]
+            },
+            "description": "Platform accounts, newest first.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Add A Super Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sara Platform\",\n  \"email\": \"sara@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/super-admins",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "super-admins"
+              ]
+            },
+            "description": "Invites a new platform account: Cognito creates it and emails a temporary password (never returned here). An existing account is never promoted.\n\nRequires: SUPER_ADMIN.\n\nBody: name ≤100 · email ≤254.\n\nSuccess: 201."
+          },
+          "response": []
+        },
+        {
+          "name": "Open A Super Admin",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/super-admins/SUPER_ADMIN_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "super-admins",
+                "SUPER_ADMIN_ID_HERE"
+              ]
+            },
+            "description": "One platform account.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Or Restore A Super Admin",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"DEACTIVATED\",\n  \"reason\": \"Left the company\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/super-admins/SUPER_ADMIN_ID_HERE/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "super-admins",
+                "SUPER_ADMIN_ID_HERE",
+                "status"
+              ]
+            },
+            "description": "Removing platform access is DEACTIVATED (the record and its history are kept; Cognito signs the account out and disables it); ACTIVE restores it (Cognito re-enabled first). Never yourself, and never the last active Super Admin.\n\nRequires: SUPER_ADMIN.\n\nBody: status ACTIVE · SUSPENDED · DEACTIVATED · reason ≤500 (required to suspend or deactivate).\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Resend A Super Admin Invitation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/super-admins/SUPER_ADMIN_ID_HERE/resend-invitation",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "super-admins",
+                "SUPER_ADMIN_ID_HERE",
+                "resend-invitation"
+              ]
+            },
+            "description": "A new temporary password for an INVITED Super Admin (emailed by Cognito). No body.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Account Directory",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/accounts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "accounts"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Name or email, ≤100 characters.",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "",
+                  "description": "SUPER_ADMIN, ADMIN or USER.",
+                  "disabled": true
+                },
+                {
+                  "key": "tenantId",
+                  "value": "",
+                  "description": "Only accounts of this organization (≤64).",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "INVITED, ACTIVE, SUSPENDED or DEACTIVATED.",
+                  "disabled": true
+                },
+                {
+                  "key": "module",
+                  "value": "",
+                  "description": "Only accounts assigned this module (NORMAONE is refused with 400).",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "",
+                  "description": "0-based page index (default 0).",
+                  "disabled": true
+                },
+                {
+                  "key": "size",
+                  "value": "",
+                  "description": "1 to 100 (default 20).",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Read-only directory of every account across all tenants and the platform (Super Admins, Admins and Users), with filters. Never returns the Cognito sub or a regular user's phone number.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        }
+      ],
+      "description": "SuperAdminController — platform administration: dashboard, organizations, their administrators and module access, regular users (read only), the cross-tenant account directory, the platform audit trail and Super Admin accounts. Requires SUPER_ADMIN."
+    },
+    {
+      "name": "Super Admin Plan Controller",
+      "item": [
+        {
+          "name": "List Plans",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/plans?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "plans"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "ACTIVE",
+                  "description": "DRAFT, ACTIVE, INACTIVE or ARCHIVED.",
+                  "disabled": true
+                },
+                {
+                  "key": "planCode",
+                  "value": "BASIC",
+                  "description": "One plan code (any case).",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "0-based page index."
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "1 to 100."
+                }
+              ]
+            },
+            "description": "Every plan version, by code then newest version first.\n\nRequires: SUPER_ADMIN.\n\nlatestVersion false marks a historical version: a newer version of the same code exists.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Create A Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planCode\": \"PRO\",\n  \"name\": \"Professional\",\n  \"description\": \"For growing teams\",\n  \"billingCycle\": \"MONTHLY\",\n  \"listPrice\": 49.90,\n  \"currencyCode\": \"EUR\",\n  \"maxEmployees\": 50,\n  \"maxUsers\": 25,\n  \"durationMonths\": 12,\n  \"publiclyAvailable\": true,\n  \"moduleApps\": [\"NORMAONE\", \"FACTURAFLOW\", \"JORNADAPULSE\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/plans",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "plans"
+              ]
+            },
+            "description": "Creates a DRAFT plan, or a new DRAFT version of an existing code (planVersion omitted = the next one). Recorded in the plan history.\n\nRequires: SUPER_ADMIN.\n\nBody: planCode ≤50 [A-Za-z0-9_-] · planVersion optional (next one) · name ≤100 · description ≤1000 · billingCycle MONTHLY · QUARTERLY · YEARLY · listPrice ≥0, 2 decimals · currencyCode ISO 4217 (EUR) · maxEmployees >0 · maxUsers 1–1000000 (seat limit; omit = none) · durationMonths 1–120 (omit = rolling) · trialDays ≥0 · publiclyAvailable (shown to Tenant Admins) · effectiveFrom/Until · moduleApps NORMAONE and the six modules.\n\nSuccess: 201."
+          },
+          "response": []
+        },
+        {
+          "name": "Open A Plan",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/plans/PLAN_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "plans",
+                "PLAN_ID_HERE"
+              ]
+            },
+            "description": "One plan version, with how many organizations are on it now.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Edit A Plan",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Professional\",\n  \"description\": \"For growing teams\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/plans/PLAN_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "plans",
+                "PLAN_ID_HERE"
+              ]
+            },
+            "description": "A DRAFT changes anything. A published version changes only name, description, publiclyAvailable and the sale window: new terms (price, currency, cycle, duration, seats, trial, employees, modules) are a new version. Each changed field is recorded in the plan history with its previous and new value.\n\nRequires: SUPER_ADMIN.\n\nBody: Any field of Create a plan except planCode and planVersion; only the ones sent change..\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Activate Or Deactivate A Plan",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"INACTIVE\",\n  \"reason\": \"Replaced by version 2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/plans/PLAN_ID_HERE/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "plans",
+                "PLAN_ID_HERE",
+                "status"
+              ]
+            },
+            "description": "DRAFT → ACTIVE or ARCHIVED; ACTIVE ⇄ INACTIVE; ACTIVE or INACTIVE → ARCHIVED (final). Status decides only whether the plan can be assigned from now on: organizations on it and every history entry stay. Nothing deletes a plan.\n\nRequires: SUPER_ADMIN.\n\nBody: status ACTIVE · INACTIVE · ARCHIVED · reason ≤500.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Current Subscriptions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/subscriptions?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "subscriptions"
+              ],
+              "query": [
+                {
+                  "key": "planId",
+                  "value": "PLAN_ID_HERE",
+                  "description": "One plan version.",
+                  "disabled": true
+                },
+                {
+                  "key": "planCode",
+                  "value": "BASIC",
+                  "description": "Every version of a code.",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "ACTIVE",
+                  "description": "A SubscriptionStatus.",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "0-based page index."
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "1 to 100."
+                }
+              ]
+            },
+            "description": "Every organization's current subscription, newest first — with planId, which organizations are on one plan version.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Move An Organization To A Plan",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planId\": \"PLAN_ID_HERE\",\n  \"reason\": \"Upgrade agreed with sales\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants/TENANT_ID_HERE/package",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants",
+                "TENANT_ID_HERE",
+                "package"
+              ]
+            },
+            "description": "Applies an ACTIVE plan to an organization directly (no request needed). Recorded in the subscription and plan histories. No payment is taken.\n\nRequires: SUPER_ADMIN.\n\nBody: planId · reason ≤500.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "An Organization's Subscription History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants/TENANT_ID_HERE/package/history?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants",
+                "TENANT_ID_HERE",
+                "package",
+                "history"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "0-based page index."
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "1 to 100."
+                }
+              ]
+            },
+            "description": "The organization's subscription lifecycle, newest first (SubscriptionHistory).\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Plan History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/plan-history?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "plan-history"
+              ],
+              "query": [
+                {
+                  "key": "eventType",
+                  "value": "TENANT_PLAN_CHANGED",
+                  "description": "A PlanHistoryEventType.",
+                  "disabled": true
+                },
+                {
+                  "key": "tenantId",
+                  "value": "",
+                  "description": "One organization.",
+                  "disabled": true
+                },
+                {
+                  "key": "actorUserId",
+                  "value": "",
+                  "description": "Who did it.",
+                  "disabled": true
+                },
+                {
+                  "key": "planId",
+                  "value": "",
+                  "description": "One plan version (as the plan or as the previous plan).",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2026-10-01T00:00:00Z",
+                  "description": "ISO-8601 instant, inclusive.",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2026-12-31T23:59:59Z",
+                  "description": "ISO-8601 instant, inclusive.",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "0-based page index."
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "1 to 100."
+                }
+              ]
+            },
+            "description": "Every plan operation across the platform, newest first: plans created, updated (field by field), activated or deactivated, and organizations' plan requests, decisions and changes. Append-only.\n\nRequires: SUPER_ADMIN.\n\nThe entries of one request (requested, approved, changed) share its id as correlationId.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Plan-Change Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/plan-change-requests?status=PENDING&page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "plan-change-requests"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PENDING",
+                  "description": "PENDING, PROCESSING, APPROVED, REJECTED or CANCELLED."
+                },
+                {
+                  "key": "tenantId",
+                  "value": "",
+                  "description": "One organization.",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "0-based page index."
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "1 to 100."
+                }
+              ]
+            },
+            "description": "Every organization's requests, newest first.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Open A Plan-Change Request",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/plan-change-requests/REQUEST_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "plan-change-requests",
+                "REQUEST_ID_HERE"
+              ]
+            },
+            "description": "One request, with the Super Admin email's delivery attempts and last error.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Approve A Plan-Change Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"note\": \"Approved after the sales call\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/plan-change-requests/REQUEST_ID_HERE/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "plan-change-requests",
+                "REQUEST_ID_HERE",
+                "approve"
+              ]
+            },
+            "description": "Approves a PENDING request and applies the plan (as Move an organization to a plan). If it cannot be applied, the request stays PENDING and nothing changes.\n\nRequires: SUPER_ADMIN.\n\nBody: note ≤500 (optional).\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Reject A Plan-Change Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"note\": \"Please contact sales first\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/plan-change-requests/REQUEST_ID_HERE/reject",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "plan-change-requests",
+                "REQUEST_ID_HERE",
+                "reject"
+              ]
+            },
+            "description": "Rejects a PENDING request; the organization keeps its plan and may ask again.\n\nRequires: SUPER_ADMIN.\n\nBody: note ≤500 (required).\n\nSuccess: 200."
+          },
+          "response": []
+        }
+      ],
+      "description": "SuperAdminPlanController — plans (draft, versions, activate / deactivate / archive — nothing deletes a plan), subscriptions, moving an organization to a plan, plan history, and approving or rejecting plan-change requests. Requires SUPER_ADMIN."
+    },
+    {
+      "name": "Super Admin Notification Controller",
+      "item": [
+        {
+          "name": "Send A Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"Important Compliance Update\",\n  \"body\": \"Please review the updated compliance requirements.\",\n  \"audience\": \"SELECTED\",\n  \"userIds\": [\"USER_ID_HERE\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants/TENANT_ID_HERE/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants",
+                "TENANT_ID_HERE",
+                "notifications"
+              ]
+            },
+            "description": "To the tenant in the path, which must exist (404) and be ACTIVE (409). SELECTED: userIds must all be INVITED or ACTIVE members of the tenant (one that is not refuses the whole request, without saying whether it exists elsewhere). TENANT: no userIds; every member who joined on or before it. Never platform-wide.\n\nRequires: SUPER_ADMIN.\n\nBody: subject ≤200 · body ≤10000 (plain text) · audience SELECTED or TENANT · userIds (SELECTED only, ≤1000, duplicates removed).\n\nWith an attachment the same endpoint takes multipart/form-data: a \"notification\" part (this JSON, Content-Type application/json) and an \"attachment\" file part. The notification screens send it that way; the console sends JSON only. A users array, tenantId or createdByRole in the body is ignored.\n\nSuccess: 201."
+          },
+          "response": []
+        },
+        {
+          "name": "Send A Notification (With Attachment)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "notification",
+                  "value": "{\n  \"subject\": \"Important Compliance Update\",\n  \"body\": \"Please review the updated compliance requirements.\",\n  \"audience\": \"SELECTED\",\n  \"userIds\": [\"USER_ID_HERE\"]\n}",
+                  "type": "text",
+                  "contentType": "application/json",
+                  "description": "The notification JSON (subject, body, audience TENANT or SELECTED, userIds for SELECTED)."
+                },
+                {
+                  "key": "attachment",
+                  "type": "file",
+                  "description": "Choose a PDF, PNG, JPEG, DOCX or XLSX file (max 10 MB).",
+                  "value": null
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants/TENANT_ID_HERE/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants",
+                "TENANT_ID_HERE",
+                "notifications"
+              ]
+            },
+            "description": "To the tenant in the path, which must exist (404) and be ACTIVE (409). SELECTED: userIds must all be INVITED or ACTIVE members of the tenant (one that is not refuses the whole request, without saying whether it exists elsewhere). TENANT: no userIds; every member who joined on or before it. Never platform-wide.\n\nRequires: SUPER_ADMIN.\n\nBody: subject ≤200 · body ≤10000 (plain text) · audience SELECTED or TENANT · userIds (SELECTED only, ≤1000, duplicates removed).\n\nWith an attachment the same endpoint takes multipart/form-data: a \"notification\" part (this JSON, Content-Type application/json) and an \"attachment\" file part. The notification screens send it that way; the console sends JSON only. A users array, tenantId or createdByRole in the body is ignored.\n\nSuccess: 201."
+          },
+          "response": []
+        },
+        {
+          "name": "List Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants/TENANT_ID_HERE/notifications?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants",
+                "TENANT_ID_HERE",
+                "notifications"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "ACTIVE",
+                  "description": "ACTIVE · ARCHIVED",
+                  "disabled": true
+                },
+                {
+                  "key": "audience",
+                  "value": "TENANT",
+                  "description": "SELECTED · TENANT",
+                  "disabled": true
+                },
+                {
+                  "key": "createdBy",
+                  "value": "",
+                  "description": "A creator's user id.",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "0-based page index."
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "1 to 100."
+                }
+              ]
+            },
+            "description": "The tenant's notifications, ACTIVE and ARCHIVED, newest first, with recipient and read counts (no recipient lists).\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Open A Notification",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants/TENANT_ID_HERE/notifications/NOTIFICATION_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants",
+                "TENANT_ID_HERE",
+                "notifications",
+                "NOTIFICATION_ID_HERE"
+              ]
+            },
+            "description": "One notification with every recipient's read state (SELECTED) or the read and eligible counts (TENANT).\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Edit A Notification",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"Important Compliance Update (revised)\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants/TENANT_ID_HERE/notifications/NOTIFICATION_ID_HERE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants",
+                "TENANT_ID_HERE",
+                "notifications",
+                "NOTIFICATION_ID_HERE"
+              ]
+            },
+            "description": "Only the fields sent change. Recipients (SELECTED only) are added unread and removed on the server, so everyone else keeps their read state. The audience never changes.\n\nRequires: SUPER_ADMIN.\n\nBody: subject ≤200 · body ≤10000 · addUserIds · removeUserIds.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Archive Or Restore A Notification",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ARCHIVED\",\n  \"reason\": \"Superseded\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants/TENANT_ID_HERE/notifications/NOTIFICATION_ID_HERE/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants",
+                "TENANT_ID_HERE",
+                "notifications",
+                "NOTIFICATION_ID_HERE",
+                "status"
+              ]
+            },
+            "description": "ARCHIVED: it leaves every inbox and unread count and cannot be edited, but stays in the admin lists and is never deleted. ACTIVE: restores an archived one exactly as it was (content, audience, recipients, read states), back in the inboxes — the organization must be ACTIVE. Repeating either changes nothing. Audited as NOTIFICATION_ARCHIVED / NOTIFICATION_RESTORED.\n\nRequires: SUPER_ADMIN.\n\nBody: status ARCHIVED (archive) · ACTIVE (restore) · reason ≤500 (to the audit trail).\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Replace The Attachment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "attachment",
+                  "type": "file",
+                  "description": "Choose a PDF, PNG, JPEG, DOCX or XLSX file (max 10 MB).",
+                  "value": null
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants/TENANT_ID_HERE/notifications/NOTIFICATION_ID_HERE/attachment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants",
+                "TENANT_ID_HERE",
+                "notifications",
+                "NOTIFICATION_ID_HERE",
+                "attachment"
+              ]
+            },
+            "description": "multipart/form-data with an \"attachment\" file part. Adds or replaces it; the old file is deleted once nothing refers to it.\n\nRequires: SUPER_ADMIN.\n\nMultipart only — send it from the notification's page, which builds the form. The console cannot attach a file.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Remove The Attachment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants/TENANT_ID_HERE/notifications/NOTIFICATION_ID_HERE/attachment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants",
+                "TENANT_ID_HERE",
+                "notifications",
+                "NOTIFICATION_ID_HERE",
+                "attachment"
+              ]
+            },
+            "description": "Removes the attachment and deletes its file. Without one, nothing changes.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Download The Attachment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants/TENANT_ID_HERE/notifications/NOTIFICATION_ID_HERE/attachment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants",
+                "TENANT_ID_HERE",
+                "notifications",
+                "NOTIFICATION_ID_HERE",
+                "attachment"
+              ]
+            },
+            "description": "The file as a download, ACTIVE or ARCHIVED. With S3 storage: 302 to a 60-second presigned URL.\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        },
+        {
+          "name": "Recipient Options For A Tenant",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/tenants/TENANT_ID_HERE/notifications/recipients",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "super-admin",
+                "tenants",
+                "TENANT_ID_HERE",
+                "notifications",
+                "recipients"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Name or email, ≤100 characters.",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "",
+                  "description": "0-based page index (default 0).",
+                  "disabled": true
+                },
+                {
+                  "key": "size",
+                  "value": "",
+                  "description": "1 to 100 (default 20).",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Members of the organization in the path who can be chosen as notification recipients (INVITED or ACTIVE).\n\nRequires: SUPER_ADMIN.\n\nSuccess: 200."
+          },
+          "response": []
+        }
+      ],
+      "description": "SuperAdminNotificationController — a Super Admin sends and manages notifications inside the organization named in the path. Requires SUPER_ADMIN."
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8881"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "challengeSession",
+      "value": ""
+    }
+  ]
+}
